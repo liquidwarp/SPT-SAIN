@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.EnemyClasses;
 
-public class Enemy : BotBase, ISPlayer
+public class Enemy : BotBase
 {
     public PredictivePositionSmoother PositionSmoother { get; } = new PredictivePositionSmoother();
 
@@ -82,28 +82,6 @@ public class Enemy : BotBase, ISPlayer
     private float _nextCheckLookTime = 0f;
     private float _nextCheckLoSTime = 0f;
 
-    public Vector3 NavMeshPosition
-    {
-        get { return EnemyTransform.NavData.Position; }
-    }
-
-    /// <summary>
-    /// Enemy player to ProfileId player
-    /// </summary>
-    public float GetDistanceToPlayer(string ProfileId)
-    {
-        return EnemyPlayerComponent.GetDistanceToPlayer(ProfileId);
-    }
-
-    /// <summary>
-    /// Enemy player to ProfileId player
-    /// </summary>
-    public bool IsPlayerInRange(string ProfileId, float maxDistance, out float playerDistance)
-    {
-        playerDistance = GetDistanceToPlayer(ProfileId);
-        return playerDistance <= maxDistance;
-    }
-
     public void TickEnemy(float currentTime, float forgetEnemyTime, bool botSearching)
     {
         UpdateDistAndDirection();
@@ -152,11 +130,6 @@ public class Enemy : BotBase, ISPlayer
     public bool IsShooter()
     {
         return !IsZombie && EnemyPlayer.HandsController is Player.FirearmController;
-    }
-
-    public bool IsSamePlayer(string profileId)
-    {
-        return EnemyProfileId == profileId;
     }
 
     public EnemyEvents Events { get; }
@@ -533,18 +506,15 @@ public class Enemy : BotBase, ISPlayer
     {
         if (enemyPlayerComp == null)
         {
-            //Logger.LogError($"Enemy {Enemy.EnemyName} PlayerComponent is Null");
             return false;
         }
         var Player = enemyPlayerComp.Player;
         if (Player == null)
         {
-            //Logger.LogError($"Enemy {Enemy.EnemyName} PlayerComponent is Null");
             return false;
         }
         if (!Player.HealthController.IsAlive)
         {
-            //Logger.LogDebug("Enemy Player Is Dead");
             return false;
         }
         // Checks specific to bots

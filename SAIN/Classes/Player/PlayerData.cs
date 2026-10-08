@@ -2,7 +2,6 @@
 using EFT;
 using SAIN.Models.PlayerData;
 using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace SAIN.Components.PlayerComponentSpace;
@@ -75,66 +74,6 @@ public class OtherPlayerLoSData
 
         _bodyPartColliders.Clear();
         _bodyPartColliderTypes.Clear();
-    }
-
-    public JobHandle ScheduleRaycasts(Vector3 origin, QueryParameters queryParams)
-    {
-        var commands = RaycastCommands;
-        var hits = RaycastHits;
-        int count = RaycastArray.Length;
-        for (int i = 0; i < count; i++)
-        {
-            commands[i] = new RaycastCommand(origin, BodyPartColliders[i].Center - origin, queryParams, 1f);
-            hits[i] = default;
-        }
-        RaycastCommands = commands;
-        RaycastHits = hits;
-        return RaycastCommand.ScheduleBatch(commands, hits, count);
-    }
-
-    public void ReadLoSRaycastResults()
-    {
-        var resultsCache = RaycastArray;
-        for (int i = 0; i < RaycastHits.Length; i++)
-        {
-            RaycastHit hit = RaycastHits[i];
-            if (hit.collider == null)
-            {
-                //resultsCache[i].LastSuccessCastPoint = castPoint;
-                resultsCache[i].TimeLastLineofSightSuccess = Time.time;
-            }
-        }
-        RaycastArray = resultsCache;
-    }
-
-    public void ReadVisionRaycastResults()
-    {
-        var resultsCache = RaycastArray;
-        for (int i = 0; i < RaycastHits.Length; i++)
-        {
-            RaycastHit hit = RaycastHits[i];
-            if (hit.collider == null)
-            {
-                //resultsCache[i].LastSuccessCastPoint = castPoint;
-                resultsCache[i].TimeLastVisibleSuccess = Time.time;
-            }
-        }
-        RaycastArray = resultsCache;
-    }
-
-    public void ReadShootRaycastResults()
-    {
-        var resultsCache = RaycastArray;
-        for (int i = 0; i < RaycastHits.Length; i++)
-        {
-            RaycastHit hit = RaycastHits[i];
-            if (hit.collider == null)
-            {
-                //resultsCache[i].LastSuccessCastPoint = castPoint;
-                resultsCache[i].TimeLastCanShootSuccess = Time.time;
-            }
-        }
-        RaycastArray = resultsCache;
     }
 
     public void Dispose()

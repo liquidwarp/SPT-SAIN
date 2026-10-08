@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.WeaponFunction;
 
-public class GrenadeThrowDecider : BotSubClass<BotGrenadeManager>, IBotDecisionClass
+public class GrenadeThrowDecider : BotSubClass<BotGrenadeManager>
 {
     private const float MIN_THROW_DISPERSION = 0.5f;
     private const float MAX_THROW_DISPERSION = 5f;

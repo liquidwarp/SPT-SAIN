@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using EFT;
-using EFT.Ballistics;
 using SAIN.Components;
 using SAIN.Components.PlayerComponentSpace;
 using UnityEngine;
@@ -68,26 +67,9 @@ public class SAINBotTalkClass : BotComponentClassBase
 
     public override void Init()
     {
-        //Player.BeingHitAction += GetHit;
         GroupTalk.Init();
         EnemyTalk.Init();
         base.Init();
-    }
-
-    private void GetHit(DamageInfo DamageInfo, EBodyPart bodyPart, float floatVal)
-    {
-        if (Player == null || BotOwner == null || Bot == null)
-        {
-            return;
-        }
-
-        if (EFTMath.RandomBool(25) && _nextGetHitTime < Time.time && GroupTalk.FriendIsClose)
-        {
-            _nextGetHitTime = Time.time + 1f;
-            EPhraseTrigger trigger = EPhraseTrigger.OnBeingHurt;
-            ETagStatus mask = ETagStatus.Combat | ETagStatus.Aware;
-            GroupSay(trigger, mask, false, 100);
-        }
     }
 
     public override void ManualUpdate()
@@ -161,10 +143,6 @@ public class SAINBotTalkClass : BotComponentClassBase
 
     public override void Dispose()
     {
-        if (Player != null)
-        {
-            //Player.BeingHitAction -= GetHit;
-        }
         _phraseDictionary.Clear();
         GroupTalk.Dispose();
         EnemyTalk.Dispose();
@@ -503,7 +481,6 @@ public class SAINBotTalkClass : BotComponentClassBase
     private bool _talkCacheActive = false;
     private float _talkCacheTimer = 0f;
     private float _allTalkDelay = 0f;
-    private float _nextGetHitTime;
     private float _timeCanTalk;
     private float _talkDelayTimer = 0f;
 

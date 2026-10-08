@@ -37,11 +37,6 @@ internal static class ConfigEditingTracker
         ClearAndCreateStringBuilder();
     }
 
-    public static bool WasEdited(ConfigInfoClass info)
-    {
-        return EditedConfigValues.ContainsKey(info.Name);
-    }
-
     public static void Clear()
     {
         EditedConfigValues.Clear();

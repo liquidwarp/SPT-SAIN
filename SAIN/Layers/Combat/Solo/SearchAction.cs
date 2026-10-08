@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace SAIN.Layers.Combat.Solo;
 
-internal class SearchAction(BotOwner bot) : BotAction(bot, "Search"), IBotAction
+internal class SearchAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     private Enemy _searchTarget
     {

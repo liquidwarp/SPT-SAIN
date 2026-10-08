@@ -1,7 +1,6 @@
 using EFT;
 using SAIN.Extensions;
 using SAIN.Models.Enums;
-using SAIN.Preset.Shared.Enums;
 
 namespace SAIN.Layers.Combat.Run;
 
@@ -22,11 +21,6 @@ internal class DebugLayer : SAINLayer
         if (SAINPlugin.DebugSettings.Logs.ForceBotsToTryCrawl)
         {
             return new Action(typeof(CrawlAction), $"CRAWL");
-        }
-
-        if (SAINPlugin.DebugSettings.Logs.TestGrenadeThrow && BotOwner.WeaponManager.Grenades.HaveGrenade)
-        {
-            //return new Action(typeof(GrenadeThrowTestAction), "testGrenade");
         }
 
         return new Action(typeof(RunningAction), $"RUNNING");
@@ -59,10 +53,5 @@ internal class DebugLayer : SAINLayer
         }
 
         return false;
-    }
-
-    public ECombatDecision CurrentDecision
-    {
-        get { return Bot.Decision.CurrentCombatDecision; }
     }
 }

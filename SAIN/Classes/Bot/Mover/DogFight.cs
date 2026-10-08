@@ -87,11 +87,6 @@ public class DogFight : BotBase
             return;
         }
 
-        //if (_backingUp && Bot.Mover.Moving)
-        //{
-        //    _updateDogFightTimer = Time.time + 0.1f;
-        //    return;
-        //}
         if (HasEnemy && BackUpFromEnemy(Enemy))
         {
             Status = EDogFightStatus.BackingUp;

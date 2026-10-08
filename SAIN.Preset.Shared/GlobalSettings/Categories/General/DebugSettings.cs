@@ -88,10 +88,6 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     public bool ForceBotsToTryCrawl;
 
     [DataMember]
-    [Name("Test Grenade Throw")]
-    public bool TestGrenadeThrow;
-
-    [DataMember]
     [Name("Draw Debug Labels")]
     public bool DrawDebugLabels;
 

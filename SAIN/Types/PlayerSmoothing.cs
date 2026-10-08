@@ -26,14 +26,6 @@ public class PredictivePositionSmoother
     }
 
     /// <summary>
-    /// Estimated target velocity
-    /// </summary>
-    public Vector3 Velocity
-    {
-        get { return _targetVelocity; }
-    }
-
-    /// <summary>
     /// Initialize or reset the smoother with a starting position
     /// </summary>
     /// <param name="initialPosition">Starting position</param>

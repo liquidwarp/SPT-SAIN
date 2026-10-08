@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.GlobalSettings.Categories;
 using UnityEngine;
@@ -40,11 +39,6 @@ public struct BotVisiblePathNode
         Point = point;
         CornerStartIndex = cornerStartIndex;
         CornerEndIndex = cornerEndIndex;
-    }
-
-    public BotVisiblePathNode()
-    {
-        Point = default;
     }
 
     public readonly Vector3 Point;
@@ -118,7 +112,6 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
 
     public BotVisiblePathNode[] AllPathNodes { get; } =
         enemyData.EnemyPlayer.IsAI ? new BotVisiblePathNode[512] : new BotVisiblePathNode[1024];
-    public List<BotVisiblePathNode> VisibleNodes { get; } = [];
 
     public int AllPathNodeCount { get; private set; } = 0;
 
@@ -400,7 +393,6 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
         bool performanceMode = SAINPlugin.LoadedPreset.GlobalSettings.General.Performance.PerformanceMode;
         bool currentEnemy = Enemy.IsCurrentEnemy;
         bool isAI = Enemy.IsAI;
-        //bool searchingForEnemy = Enemy.Events.OnSearch.Value;
         float distance = Enemy.RealDistance;
 
         float maxDelay = isAI ? MAX_FREQ_CALCPATH_AI : MAX_FREQ_CALCPATH;
@@ -413,8 +405,6 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
         {
             maxDelay *= PERFORMANCE_MODE_COEF;
         }
-        //if (searchingForEnemy)
-        //    maxDelay *= ACTIVE_SEARCH_COEF;
 
         if (distance > MAX_FREQ_CALCPATH_DISTANCE)
         {
@@ -431,8 +421,6 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
         {
             minDelay *= PERFORMANCE_MODE_COEF;
         }
-        //if (searchingForEnemy)
-        //    minDelay *= ACTIVE_SEARCH_COEF;
 
         if (distance < MIN_FREQ_CALCPATH_DISTANCE)
         {
@@ -445,12 +433,6 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
 
         float result = distanceRatio * delayDifference + minDelay;
         float clampedResult = Mathf.Clamp(result, minDelay, maxDelay);
-
-        //if (_nextLogTime < Time.time)
-        //{
-        //    _nextLogTime = Time.time + 10f;
-        //    //Logger.LogDebug($"{BotOwner.name} calcPathFreqResults for [{Enemy.EnemyPerson.Nickname}] Result: [{result}] preClamped: [[{result}] [{distanceRatio} * {delayDifference} + {minDelay}]] : Distance: [{distance}] : IsAI? [{isAI}] : Current Enemy? [{currentEnemy}] : MinDelay [{minDelay}] : MaxDelay [{maxDelay}]");
-        //}
 
         return clampedResult;
     }

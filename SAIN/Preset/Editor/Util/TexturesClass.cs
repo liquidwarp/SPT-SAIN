@@ -28,30 +28,11 @@ public static class TexturesClass
         }
     }
 
-    public static Texture2D GetRandomGray(string key)
-    {
-        if (!RandomColors.ContainsKey(key))
-        {
-            var texture = NewTexture(ColorsClass.GetRandomColor(key));
-            RandomColors.Add(key, texture);
-        }
-        return RandomColors[key];
-    }
-
     private static readonly Dictionary<string, Texture2D> RandomColors = new();
 
     public static Texture2D GetTexture<T>(T name)
     {
         if (ColorTextures.TryGetValue(name.ToString(), out var texture))
-        {
-            return texture;
-        }
-        return Texture2D.redTexture;
-    }
-
-    public static Texture2D GetCustom(ColorNames name)
-    {
-        if (CustomTextures.TryGetValue(name.ToString(), out var texture))
         {
             return texture;
         }

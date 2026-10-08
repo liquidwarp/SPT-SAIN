@@ -6,16 +6,6 @@ namespace SAIN.SAINComponent.Classes.Memory;
 
 public class LocationTracker : BotBase
 {
-    public Collider BotZoneCollider
-    {
-        get { return BotZone?.Collider; }
-    }
-
-    public AIPlaceInfo BotZone
-    {
-        get { return BotOwner.AIData.PlaceInfo; }
-    }
-
     public bool IsIndoors { get; private set; }
 
     public LocationTracker(BotComponent sain)

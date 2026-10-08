@@ -73,7 +73,6 @@ public class BotDifficultyClass : BotBase
         mods.PrecicingSpeedCoef = globalSettings.PRECISION_SPEED_COEF;
         mods.VisibleDistCoef = globalSettings.VisibleDistCoef;
         mods.ScatteringCoef = globalSettings.ScatteringCoef;
-        //mods.PriorityScatteringCoef = globalSettings.PriorityScatteringCoef;
         mods.RuntimeVisionEffectK = globalSettings.GainSightCoef;
         mods.HearingDistCoef = globalSettings.HearingDistanceCoef;
     }
@@ -87,7 +86,6 @@ public class BotDifficultyClass : BotBase
         mods.PrecicingSpeedCoef = botSettings.PRECISION_SPEED_COEF;
         mods.VisibleDistCoef = botSettings.VisibleDistCoef;
         mods.ScatteringCoef = botSettings.ScatteringCoef;
-        //mods.PriorityScatteringCoef = botSettings.PriorityScatteringCoef;
         mods.RuntimeVisionEffectK = botSettings.GainSightCoef;
         mods.HearingDistCoef = botSettings.HearingDistanceCoef;
     }
@@ -106,7 +104,6 @@ public class BotDifficultyClass : BotBase
         mods.PrecicingSpeedCoef = locationSettings.PRECISION_SPEED_COEF;
         mods.VisibleDistCoef = locationSettings.VisibleDistCoef;
         mods.ScatteringCoef = locationSettings.ScatteringCoef;
-        //mods.PriorityScatteringCoef = locationSettings.PriorityScatteringCoef;
         mods.RuntimeVisionEffectK = locationSettings.GainSightCoef;
         mods.HearingDistCoef = locationSettings.HearingDistanceCoef;
     }
@@ -120,7 +117,6 @@ public class BotDifficultyClass : BotBase
         mods.PrecicingSpeedCoef = personalitySettings.PRECISION_SPEED_COEF;
         mods.VisibleDistCoef = personalitySettings.VisibleDistCoef;
         mods.ScatteringCoef = personalitySettings.ScatteringCoef;
-        //mods.PriorityScatteringCoef = personalitySettings.PriorityScatteringCoef;
         mods.RuntimeVisionEffectK = personalitySettings.GainSightCoef;
         mods.HearingDistCoef = personalitySettings.HearingDistanceCoef;
     }

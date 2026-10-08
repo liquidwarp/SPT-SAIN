@@ -42,11 +42,6 @@ public class SAINBotLookClass : BotBase
             BotOwner.Memory.SetLastTimeSeeEnemy();
         }
 
-        if (lookData.ShallRecalcGoal)
-        {
-            //BotOwner.CalcGoal();
-        }
-
         lookData.Reset();
     }
 

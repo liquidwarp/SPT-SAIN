@@ -47,30 +47,6 @@ public class EnemyKnownPlaces
         }
     }
 
-    public float EnemyDistanceFromLastSeen
-    {
-        get
-        {
-            if (LastSeenPlace == null)
-            {
-                return float.MaxValue;
-            }
-            return LastSeenPlace.DistanceToEnemyRealPosition;
-        }
-    }
-
-    public float EnemyDistanceFromLastHeard
-    {
-        get
-        {
-            if (LastHeardPlace == null)
-            {
-                return float.MaxValue;
-            }
-            return LastHeardPlace.DistanceToEnemyRealPosition;
-        }
-    }
-
     public bool SearchedAllKnownLocations { get; private set; }
 
     private void checkSearched(float currentTime)
@@ -118,7 +94,6 @@ public class EnemyKnownPlaces
 
     public void TickEnemy(float currentTime)
     {
-        //UpdatePlaces();
         if (Enemy.EnemyKnown)
         {
             checkSearched(currentTime);

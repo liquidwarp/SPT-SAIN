@@ -26,12 +26,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
         get { return _activePath != null && _activePath.Running; }
     }
 
-    public bool Crawling
-    {
-        get { return _activePath != null && _activePath.Crawling; }
-    }
-
-    public event Action<OperationResult, IBotPathData> OnPathComplete;
 
     public event Action<BotPathCorner, int, int> OnPathCornerSet;
 
@@ -104,10 +98,8 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
         // We are swapping between two preallocated paths, so we need to check which one is active and check if the other one is prepared.
         if (pathData == _preparedPath1)
         {
-            //Logger.LogDebug($"[{Bot.name}] Path 1 Completed");
             if (!_disposing && _preparedPath2.Status == EBotMoveStatus.ReadyToMove)
             {
-                //Logger.LogDebug($"[{Bot.name}] Path 2 Started");
                 _activePath = _preparedPath2;
                 _activePath.Start();
             }
@@ -118,10 +110,8 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
         }
         else if (pathData == _preparedPath2)
         {
-            //Logger.LogDebug($"[{Bot.name}] Path 2 Completed");
             if (!_disposing && _preparedPath1.Status == EBotMoveStatus.ReadyToMove)
             {
-                //Logger.LogDebug($"[{Bot.name}] Path 1 Started");
                 _activePath = _preparedPath1;
                 _activePath.Start();
             }
@@ -425,11 +415,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
     public PoseClass Pose { get; private set; }
     public ProneClass Prone { get; private set; }
 
-    public bool CrawlToPoint(Vector3 point, bool mustHaveCompletePath = true)
-    {
-        throw new NotImplementedException();
-    }
-
     public bool CanGoToPoint(Vector3 point, out NavMeshPath path, bool mustHaveCompletePath = true, float navSampleRange = 0.5f)
     {
         var navData = Bot.Transform.NavData;
@@ -465,16 +450,11 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
 
             return WalkToPointByWay(point.PathData.Path);
         }
-        else
-        {
-            //Logger.LogDebug("cant go to point");
-        }
         return false;
     }
 
     private static bool CanGoToCoverPoint(CoverPoint point, PlayerNavData navData)
     {
-        //if (point.GetDistance(navData.Position) < BASE_DESTINATION_REACH_DIST * BASE_DESTINATION_REACH_DIST) return false;
         if (navData.IsOnNavMesh)
         {
             PathData coverPathData = point.PathData;
@@ -488,22 +468,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
                 return true;
             }
         }
-        return false;
-    }
-
-    private static bool TryRecalcCoverPointPath(CoverPoint point, PlayerNavData navData, PathData coverPathData)
-    {
-        coverPathData.Path.ClearCorners();
-        if (
-            NavMesh.CalculatePath(navData.Position, point.Position, -1, coverPathData.Path)
-            && coverPathData.Path.status == NavMeshPathStatus.PathComplete
-        )
-        {
-            return true;
-        }
-#if DEBUG
-#endif
-        Logger.LogDebug($"Failed to recalculate path to cover point, path status: {coverPathData.Path.status}");
         return false;
     }
 
@@ -526,14 +490,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
     public void PauseMovement(float forDuration)
     {
         _activePath?.Pause(forDuration);
-    }
-
-    public void RecalcPath()
-    {
-        if (_activePath != null)
-        {
-            _activePath.PathRecalcRequested = true;
-        }
     }
 
     public bool TryJump()
@@ -574,11 +530,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
                 if (wantToPatrolStance != movementContext._isInPatrol)
                 {
                     // If we are in left stance and want to patrol, reset back to normal  before setting patrol next update.
-                    //if (wantToPatrolStance && leftStance?.LeftStance == true)
-                    //{
-                    //    leftStance.ToggleLeftStance();
-                    //    return;
-                    //}
                     movementContext.SetPatrol(wantToPatrolStance && CanSetPatrol());
                     return;
                 }
@@ -590,41 +541,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
                 }
             }
         }
-    }
-
-    private void CheckSetBotToNavMesh()
-    {
-        if (Player.UpdateQueue != EUpdateQueue.Update)
-        {
-            return;
-        }
-        // Is the bot currently Moving somewhere?
-        if (Moving || BotOwner.Mover.HasPathAndNoComplete)
-        {
-            _movingTime = Time.time + 1f;
-            return;
-        }
-        if (_movingTime > Time.time)
-        {
-            return;
-        }
-        // Did the bot jump recently?
-        if (Time.time - TimeLastJumped < _timeAfterJumpVaultReset)
-        {
-            return;
-        }
-        // Did the bot vault recently?
-        if (Time.time - TimeLastVaulted < _timeAfterJumpVaultReset)
-        {
-            return;
-        }
-        // Is the bot currently falling?
-        if (!Player.MovementContext.IsGrounded)
-        {
-            _ungroundedTime = Time.time + 1f;
-            return;
-        }
-        if (_ungroundedTime < Time.time) { }
     }
 
     public void PathCornerSet(BotPathCorner corner, int index, int totalCorners)
@@ -642,11 +558,6 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
         Bot.CurrentAction?.OnSteeringTicked();
         Bot.Steering.TickPlayerSteering();
     }
-
-    private float _ungroundedTime;
-    private float _movingTime;
-
-    private readonly float _timeAfterJumpVaultReset = 1.25f;
     private bool _wantLeftStance
     {
         get { return Lean.LeanAngleValue.TargetValue < 0; }

@@ -28,25 +28,6 @@ public struct DoorDataStruct(NavMeshDoorLink link)
         return true;
     }
 
-    public void OnInteract(EDoorState desiredState)
-    {
-        LastInteractTime = Time.time;
-        switch (desiredState)
-        {
-            case EDoorState.Open:
-                LastOpenTime = Time.time;
-                break;
-            case EDoorState.Shut:
-                LastCloseTime = Time.time;
-                break;
-        }
-    }
-
-    public readonly int Id
-    {
-        get { return Link.Id; }
-    }
-
     public float LastInteractTime;
     public float LastOpenTime;
     public float LastCloseTime;
@@ -59,7 +40,6 @@ public struct DoorDataStruct(NavMeshDoorLink link)
     public void ManualUpdate(Vector3 botPosition)
     {
         Direction = Link.MidClose - botPosition;
-        //Direction = CenterPoint - from;
         DirectionNormal = Direction.normalized;
         CurrentSqrMagnitude = Direction.sqrMagnitude;
     }

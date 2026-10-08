@@ -53,7 +53,6 @@ public class HearingDispersion(HearingSensor hearingSensor) : BotSubClass<Hearin
 
         HearingSettings hearingSettings = GlobalSettingsClass.Instance.Hearing;
         finalDispersion = Mathf.Clamp(finalDispersion, 0f, hearingSettings.HEAR_DISPERSION_MAX_DISPERSION);
-        //Vector3 randomBox = getRandomizedDirection(finalDispersion, 1f, 0.1f, 1f);
         if (GetRandomReachablePointAroundPlayer(Sound.HeardPlayerComponent, finalDispersion, 0f, out Vector3 result, 4f, 20))
         {
 #if DEBUG
@@ -136,7 +135,6 @@ public class HearingDispersion(HearingSensor hearingSensor) : BotSubClass<Hearin
         if (hearingSettings.HEAR_DISPERSION_VALUES.TryGetValue(soundType, out float dispersionValue) == false)
         {
             dispersionValue = 12.5f;
-            //Logger.LogWarning($"Could not find [{soundType}] in Hearing Dispersion Dictionary!");
         }
         return enemyDistance / dispersionValue;
     }
@@ -153,7 +151,6 @@ public class HearingDispersion(HearingSensor hearingSensor) : BotSubClass<Hearin
             scaled
         );
 
-        //Logger.LogInfo($"Dispersion Modifier for Sound [{dispersionModifier}] Dot Product [{dotProduct}]");
         return dispersionModifier;
     }
 }

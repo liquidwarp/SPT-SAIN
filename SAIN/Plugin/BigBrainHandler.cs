@@ -361,11 +361,6 @@ public static class BigBrainHandler
             }
         }
 
-        public static void ToggleVanillaLayersForBrains(List<string> brainList, List<string> layersToToggle, bool useVanillaLayers)
-        {
-            ToggleVanillaLayers(brainList, layersToToggle, useVanillaLayers);
-        }
-
         public static void ToggleVanillaLayersForBrainsAndRoles(
             List<string> brainList,
             List<WildSpawnType> roles,
@@ -374,22 +369,6 @@ public static class BigBrainHandler
         )
         {
             ToggleVanillaLayers(brainList, layersToToggle, roles, useVanillaLayers);
-        }
-
-        public static void AddCustomLayersToBrains(List<string> brainList, bool withExtract)
-        {
-            var settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
-
-            BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
-            BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
-            BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
-            BrainManager.AddCustomLayer(typeof(CombatSquadLayer), brainList, settings.SAINCombatSquadLayerPriority);
-            BrainManager.AddCustomLayer(typeof(CombatSoloLayer), brainList, settings.SAINCombatSoloLayerPriority);
-
-            if (withExtract)
-            {
-                BrainManager.AddCustomLayer(typeof(ExtractLayer), brainList, settings.SAINExtractLayerPriority);
-            }
         }
 
         public static void AddCustomLayersToBrainsAndRoles(List<string> brainList, List<WildSpawnType> roles, bool withExtract)
@@ -468,7 +447,6 @@ public static class BigBrainHandler
             List<string> brainList = GetBrainList(AIBrains.Scavs);
             var settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
 
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
@@ -497,7 +475,6 @@ public static class BigBrainHandler
             List<string> brainList = GetBrainList(AIBrains.SpecialBots);
 
             var settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
@@ -511,7 +488,6 @@ public static class BigBrainHandler
             List<string> brainList = GetBrainList(AIBrains.LabyrinthBots);
             var settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
 
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
@@ -524,7 +500,6 @@ public static class BigBrainHandler
         {
             List<string> brainList = GetBrainList(AIBrains.Cultists);
 
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 146);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 150);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 118);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 123);
@@ -538,7 +513,6 @@ public static class BigBrainHandler
             List<string> brainList = [nameof(EBrain.ExUsec)];
 
             var settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
@@ -552,7 +526,6 @@ public static class BigBrainHandler
             List<string> brainList = [nameof(EBrain.ArenaFighter)];
 
             var settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
@@ -565,8 +538,6 @@ public static class BigBrainHandler
         {
             List<string> brainList = GetBrainList(AIBrains.NormalBosses);
 
-            //var settings = SAINPlugin.LoadedPreset.GlobalSettings.General;
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);
@@ -578,8 +549,6 @@ public static class BigBrainHandler
         {
             List<string> brainList = GetBrainList(AIBrains.NormalFollowers);
 
-            //var settings = SAINPlugin.LoadedPreset.GlobalSettings.General;
-            //BrainManager.AddCustomLayer(typeof(BotUnstuckLayer), stringList, 98);
             BrainManager.AddCustomLayer(typeof(DebugLayer), brainList, 99);
             BrainManager.AddCustomLayer(typeof(SAINAvoidThreatLayer), brainList, 80);
             BrainManager.AddCustomLayer(typeof(SAINFlashedLayer), brainList, 85);

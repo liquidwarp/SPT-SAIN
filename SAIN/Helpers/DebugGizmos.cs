@@ -36,11 +36,6 @@ public class DebugGizmos
         PresetHandler.OnPresetUpdated += PresetUpdated;
     }
 
-    public static Color RandomColor
-    {
-        get { return new(RandomFloat, RandomFloat, RandomFloat); }
-    }
-
     public static bool DrawGizmos
     {
         get { return SAINPlugin.DrawDebugGizmos; }
@@ -196,50 +191,6 @@ public class DebugGizmos
         }
     }
 
-    public static GameObject DrawBox(Vector3 position, float length, float height, Color color, float expiretime = -1f)
-    {
-        if (!DrawGizmos)
-        {
-            return null;
-        }
-        if (!SAINPlugin.DebugMode)
-        {
-            return null;
-        }
-
-        var box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-        box.GetComponent<Renderer>().material.color = color;
-        box.GetComponent<Collider>().enabled = false;
-        box.transform.position = position;
-        box.transform.localScale = new Vector3(length * 2, height * 2, length * 2);
-        AddGizmo(box, expiretime);
-
-        return box;
-    }
-
-    public static GameObject DrawBox(Vector3 position, Vector3 size, Color color, float expiretime = -1f)
-    {
-        if (!DrawGizmos)
-        {
-            return null;
-        }
-        if (!SAINPlugin.DebugMode)
-        {
-            return null;
-        }
-
-        var box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-        box.GetComponent<Renderer>().material.color = color;
-        box.GetComponent<Collider>().enabled = false;
-        box.transform.position = position;
-        box.transform.localScale = size;
-        AddGizmo(box, expiretime);
-
-        return box;
-    }
-
     public static GameObject Ray(
         Vector3 startPoint,
         Vector3 direction,
@@ -336,17 +287,6 @@ public class DebugGizmos
         }
     }
 
-    public static void UpdateLinePosition(Vector3 a, Vector3 b, GameObject gameObject)
-    {
-        if (gameObject == null)
-        {
-            return;
-        }
-        var lineRenderer = gameObject.GetComponent<LineRenderer>();
-        lineRenderer?.SetPosition(0, a);
-        lineRenderer?.SetPosition(1, b);
-    }
-
     private static void PresetUpdated(SAINPresetClass preset)
     {
         if (!preset.GlobalSettings.General.Debug.Gizmos.DrawDebugGizmos)
@@ -385,11 +325,6 @@ public class DebugGizmos
             }
         }
         _gizmos.Clear();
-    }
-
-    private static float RandomFloat
-    {
-        get { return Random.Range(0.2f, 1f); }
     }
 
     private static float _screenScale = 1.0f;

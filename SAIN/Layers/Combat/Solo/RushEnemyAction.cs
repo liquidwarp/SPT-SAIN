@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace SAIN.Layers.Combat.Solo;
 
-internal class RushEnemyAction(BotOwner bot) : BotAction(bot, nameof(RushEnemyAction)), IBotAction
+internal class RushEnemyAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

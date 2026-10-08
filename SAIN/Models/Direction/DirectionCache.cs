@@ -18,13 +18,4 @@ public sealed class DirectionCache
         SqrMagnitude = sqrMag;
         Magnitude = Mathf.Sqrt(sqrMag);
     }
-
-    public DirectionCache(Vector3 direction)
-    {
-        Direction = direction;
-        DirectionNormalized = direction.normalized;
-        float sqrMag = direction.sqrMagnitude;
-        SqrMagnitude = sqrMag;
-        Magnitude = Mathf.Sqrt(sqrMag);
-    }
 }

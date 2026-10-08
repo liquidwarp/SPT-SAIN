@@ -59,13 +59,6 @@ public class EnemyVisionDistanceClass : EnemyBase
         float defaultVisDist = BotOwner.LookSensor.VisibleDist;
         float result = (defaultVisDist * finalModifier) - defaultVisDist;
 
-        // if (EnemyPlayer.IsYourPlayer &&
-        //     _nextLogTime < Time.time)
-        // {
-        //     _nextLogTime = Time.time + 0.5f;
-        //     Logger.LogWarning($"Result: [{result}] : Final Mod: {finalModifier} : defaultVisDist {defaultVisDist} : sprint {sprint} : gear {gear} : angle {angle} : flareMod {flareMod} : positionalFlareMod {positionalFlareMod} : underFire {underFire} : aiReduction {aiReduction} ");
-        // }
-
         return result;
     }
 
@@ -73,12 +66,6 @@ public class EnemyVisionDistanceClass : EnemyBase
     {
         float velocity = Enemy.Vision.EnemyVelocity;
         float result = Mathf.Lerp(0.9f, _sprintMod, velocity);
-
-        // if (EnemyPlayer.IsYourPlayer &&
-        //     _nextLogTime < Time.time)
-        // {
-        //     Logger.LogWarning($"Velocity: [{velocity}] : Vision Distance mod: {result}");
-        // }
 
         return result;
     }

@@ -81,7 +81,6 @@ public class SAINEquipmentClass : PlayerComponentBase
 
     public void Update()
     {
-        //updateAllWeapons();
         if (CurrentWeaponInfo == null && Player.HandsController?.Item is Weapon weapon)
         {
             foreach (var WeaponInfo in WeaponInfos.Values)

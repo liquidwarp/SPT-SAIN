@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Comfort.Common;
-using EFT;
 using SAIN.Components;
 using SAIN.Components.BotController;
-using SAIN.Components.PlayerComponentSpace;
 using UnityEngine;
 
 namespace SAIN.Types.Jobs;
@@ -101,16 +98,6 @@ public abstract class SainJobTemplate(string InName, MonoBehaviour InOwner, bool
         }
     }
 
-    protected static GameWorld GameWorld
-    {
-        get { return Singleton<GameWorld>.Instance; }
-    }
-
-    protected static IBotGame BotGame
-    {
-        get { return Singleton<IBotGame>.Instance; }
-    }
-
     protected static GameWorldComponent SAINGameWorld
     {
         get { return GameWorldComponent.Instance; }
@@ -121,42 +108,8 @@ public abstract class SainJobTemplate(string InName, MonoBehaviour InOwner, bool
         get { return BotManagerComponent.Instance; }
     }
 
-    protected static Dictionary<string, PlayerComponent> AlivePlayers
-    {
-        get { return GameWorldComponent.Instance?.PlayerTracker?.AlivePlayersDictionary; }
-    }
-
-    protected static List<IPlayer> DeadPlayers
-    {
-        get { return GameWorldComponent.Instance?.PlayerTracker?.DeadPlayers; }
-    }
-
     protected static Dictionary<string, BotComponent> AliveBots
     {
         get { return BotSpawnController.Instance?.BotDictionary; }
-    }
-
-    protected static bool GameActive
-    {
-        get
-        {
-            return GameStatus switch
-            {
-                GameStatus.Running or GameStatus.Runned or GameStatus.Starting or GameStatus.Started => true,
-                _ => false,
-            };
-        }
-    }
-
-    protected static GameStatus GameStatus
-    {
-        get
-        {
-            if (BotGame == null)
-            {
-                return GameStatus.Stopped;
-            }
-            return BotGame.Status;
-        }
     }
 }

@@ -42,11 +42,6 @@ public sealed class PresetSyncWebSocket
     private bool _reconnecting;
     private bool _closing;
 
-    public bool Connected
-    {
-        get { return _webSocket != null && _webSocket.ReadyState == WebSocketState.Open; }
-    }
-
     public PresetSyncWebSocket()
     {
         Instance = this;

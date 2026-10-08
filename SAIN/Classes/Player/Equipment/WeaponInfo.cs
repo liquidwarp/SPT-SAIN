@@ -24,10 +24,6 @@ public class WeaponInfo
     public EWeaponClass WeaponClass { get; private set; }
     public string AmmoCaliber { get; private set; }
     public float CalculatedAudibleRange { get; private set; }
-    public AISoundType AISoundType
-    {
-        get { return HasSuppressor ? AISoundType.silencedGun : AISoundType.gun; }
-    }
 
     public SAINSoundType SoundType
     {
@@ -47,10 +43,6 @@ public class WeaponInfo
     public bool HasSuppressor { get; private set; }
     public float BaseAudibleRange { get; private set; } = 150f;
     public float MuzzleLoudness { get; private set; } = 0f;
-    public bool Subsonic
-    {
-        get { return Weapon != null && BulletSpeed < SuperSonicSpeed; }
-    }
 
     public Mod FlashHider { get; private set; }
     public Mod Suppressor { get; private set; }
@@ -101,7 +93,6 @@ public class WeaponInfo
         {
             HasSuppressor = false;
         }
-        //Log();
     }
 
     public void WeaponEquiped(Player player)
@@ -229,37 +220,10 @@ public class WeaponInfo
         return caliber;
     }
 
-    private void Log()
-    {
-        Logger.LogDebug(
-            $"Found Weapon Info: "
-                + $"Weapon: [{Weapon.ShortName.Localized()}] "
-                + $"Weapon Class: [{WeaponClass}] "
-                + $"Ammo Caliber: [{AmmoCaliber}] "
-                + $"Calculated Audible Range: [{CalculatedAudibleRange}] "
-                + $"Base Audible Range: [{BaseAudibleRange}] "
-                + $"Muzzle Loudness: [{MuzzleLoudness}] "
-                + $"Speed Factor: [{Weapon.SpeedFactor}] "
-                + $"Subsonic: [{Subsonic}] "
-                + $"Has Red Dot? [{HasRedDot}] "
-                + $"Has Optic? [{HasOptic}] "
-                + $"Has Suppressor? [{HasSuppressor}]"
-        );
-
-        Logger.LogDebug(
-            $"Found Weapon Info (continue):"
-                + $" Suppressor: [{Suppressor?.ShortName.Localized()}]"
-                + $" Flash Hider: [{FlashHider?.ShortName.Localized()}]"
-                + $" Optic: [{Optic?.ShortName.Localized()}]"
-                + $" Red dot: [{RedDot?.ShortName.Localized()}]"
-        );
-    }
-
     private const float SuperSonicSpeed = 343.2f;
 
     // Contrary to the name, Muzzle here means "Muzzle Device", i.e., the parent of flash hiders and suppressors.
     // Muzzle brake is also considered a "FlashHider".
-    //private static readonly string MuzzleTypeId = "5448fe394bdc2d0d028b456c";
     private static readonly string _flashHiderTypeId = "550aa4bf4bdc2dd6348b456b";
     private static readonly string _suppressorTypeId = "550aa4cd4bdc2dd8348b456c";
 

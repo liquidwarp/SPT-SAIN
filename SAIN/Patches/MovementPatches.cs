@@ -141,7 +141,6 @@ public class GlobalShootSettingsPatch : ModulePatch
     [PatchPostfix]
     public static void PatchPrefix(BotGlobalShootData __instance)
     {
-        //__instance.CAN_STOP_SHOOT_CAUSE_ANIMATOR = true;
         __instance.MAX_DIST_COEF = 100f;
     }
 }
@@ -199,10 +198,7 @@ public class BotMoverManualUpdatePatch : ModulePatch
         __instance.LocalAvoidance.DropOffset();
         __instance.PositionOnWayInner = __instance._owner.Position;
 
-        //__instance.method_16();
-        //__instance.method_15();
         __instance.method_14();
-        //__instance.LocalAvoidance.ManualUpdate();
         return false;
     }
 }
@@ -271,10 +267,6 @@ public class EncumberedPatch : ModulePatch
     [PatchPrefix]
     public static bool PatchPrefix(PhysicalBase __instance)
     {
-        //if (___bool_7)
-        //{
-        //    return true;
-        //}
         IPlayer player = __instance._playerBridge.iPlayer;
         if (player == null)
         {
@@ -300,10 +292,6 @@ public class EncumberedPatch : ModulePatch
             0f
         );
         __instance.BaseInertiaLimits = inertia.InertiaLimits + b2;
-        //__instance.WalkOverweightLimits = stamina.WalkOverweightLimits * d + b;
-        //__instance.BaseOverweightLimits = stamina.BaseOverweightLimits * d + b;
-        //__instance.SprintOverweightLimits = stamina.SprintOverweightLimits * d + b;
-        //__instance.WalkSpeedOverweightLimits = stamina.WalkSpeedOverweightLimits * d + b;
         __instance.WalkOverweightLimits.Set(9000f, 10000f);
         __instance.BaseOverweightLimits.Set(9000f, 10000f);
         __instance.SprintOverweightLimits.Set(9000f, 10000f);

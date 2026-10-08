@@ -39,10 +39,4 @@ public class Shoot
 
         return scaledBurstLength * Random.Range(0.66f, 1.33f);
     }
-
-    public static float InverseScaleWithLogisticFunction(float originalValue, float k, float x0 = 20f)
-    {
-        float scaledValue = 1f - 1f / (1f + Mathf.Exp(k * (originalValue - x0)));
-        return (float)System.Math.Round(scaledValue, 3);
-    }
 }

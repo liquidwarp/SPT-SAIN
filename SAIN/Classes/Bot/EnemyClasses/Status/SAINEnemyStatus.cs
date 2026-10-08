@@ -168,17 +168,6 @@ public class SAINEnemyStatus(EnemyData enemyData) : EnemyBase(enemyData, enemyDa
         }
     }
 
-    private void UpdateShotStatus()
-    {
-        if (!ShotMe)
-        {
-            ShotMe = true;
-            TimeFirstShot = Time.time;
-        }
-    }
-
-    private void UpdateShotPos() { }
-
     public bool PointingWeaponAtMe
     {
         get { return _pointWeaponAtMe.Value; }

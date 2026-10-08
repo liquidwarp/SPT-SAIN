@@ -23,11 +23,6 @@ public class SAINSteeringClass : BotComponentClassBase
         get { return _steerPriorityClass.CurrentSteerPriority; }
     }
 
-    public ESteerPriority LastSteerPriority
-    {
-        get { return _steerPriorityClass.LastSteerPriority; }
-    }
-
     public EEnemySteerDir EnemySteerDir { get; private set; }
 
     public Vector3 WeaponRootOffset
@@ -45,7 +40,6 @@ public class SAINSteeringClass : BotComponentClassBase
                 return true;
 
             case ESteerPriority.Aiming:
-                //LookToPoint(Bot.Aim.EndTargetPoint());
                 return true;
 
             case ESteerPriority.ManualShooting:
@@ -148,11 +142,6 @@ public class SAINSteeringClass : BotComponentClassBase
     public float AngleToPointFromLookDir(Vector3 point)
     {
         Vector3 direction = (point - BotOwner.WeaponRoot.position).normalized;
-        return Vector3.Angle(_lookDirection, direction);
-    }
-
-    public float AngleToDirectionFromLookDir(Vector3 direction)
-    {
         return Vector3.Angle(_lookDirection, direction);
     }
 

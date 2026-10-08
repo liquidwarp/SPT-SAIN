@@ -33,24 +33,9 @@ public struct AISoundData(SoundEvent InSound, BotComponent InBot, float InPlayer
         get { return Sound.IsGunShot; }
     }
 
-    public readonly string HeardProfileId
-    {
-        get { return Sound.ProfileId; }
-    }
-
-    public readonly bool IsAI
-    {
-        get { return Sound.IsAI; }
-    }
-
     public readonly int EnvironmentId
     {
         get { return Sound.EnvironmentId; }
-    }
-
-    public Vector3 Position
-    {
-        get { return Sound.Position; }
     }
 
     public readonly bool CanReport(float ReactionDelay)

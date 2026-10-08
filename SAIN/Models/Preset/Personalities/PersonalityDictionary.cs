@@ -68,15 +68,6 @@ public sealed class PersonalityDictionary : Dictionary<EPersonality, Personality
         return result;
     }
 
-    public PersonalitySettingsClass GetSettings(EPersonality personality)
-    {
-        if (this.TryGetValue(personality, out var result))
-        {
-            return result;
-        }
-        return null;
-    }
-
     private bool checkForcePersonality(out EPersonality personality)
     {
         foreach (var item in SAINPlugin.LoadedPreset.GlobalSettings.Mind.ForcePersonality)
@@ -170,7 +161,6 @@ public sealed class PersonalityDictionary : Dictionary<EPersonality, Personality
         }
         float result = assignment.MaxChanceIfMeetRequirements * modifier0to1;
         result = Mathf.Clamp(result, 0f, 100f);
-        //Logger.LogDebug($"Result: [{result}] Power: [{powerLevel}] PowerLevelScaleStart [{PowerLevelScaleStart}] PowerLevelScaleEnd [{PowerLevelScaleEnd}] MaxChanceIfMeetRequirements [{MaxChanceIfMeetRequirements}]");
         return result;
     }
 }

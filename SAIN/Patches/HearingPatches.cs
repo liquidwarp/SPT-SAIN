@@ -25,7 +25,6 @@ public class GrenadeCollisionPatch : ModulePatch
     public static void Patch(Grenade __instance, SoundBank ____collisionSoundBank)
     {
         ____collisionSoundBank.Rolloff = _defaultRolloff * ROLLOFF_MULTI;
-        //Logger.LogDebug($"Rolloff {_defaultRolloff} after {___soundBank_0.Rolloff}");
         BotManagerComponent.Instance?.GrenadeController.GrenadeCollided(__instance, 35);
     }
 
@@ -140,22 +139,5 @@ public class TogglableSetPatch : ModulePatch
                 1f
             );
         }
-    }
-}
-
-public class SpawnInHandsSoundPatch : ModulePatch
-{
-    protected override MethodBase GetTargetMethod()
-    {
-        return AccessTools.Method(typeof(Player), nameof(Player.SpawnInHands));
-    }
-
-    [PatchPostfix]
-    public static void PatchPostfix(Player __instance, Item item)
-    {
-        //AudioClip itemClip = Singleton<GUISounds>.Instance.GetItemClip(item.ItemSound, EInventorySoundType.pickup);
-        //if (itemClip != null) {
-        //    SAINBotController.Instance?.BotHearing.PlayAISound(__instance.ProfileId, SAINSoundType.GearSound, __instance.Position, 30f, 1f);
-        //}
     }
 }

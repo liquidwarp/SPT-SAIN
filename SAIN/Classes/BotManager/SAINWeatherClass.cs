@@ -61,11 +61,6 @@ public class SAINWeatherClass : BotManagerBase
             1f * (FogModifier(weatherCurve.Fog) * RainModifier(weatherCurve.Rain) * CloudsModifier(weatherCurve.Cloudiness));
         weathermodifier = Mathf.Clamp(weathermodifier, 0.01f, 1f);
 
-        //if (GameWorldComponent.Instance.Location.WinterActive) {
-        //    weathermodifier = Mathf.Clamp(weathermodifier, 0.01f, 1f);
-        //    //Logger.LogWarning("Snow Active");
-        //}
-
         return weathermodifier;
     }
 

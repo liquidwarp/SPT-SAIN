@@ -56,10 +56,6 @@ public class SAINCoverClass : BotComponentClassBase
 
     public CoverFinderComponent CoverFinder { get; }
     public float LastHitInCoverTime { get; private set; }
-    public float TimeSinceLastHitInCover
-    {
-        get { return Time.time - LastHitInCoverTime; }
-    }
 
     public SAINCoverClass(BotComponent bot)
         : base(bot)
@@ -109,7 +105,6 @@ public class SAINCoverClass : BotComponentClassBase
                 return coverPoint;
             }
         }
-        //Logger.LogWarning($"[{Bot.name}] No Cover Point found, even though there are {_coverPoints.Count} cover points available.");
         return null;
     }
 
@@ -153,11 +148,6 @@ public class SAINCoverClass : BotComponentClassBase
             reason = "cantSprint";
             return false;
         }
-        //if (Bot.Cover.CoverPoints.Count == 0)
-        //{
-        //    reason = "noCoverPoints";
-        //    return false;
-        //}
         if (enemy.IsSniper && Bot.Info.PersonalitySettings.General.ENEMYSNIPER_ALWAYS_SPRINT_COVER)
         {
             reason = "EnemySniperRun";
@@ -315,15 +305,6 @@ public class SAINCoverClass : BotComponentClassBase
 
     public CoverPoint CoverPoint_MovingTo { get; private set; }
 
-    private bool CheckMoveToCover(CoverPoint coverPoint, bool sprint)
-    {
-        if (coverPoint != null && !coverPoint.CoverData.IsBad && Bot.Mover.GoToCoverPoint(coverPoint, sprint, ESprintUrgency.High))
-        {
-            return true;
-        }
-        return false;
-    }
-
     public override void Dispose()
     {
         try
@@ -382,7 +363,7 @@ public class SAINCoverClass : BotComponentClassBase
             CoverInUse.GetHit(DamageInfo, bodyPart, Bot.GoalEnemy);
             if (CoverInUse.Spotted && !wasSpotted)
             {
-                _spottedTime = Time.time + SpottedCoverPoint.SPOTTED_PERIOD;
+                _spottedTime = Time.time + CoverPoint.SPOTTED_PERIOD;
                 OnSpottedInCover?.Invoke();
             }
         }
@@ -400,30 +381,6 @@ public class SAINCoverClass : BotComponentClassBase
             CoverFinder?.StopLooking();
             CurrentCoverFinderState = CoverFinderState.off;
         }
-    }
-
-    //public void CheckResetCoverInUse()
-    //{
-    //    if (CoverInUse != null && CoverInUse.CoverData.IsBad)
-    //    {
-    //        CoverInUse = null;
-    //        return;
-    //    }
-    //
-    //    ECombatDecision decision = Bot.Decision.CurrentCombatDecision;
-    //    if (decision != ECombatDecision.MoveToCover
-    //        && decision != ECombatDecision.RunToCover
-    //        && decision != ECombatDecision.Retreat
-    //        && decision != ECombatDecision.HoldInCover
-    //        && decision != ECombatDecision.ShiftCover)
-    //    {
-    //        CoverInUse = null;
-    //    }
-    //}
-
-    public void SortPointsByPathDist()
-    {
-        CoverFinderComponent.OrderPointsByPathDist(CoverPoints);
     }
 
     public bool TrySetProneConditional(Enemy enemy)
@@ -444,13 +401,6 @@ public class SAINCoverClass : BotComponentClassBase
             return true;
         }
 
-        //const float minCoverHeightToProne = 0.5f;
-        //var point = CoverInUse;
-        //if (point != null && shallProne && point.Collider.bounds.size.y < minCoverHeightToProne)
-        //{
-        //    Bot.Mover.Prone.SetProne(true);
-        //    return true;
-        //}
         Bot.Mover.Prone.SetProne(false);
         return false;
     }

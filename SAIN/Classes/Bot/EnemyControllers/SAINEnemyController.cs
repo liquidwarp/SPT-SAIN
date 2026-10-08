@@ -26,9 +26,9 @@ public class SAINEnemyController : BotComponentClassBase
         get { return _listController.EnemiesArray; }
     }
 
-    public EnemyList KnownEnemies { get; private set; } = new("Known Enemies");
-    public EnemyList EnemiesInLineOfSight { get; private set; } = new("Enemies In LoS");
-    public EnemyList VisibleEnemies { get; private set; } = new("Visible Enemies");
+    public EnemyList KnownEnemies { get; private set; } = new();
+    public EnemyList EnemiesInLineOfSight { get; private set; } = new();
+    public EnemyList VisibleEnemies { get; private set; } = new();
 
     public EnemyControllerEvents Events { get; }
 
@@ -40,11 +40,6 @@ public class SAINEnemyController : BotComponentClassBase
     public bool ActiveHumanEnemy
     {
         get { return Events.ActiveHumanEnemyEvent.Value; }
-    }
-
-    public bool HumanEnemyInLineofSight
-    {
-        get { return Events.HumanInLineOfSightEvent.Value; }
     }
 
     private const float CHANGE_ENEMY_DIST_RATIO_MELEE = 0.9f;
@@ -197,7 +192,6 @@ public class SAINEnemyController : BotComponentClassBase
             {
                 if (value.LastKnownPosition == null)
                 {
-                    //Logger.LogError($"Bot: [{Bot.name}] cant set enemy [{value.EnemyName}] with null last known![Timesinceseen {value.TimeSinceSeen}: timesinceheard{value.TimeSinceHeard}] [IsAlive:{value.EnemyPlayer?.HealthController.IsAlive} : IsSainBot:[{value.EnemyPlayerComponent?.IsSAINBot}]]");
                     return;
                 }
             }
@@ -276,15 +270,6 @@ public class SAINEnemyController : BotComponentClassBase
                 return enemy;
             }
         }
-        //
-        //if (BotOwner.Memory.IsUnderFire)
-        //{
-        //    Enemy enemy = Bot.Memory.LastUnderFireEnemy;
-        //    if (enemy != null && KnownEnemies.Contains(enemy))
-        //    {
-        //        return enemy;
-        //    }
-        //}
 
         if (_goalEnemy != null)
         {
@@ -483,33 +468,23 @@ public class SAINEnemyController : BotComponentClassBase
         EnemyInfo goalEnemy = BotOwner.Memory.GoalEnemy;
         if (goalEnemy != null && GoalEnemy == null)
         {
-            //if (_nextLogTime < Time.time)
-            //{
-            //_nextLogTime = Time.time + 1f;
-
-            //Logger.LogError("Bot's Goal Enemy is not null, but SAIN enemy is null.");
             if (goalEnemy.Person == null)
             {
-                //Logger.LogError("Bot's Goal Enemy Person is null");
                 return;
             }
             if (goalEnemy.ProfileId == Bot.ProfileId)
             {
-                //Logger.LogError("goalEnemy.ProfileId == SAINBot.ProfileId");
                 return;
             }
             if (goalEnemy.ProfileId == Bot.Player.ProfileId)
             {
-                //Logger.LogError("goalEnemy.ProfileId == SAINBot.Player.ProfileId");
                 return;
             }
             if (goalEnemy.ProfileId == Bot.BotOwner.ProfileId)
             {
-                //Logger.LogError("goalEnemy.ProfileId == SAINBot.Player.ProfileId");
                 return;
             }
             Bot.EnemyController.CheckAddEnemy(goalEnemy.Person);
-            //}
         }
     }
 

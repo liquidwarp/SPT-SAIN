@@ -33,9 +33,4 @@ public sealed class DirectionData
         YDifference = yDiff;
         Dot = Vector3.Dot(LookDirection, DirectionNormal);
     }
-
-    public void UpdateDotProduct(Vector3 LookDirection)
-    {
-        Dot = Vector3.Dot(LookDirection, DirectionNormalized);
-    }
 }

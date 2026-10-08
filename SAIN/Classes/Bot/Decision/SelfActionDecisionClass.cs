@@ -41,7 +41,6 @@ public class SelfActionDecisionClass : BotBase
         }
         if (CheckDoReload(enemy, Bot))
         {
-            //botOwner.ShootData.BlockFor(1.0f);
             Decision = ESelfActionType.Reload;
             return true;
         }
@@ -86,16 +85,6 @@ public class SelfActionDecisionClass : BotBase
             {
                 return false;
             }
-            //bool holsterRefilled = ReloadClass.RefillMagsInSlot(EquipmentSlot.Holster, bot, weaponManager, 1, true);
-            //bool secondRefilled = ReloadClass.RefillMagsInSlot(EquipmentSlot.SecondPrimaryWeapon, bot, weaponManager, 1, true);
-            //bool primaryRefilled = ReloadClass.RefillMagsInSlot(EquipmentSlot.FirstPrimaryWeapon, bot, weaponManager, 1, true);
-            //if (!holsterRefilled &&
-            //    !secondRefilled &&
-            //    !primaryRefilled)
-            //{
-            //    Logger.LogWarning("Cant refill weapons!");
-            //    return false;
-            //}
             if (weaponManager.Reload?.Reloading != true)
             {
                 weaponManager.Selector.TryChangeWeapon(true);
@@ -211,10 +200,6 @@ public class SelfActionDecisionClass : BotBase
                 }
             }
 
-            //if (!CheckReloadByAmmoRemaining(enemy, ammoRatio))
-            //{
-            //    return false;
-            //}
             // TODO: Test to see if this is too much and makes bots not reload often enough
             foreach (var knownEnemy in enemy.Bot.EnemyController.KnownEnemies)
             {
@@ -249,11 +234,6 @@ public class SelfActionDecisionClass : BotBase
                 Decision = ESelfActionType.FirstAid;
                 return true;
             }
-            //if (Bot.Medical.TryUseMedItem())
-            //{
-            //    Decision = ESelfActionType.FirstAid;
-            //    return true;
-            //}
             if (Bot.Medical.Surgery.CheckCanStartUsingKit())
             {
                 Decision = ESelfActionType.Surgery;
@@ -277,7 +257,6 @@ public class SelfActionDecisionClass : BotBase
                 if (checkContinueReload(_timeSinceChangeDecision, enemy))
                 {
                     Decision = ESelfActionType.Reload;
-                    //BotOwner.ShootData.BlockFor(0.05f);
                     return true;
                 }
                 return false;
@@ -335,7 +314,6 @@ public class SelfActionDecisionClass : BotBase
 
         if (timeSinceChange > 8f)
         {
-            Bot.SelfActions.BotCancelReload();
             return false;
         }
         return true;
@@ -371,7 +349,6 @@ public class SelfActionDecisionClass : BotBase
         {
             Bot.Medical.TryCancelHeal();
             Decision = ESelfActionType.None;
-            //TryFixBusyHands();
             return false;
         }
         Decision = ESelfActionType.FirstAid;
@@ -388,7 +365,6 @@ public class SelfActionDecisionClass : BotBase
         if (timeSinceChange > 3f)
         {
             Bot.Medical.TryCancelHeal();
-            //TryFixBusyHands();
             Decision = ESelfActionType.None;
             return false;
         }
@@ -556,24 +532,15 @@ public class SelfActionDecisionClass : BotBase
     private static bool CheckReloadByAmmoRemaining(Enemy enemy, float ammoRatio)
     {
         const float RELOAD_AMMORATIO_UPPER = 0.66f;
-        //const float RELOAD_AMMORATIO_UPPER_TimeSinceSeen = 15f;
-        //const float RELOAD_AMMORATIO_UPPER_DIST_ENEMY_VeryClose = 90f;
-        //const float RELOAD_AMMORATIO_UPPER_DIST_ENEMY_Close = 12f;
-        //const float RELOAD_AMMORATIO_UPPER_DIST_ENEMY_Mid = 6f;
         const float RELOAD_AMMORATIO_UPPER_DIST_ENEMY_Far = 3f;
         const float RELOAD_AMMORATIO_UPPER_DIST_ENEMY_VeryFar = 3f;
 
         const float RELOAD_AMMORATIO_MID = 0.5f;
-        //const float RELOAD_AMMORATIO_MID_TimeSinceSeen = 20f;
-        //const float RELOAD_AMMORATIO_MID_DIST_ENEMY_VeryClose = 60;
-        //const float RELOAD_AMMORATIO_MID_DIST_ENEMY_Close = 8f;
         const float RELOAD_AMMORATIO_MID_DIST_ENEMY_Mid = 4f;
         const float RELOAD_AMMORATIO_MID_DIST_ENEMY_Far = 2f;
         const float RELOAD_AMMORATIO_MID_DIST_ENEMY_VeryFar = 2f;
 
         const float RELOAD_AMMORATIO_LOW = 0.25f;
-        //const float RELOAD_AMMORATIO_LOW_TimeSinceSeen = 4f;
-        //const float RELOAD_AMMORATIO_LOW_DIST_ENEMY_VeryClose = 2f;
         const float RELOAD_AMMORATIO_LOW_DIST_ENEMY_Close = 2f;
         const float RELOAD_AMMORATIO_LOW_DIST_ENEMY_Mid = 1f;
         const float RELOAD_AMMORATIO_LOW_DIST_ENEMY_Far = 1f;

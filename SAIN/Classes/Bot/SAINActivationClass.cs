@@ -129,33 +129,6 @@ public class SAINActivationClass(BotComponent botComponent) : BotComponentClassB
         BotStandByToggle.CheckToggle(standby, Time.time);
     }
 
-    private bool CheckAllEnemies()
-    {
-        if (_nextCheckEnemiesTime > Time.time)
-        {
-            return false;
-        }
-        _nextCheckEnemiesTime = Time.time + _activate_standby_check_freq;
-
-        var enemies = Bot.EnemyController.Enemies.Values;
-        foreach (var enemy in enemies)
-        {
-            if (
-                enemy != null
-                && (
-                    enemy.InLineOfSight
-                    || (enemy.IsAI && enemy.RealDistance < _activate_standby_ai)
-                    || (!enemy.IsAI && enemy.RealDistance < _activate_standby_human)
-                )
-            )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private void CheckGameEnding()
     {
         var botGame = Singleton<IBotGame>.Instance;
@@ -174,6 +147,4 @@ public class SAINActivationClass(BotComponent botComponent) : BotComponentClassB
         SetActive(false);
         base.Dispose();
     }
-
-    private float _nextCheckEnemiesTime;
 }

@@ -28,13 +28,6 @@ public class BodyPartsClass : PlayerComponentBase
             SAINBodyPart bodyPart = createPart(bodyPartType, playerBones, part.Value);
             Parts.Add(bodyPartType, bodyPart);
         }
-
-        //StringBuilder stringBuilder = new StringBuilder();
-        //stringBuilder.AppendLine($"Got Parts:");
-        //foreach (var part in Parts) {
-        //    stringBuilder.AppendLine($"{part.Key} : {part.Value.Colliders.Count}");
-        //}
-        //Logger.LogDebug(stringBuilder.ToString());
     }
 
     private BifacialTransform getTransform(EBodyPart bodyPart, PlayerBones bones)
@@ -76,8 +69,6 @@ public class BodyPartsClass : PlayerComponentBase
         List<BodyPartCollider> colliders = getColliders(playerBones, colliderTypes);
         if (colliders?.Count == 0)
         {
-#if DEBUG
-#endif
 #if DEBUG
             Logger.LogWarning($"No Colliders for {bodyPartType}!");
 #endif

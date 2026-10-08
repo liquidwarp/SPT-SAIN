@@ -6,11 +6,6 @@ namespace SAIN.Components.PlayerComponentSpace.Classes;
 
 public class SAINAIData : PlayerComponentBase
 {
-    public bool IsAI
-    {
-        get { return PlayerComponent.IsAI; }
-    }
-
     public AIGearModifierClass AIGearModifier { get; private set; }
 
     public PlayerLocationClass PlayerLocation { get; private set; }

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using EFT;
-using HarmonyLib;
 using SAIN.Components;
 using SAIN.Models.Enums;
 using SAIN.Preset.Shared.Models.Preset.Personalities;
@@ -10,62 +8,6 @@ using SAIN.SAINComponent.SubComponents;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.WeaponFunction;
-
-public class GrenadeVelocityTracker : MonoBehaviour
-{
-    public Vector3 Velocity { get; private set; }
-    public float VelocityMagnitude { get; private set; }
-
-    private const float GRENADE_UPDATE_FREQUENCY = 0.5f;
-
-    public void Awake()
-    {
-        _grenade = this.GetComponent<Grenade>();
-        _grenade.DestroyEvent += GrenadeDestroyed;
-        _rigidBody = (Rigidbody)_rigidBodyField.GetValue(_grenade);
-    }
-
-    public void Update()
-    {
-        if (_grenade == null)
-        {
-            return;
-        }
-
-        if (_rigidBody == null)
-        {
-            GrenadeDestroyed(_grenade);
-            return;
-        }
-        if (_nextUpdateTime < Time.time)
-        {
-            _nextUpdateTime = Time.time + GRENADE_UPDATE_FREQUENCY;
-            Velocity = _rigidBody.velocity;
-            VelocityMagnitude = Velocity.magnitude;
-            //Logger.LogInfo($"Grenade {_grenade.Id} Velocity [{Velocity}] Magnitude: [{VelocityMagnitude}]");
-        }
-    }
-
-    private Rigidbody _rigidBody;
-    private Grenade _grenade;
-
-    static GrenadeVelocityTracker()
-    {
-        _rigidBodyField = AccessTools.Field(typeof(Throwable), "Rigidbody");
-    }
-
-    private void GrenadeDestroyed(Throwable grenade)
-    {
-        if (grenade != null)
-        {
-            grenade.DestroyEvent -= GrenadeDestroyed;
-        }
-        Destroy(this);
-    }
-
-    private static FieldInfo _rigidBodyField;
-    private float _nextUpdateTime;
-}
 
 public class GrenadeReactionClass : BotSubClass<BotGrenadeManager>, IBotClass
 {

@@ -22,8 +22,6 @@ public class BotSurgery : BotBase
         }
     }
 
-    public void StartSurgery() { }
-
     public float SurgeryStartTime { get; private set; }
 
     private bool _surgeryStarted;
@@ -76,41 +74,6 @@ public class BotSurgery : BotBase
             }
         }
         return _allClear;
-    }
-
-    private bool checkEnemies(float minPathDist, float minTimeSinceLastKnown)
-    {
-        bool allClear = true;
-        var enemies = Bot.EnemyController.Enemies;
-        foreach (var enemy in enemies.Values)
-        {
-            if (!checkThisEnemy(enemy, minPathDist, minTimeSinceLastKnown))
-            {
-                allClear = false;
-                break;
-            }
-        }
-        return allClear;
-    }
-
-    private bool checkThisEnemy(Enemy enemy, float minPathDist, float minTimeSinceLastKnown)
-    {
-        if (enemy?.EnemyPlayer?.HealthController.IsAlive == true && (enemy.Seen || enemy.Heard) && enemy.TimeSinceLastKnownUpdated < 360f)
-        {
-            if (enemy.IsVisible)
-            {
-                return false;
-            }
-            if (enemy.TimeSinceLastKnownUpdated < minTimeSinceLastKnown)
-            {
-                return false;
-            }
-            if (enemy.Path.PathLength < minPathDist)
-            {
-                return false;
-            }
-        }
-        return true;
     }
 
     private bool _allClear;

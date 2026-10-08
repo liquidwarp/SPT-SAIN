@@ -70,21 +70,6 @@ internal class ApplyToStyle
         }
     }
 
-    public static void BackgroundNormal(Texture2D normal, params GUIStyle[] styles)
-    {
-        BackgroundNormal(normal, normal, styles);
-    }
-
-    public static void BackgroundActive(Texture2D active, params GUIStyle[] styles)
-    {
-        BackgroundActive(active, active, styles);
-    }
-
-    public static void BackgroundFocused(Texture2D focused, params GUIStyle[] styles)
-    {
-        BackgroundFocused(focused, focused, styles);
-    }
-
     public static void BackgroundHover(Texture2D hover, params GUIStyle[] styles)
     {
         BackgroundHover(hover, hover, styles);
@@ -154,33 +139,6 @@ internal class ApplyToStyle
         }
     }
 
-    public static void TextColorNormal(Color normal, Color onNormal, params GUIStyle[] styles)
-    {
-        for (int i = 0; i < styles.Length; i++)
-        {
-            TextColor(normal, styles[i], StyleState.normal);
-            TextColor(onNormal, styles[i], StyleState.onNormal);
-        }
-    }
-
-    public static void TextColorActive(Color active, Color onActive, params GUIStyle[] styles)
-    {
-        for (int i = 0; i < styles.Length; i++)
-        {
-            TextColor(active, styles[i], StyleState.active);
-            TextColor(onActive, styles[i], StyleState.onActive);
-        }
-    }
-
-    public static void TextColorFocused(Color focused, Color onFocused, params GUIStyle[] styles)
-    {
-        for (int i = 0; i < styles.Length; i++)
-        {
-            TextColor(focused, styles[i], StyleState.focused);
-            TextColor(onFocused, styles[i], StyleState.onFocused);
-        }
-    }
-
     public static void TextColorHover(Color hover, Color onHover, params GUIStyle[] styles)
     {
         for (int i = 0; i < styles.Length; i++)
@@ -188,21 +146,6 @@ internal class ApplyToStyle
             TextColor(hover, styles[i], StyleState.hover);
             TextColor(onHover, styles[i], StyleState.onHover);
         }
-    }
-
-    public static void TextColorNormal(Color normal, params GUIStyle[] styles)
-    {
-        TextColorNormal(normal, normal, styles);
-    }
-
-    public static void TextColorActive(Color active, params GUIStyle[] styles)
-    {
-        TextColorActive(active, active, styles);
-    }
-
-    public static void TextColorFocused(Color focused, params GUIStyle[] styles)
-    {
-        TextColorFocused(focused, focused, styles);
     }
 
     public static void TextColorHover(Color hover, params GUIStyle[] styles)

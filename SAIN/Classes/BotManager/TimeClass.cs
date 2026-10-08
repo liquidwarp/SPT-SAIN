@@ -44,19 +44,6 @@ public class TimeClass : BotManagerBase
             VisibilityRatio = visibilityRatio;
             TimeGainSightModifier = Mathf.Lerp(1f, GlobalSettingsClass.Instance.Look.Time.TIME_GAIN_SIGHT_SCALE_MAX, 1f - visibilityRatio);
             OnTimeUpdated?.Invoke(this);
-
-            //if (_nextTestTime < Time.time)
-            //{
-            //    StringBuilder builder = new StringBuilder();
-            //    _nextTestTime = Time.time + 10f;
-            //    for (int i = 0; i < 24;  i++)
-            //    {
-            //        var timeOFDay = getTimeEnum(i + 1);
-            //        float test = getModifier(i + 1, timeOFDay);
-            //        builder.AppendLine($"{i + 1} {test} {timeOFDay}");
-            //    }
-            //    Logger.LogInfo(builder.ToString());
-            //}
         }
     }
 

@@ -1,7 +1,6 @@
 using System;
 using EFT;
 using SAIN.Components;
-using SAIN.Helpers.Events;
 using SAIN.Models.Enums;
 using SAIN.Preset.Shared.Enums;
 using SAIN.SAINComponent.Classes.EnemyClasses;
@@ -19,19 +18,12 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
 
     public event Action<ECombatDecision, ESquadDecision, ESelfActionType, Enemy, BotComponent> OnDecisionMade;
 
-    public ToggleEvent HasDecisionToggle { get; } = new ToggleEvent();
-
     public ECombatDecision CurrentCombatDecision { get; private set; }
     public ECombatDecision PreviousCombatDecision { get; private set; }
     public ESquadDecision CurrentSquadDecision { get; private set; }
     public ESquadDecision PreviousSquadDecision { get; private set; }
     public ESelfActionType CurrentSelfDecision { get; private set; }
     public ESelfActionType PreviousSelfDecision { get; private set; }
-
-    public bool HasDecision
-    {
-        get { return HasDecisionToggle.Value; }
-    }
 
     public float ChangeDecisionTime { get; private set; }
     public float TimeSinceChangeDecision
@@ -286,7 +278,6 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
             }
 
             ChangeDecisionTime = Time.time;
-            HasDecisionToggle.CheckToggle(hasDecision, ChangeDecisionTime);
             OnDecisionMade?.Invoke(solo, squad, self, enemy, Bot);
         }
     }
@@ -332,14 +323,9 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
 
     private Enemy _lastDecisionEnemy;
 
-    public void ResetDecisions(bool active)
+    public void ResetDecisions()
     {
-        bool hasDecision = HasDecision;
         resetDecisions(false);
-        if (active && hasDecision)
-        {
-            //BotOwner.CalcGoal();
-        }
     }
 
     private void resetDecisions(bool value)

@@ -117,10 +117,6 @@ public class AttributesGUI
             {
                 return value;
             }
-            //if (CheckEditDictionary(ref value, ref wasEdited, listDepth, config, search))
-            //{
-            //    return value;
-            //}
             if (value is ISAINSettings settings)
             {
                 listDepth++;
@@ -136,17 +132,6 @@ public class AttributesGUI
             value = FindListTypeAndEdit(ref value, settingsObject, info, listDepth, out wasEdited, config, search);
         }
         return value;
-    }
-
-    private static bool CheckEditDictionary(ref object value, ref bool wasEdited, int listDepth, GUIEntryConfig config, string search)
-    {
-        if (value is Dictionary<EBotLookMode, TurnSettings> dictionary)
-        {
-            listDepth++;
-            EditGenericStructDictionary(dictionary, out wasEdited, config, listDepth, search);
-            return true;
-        }
-        return false;
     }
 
     private static void EditGenericStructDictionary<T, K>(
@@ -431,7 +416,6 @@ public class AttributesGUI
 
         // select from string array
         EPersonality newPersonality = BotPersonalityEditor.SelectPersonality(selected, gridOptionHeight, 3);
-        //int newSelection = GUILayout.SelectionGrid(selectedId, personalities_strings, 4, GetStyle(Style.selectionGrid), Width(gridWidth), Height(gridHeight));
         if (newPersonality != selected)
         {
             selected = newPersonality;
@@ -876,7 +860,6 @@ public class AttributesGUI
             {
                 newValue = defaultDictionary[limitSetting];
                 dictionary[limitSetting] = newValue;
-                //ConfigEditingTracker.Remove(attributes);
             }
 
             if (dictionary[limitSetting] != newValue)
@@ -1324,33 +1307,6 @@ public class AttributesGUI
     public static void EditAllValuesInObj(Category category, object categoryObject, out bool wasEdited, string search = null)
     {
         EditAllValuesInObj(categoryObject, out wasEdited, search);
-        //BeginVertical(5);
-        //wasEdited = false;
-        //foreach (var fieldAtt in category.FieldAttributesList) {
-        //    if (SkipForSearch(fieldAtt, search) || fieldAtt.Advanced) {
-        //        continue;
-        //    }
-        //    object value = fieldAtt.GetValue(categoryObject);
-        //    object newValue = EditValue(ref value, categoryObject, fieldAtt, out bool newEdit, 0, null, search);
-        //    if (newEdit) {
-        //        fieldAtt.SetValue(categoryObject, newValue);
-        //        wasEdited = true;
-        //    }
-        //}
-        //
-        //foreach (var fieldAtt in category.FieldAttributesList) {
-        //    if (SkipForSearch(fieldAtt, search) || !fieldAtt.Advanced) {
-        //        continue;
-        //    }
-        //    object value = fieldAtt.GetValue(categoryObject);
-        //    object newValue = EditValue(ref value, categoryObject, fieldAtt, out bool newEdit, 0, null, search);
-        //    if (newEdit) {
-        //        fieldAtt.SetValue(categoryObject, newValue);
-        //        wasEdited = true;
-        //    }
-        //}
-        //
-        //EndVertical(5);
     }
 
     public static bool SkipForSearch(ConfigInfoClass attributes, string searchQuerry)

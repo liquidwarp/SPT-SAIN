@@ -65,11 +65,11 @@ public class ManualShootClass : BotComponentClassBase
         }
     }
 
-    public bool TryShoot(Enemy Enemy, Vector3 targetPos, bool checkFF = true, EShootReason reason = EShootReason.None)
+    public bool TryShoot(Enemy Enemy, Vector3 targetPos, EShootReason reason = EShootReason.None)
     {
         if (
             Enemy != null
-            && CanShoot(checkFF)
+            && CanShoot()
             && Bot.Steering.AngleToPointFromLookDir(targetPos) <= 10
             && Bot.FriendlyFire.UpdateFriendlyFireStatus(
                 targetPos,
@@ -105,13 +105,8 @@ public class ManualShootClass : BotComponentClassBase
         get { return BotOwner.ShootData.Shooting; }
     }
 
-    public bool CanShoot(bool checkFF = true)
+    public bool CanShoot()
     {
-        if (checkFF && !Bot.FriendlyFire.ClearShot)
-        {
-            //BotOwner.ShootData.EndShoot();
-            //return false;
-        }
         BotWeaponManager weaponManager = BotOwner.WeaponManager;
         if (weaponManager.IsMelee)
         {

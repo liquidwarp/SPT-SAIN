@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Solo.Cover;
 
-internal class ShiftCoverAction(BotOwner bot) : BotAction(bot, nameof(ShiftCoverAction)), IBotAction
+internal class ShiftCoverAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

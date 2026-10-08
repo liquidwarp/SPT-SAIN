@@ -40,7 +40,6 @@ public class BotWeightManagement : BotComponentClassBase
     {
         float result = InventoryEquipment.GetTotalWeight(_slots);
         _slots.Clear();
-        // Logger.LogWarning(result);
         return result;
     }
 

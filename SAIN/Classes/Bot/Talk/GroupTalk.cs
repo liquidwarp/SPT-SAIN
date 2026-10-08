@@ -406,14 +406,6 @@ public class GroupTalk : BotBase
         Bot.Talk.GroupSay(EPhraseTrigger.OnEnemyConversation, null, false, _reportEnemyConversationChance);
     }
 
-    public void TalkEnemySniper()
-    {
-        if (FriendIsClose)
-        {
-            Bot.Talk.TalkAfterDelay(EPhraseTrigger.SniperPhrase, ETagStatus.Combat, UnityEngine.Random.Range(0.5f, 1f));
-        }
-    }
-
     public override void Dispose()
     {
         unsub();
@@ -655,7 +647,6 @@ public class GroupTalk : BotBase
             return;
         }
 
-        bool memberTalked = false;
         foreach (var member in BotSquad.Members.Values)
         {
             if (
@@ -667,8 +658,6 @@ public class GroupTalk : BotBase
                 && member.Squad.DistanceToSquadLeader <= 40f
             )
             {
-                memberTalked = true;
-
                 EPhraseTrigger myTrigger = trigger;
                 switch (commandTrigger)
                 {
@@ -730,11 +719,6 @@ public class GroupTalk : BotBase
 
                 member.Talk.TalkAfterDelay(myTrigger, mask, delay * UnityEngine.Random.Range(0.75f, 1.25f));
             }
-        }
-
-        if (memberTalked && EFTMath.RandomBool(5))
-        {
-            //SAIN.Squad.LeaderComponent?.Talk.TalkAfterDelay(EPhraseTrigger.Silence, ETagStatus.Aware, 1.25f);
         }
     }
 

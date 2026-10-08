@@ -113,43 +113,7 @@ public class FlashlightRaycastJob : SainJobTemplate, IDisposable
                         LightPoints.Add(Hit.point + (Hit.normal * 0.05f));
                     }
                 }
-
-                //if (Player.Player.IsYourPlayer)
-                //{
-                //    Logger.LogDebug($"player has {LightPoints.Count} light points");
-                //    foreach (var point in LightPoints)
-                //    {
-                //        DebugGizmos.Line(Player.Transform.WeaponFirePort, point, 0.025f, 0.02f, true);
-                //    }
-                //}
             }
-        }
-    }
-
-    private static void AddLaserPathPoints(PlayerComponent player, NativeArray<RaycastHit> hits, List<Vector3> lightPoints)
-    {
-        FlashLightClass flashlight = player.Flashlight;
-        if (!flashlight.Laser && !flashlight.IRLaser)
-        {
-            return;
-        }
-
-        Vector3 origin = player.Transform.WeaponData.FirePort;
-        Vector3 direction = player.Transform.WeaponData.PointDirection;
-        if (direction == Vector3.zero)
-        {
-            return;
-        }
-
-        float beamLength = LaserTraceDistance;
-        if (hits.Length > LaserHitIndex && hits[LaserHitIndex].collider != null)
-        {
-            beamLength = Mathf.Min(beamLength, Vector3.Distance(origin, hits[LaserHitIndex].point));
-        }
-
-        for (float distance = LaserPathPointSpacing; distance < beamLength; distance += LaserPathPointSpacing)
-        {
-            lightPoints.Add(origin + (direction * distance));
         }
     }
 
@@ -252,16 +216,6 @@ public class FlashlightRaycastJob : SainJobTemplate, IDisposable
         {
             beamDirections.Add(new(distance, (rotationsList[i] * weaponPointDir).normalized));
         }
-    }
-
-    protected static RandomDir[] GenerateRandomDirections(int Count, float LengthMin, float LengthMax)
-    {
-        RandomDir[] Result = new RandomDir[Count];
-        for (int i = 0; i < Count; i++)
-        {
-            Result[i] = new RandomDir(LengthMin, LengthMax);
-        }
-        return Result;
     }
 
     protected override bool CanProceed()

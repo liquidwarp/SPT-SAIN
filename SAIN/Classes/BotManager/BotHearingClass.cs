@@ -21,8 +21,6 @@ public class BotHearingClass : BotManagerBase
 
     public void BulletImpacted(Shot bullet)
     {
-        //Logger.LogInfo($"Shot By: {bullet.Player?.iPlayer?.Profile.Nickname} at Time: {Time.time}");
-        //DebugGizmos.Sphere(bullet.CurrentPosition);
         BulletImpact?.Invoke(bullet);
     }
 
@@ -57,12 +55,6 @@ public class BotHearingClass : BotManagerBase
         PlayAISound(playerComponent, soundType, position, range, volume, true);
     }
 
-    public void PlayAISound(IPlayer Player, SAINSoundType soundType, Vector3 position, float range, float volume)
-    {
-        PlayerComponent playerComponent = SAINGameWorld.PlayerTracker.GetPlayerComponent(Player);
-        PlayAISound(playerComponent, soundType, position, range, volume, true);
-    }
-
     public void PlayAISound(
         PlayerComponent playerComponent,
         SAINSoundType soundType,
@@ -87,15 +79,6 @@ public class BotHearingClass : BotManagerBase
         {
             return;
         }
-
-        /*
-        if (!playerComponent.IsAI)
-        {
-            Logger.LogInfo(
-                $"{playerComponent.Player.Profile.Nickname}: SoundType [{soundType}] FinalRange: {range * volume} Base Range {range} : Volume: {volume}"
-            );
-        }
-        */
 
         playerComponent.PlayAISound(soundType, position, range, volume);
         AISoundPlayed?.Invoke(soundType, position, playerComponent, range, volume);

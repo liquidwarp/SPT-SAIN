@@ -20,7 +20,6 @@ public static class PlayerDataExtensions
     public static PlayerHeadData Update(this PlayerHeadData headData, Vector3 headPosition, Quaternion headRotation, Vector3 headUpVector)
     {
         headData.HeadPosition = headPosition;
-        //headData.HeadLookDirection = headRotation * headUpVector;
         headData.HeadLookDirection = headUpVector;
         return headData;
     }

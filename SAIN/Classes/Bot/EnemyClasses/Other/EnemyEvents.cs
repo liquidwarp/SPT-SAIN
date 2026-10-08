@@ -93,12 +93,6 @@ public class EnemyEvents
         }
     }
 
-    public class EnemyToggleEvent : ToggleEventForObject<Enemy>
-    {
-        public EnemyToggleEvent(Enemy enemy, bool defaultValue)
-            : base(enemy, defaultValue) { }
-    }
-
     public class EnemyToggleEventTimeTracked : ToggleEventForObjectTimeTracked<Enemy>
     {
         public EnemyToggleEventTimeTracked(Enemy enemy, bool defaultValue)

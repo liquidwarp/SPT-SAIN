@@ -5,10 +5,6 @@ namespace SAIN.Preset.Shared.GearStealthValues;
 [DataContract]
 public class ItemStealthValue
 {
-    //[JsonConstructor]
-    //public ItemStealthValue()
-    //{
-    //}
     [DataMember]
     public string Name;
 

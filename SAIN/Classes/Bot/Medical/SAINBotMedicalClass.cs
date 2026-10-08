@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using EFT;
 using EFT.Ballistics;
-using EFT.HealthSystem;
 using EFT.InventoryLogic;
 using SAIN.Components;
 using UnityEngine;
@@ -43,77 +42,6 @@ public class SAINBotMedicalClass : BotComponentClassBase
         UpdateAvailableMeds(botOwner);
     }
 
-    public bool TryUseMedItem()
-    {
-        if (Meds.Count == 0)
-        {
-            return false;
-        }
-
-        Meds item = SelectItemToUse();
-        if (item == null)
-        {
-            return false;
-        }
-        BotOwner.Medecine.FirstAid.CurUsingMeds = item;
-        BotOwner.Medecine.FirstAid._bodyPartToHeal = EBodyPart.Chest;
-        BotOwner.Medecine.FirstAid.ApplyToSelf();
-        return true;
-    }
-
-    private Meds SelectItemToUse()
-    {
-        Meds item;
-        IHeavyBleeding heavyBleed = this.Player.HealthController.FindExistingEffect<IHeavyBleeding>(EBodyPart.Common);
-        if (heavyBleed != null && Meds.TryGetValue(EDamageEffectType.HeavyBleeding, out item))
-        {
-            Meds.Remove(EDamageEffectType.HeavyBleeding);
-            return item;
-        }
-        ILightBleeding lightBleed = this.Player.HealthController.FindExistingEffect<ILightBleeding>(EBodyPart.Common);
-        if (lightBleed != null && Meds.TryGetValue(EDamageEffectType.LightBleeding, out item))
-        {
-            Meds.Remove(EDamageEffectType.LightBleeding);
-            return item;
-        }
-        item = FindPainKiller();
-        if (item != null)
-        {
-            return item;
-        }
-        return null;
-    }
-
-    private Meds FindPainKiller()
-    {
-        IPain pain = this.Player.HealthController.FindExistingEffect<IPain>(EBodyPart.Common);
-        if (pain != null && Meds.TryGetValue(EDamageEffectType.Pain, out Meds item))
-        {
-            Meds.Remove(EDamageEffectType.Pain);
-            return item;
-        }
-        return null;
-    }
-
-    public void OnHealthEffectStarted(IHealthEffect obj)
-    {
-        if (obj is IFracture)
-        {
-            EBodyPart bodyPart = obj.BodyPart;
-            if (bodyPart - EBodyPart.LeftArm <= 1)
-            {
-                Bot?.Talk.GroupSay(EPhraseTrigger.HandBroken);
-                return;
-            }
-            if (bodyPart - EBodyPart.LeftLeg > 1)
-            {
-                return;
-            }
-            Bot?.Talk.GroupSay(EPhraseTrigger.LegBroken);
-            // leg broken
-        }
-    }
-
     private const float _fullRefreshFreq = 30f;
     private float _nextFullRefreshTime;
 
@@ -133,7 +61,6 @@ public class SAINBotMedicalClass : BotComponentClassBase
                 )
                 {
                     Meds.Add(EDamageEffectType.HeavyBleeding, med);
-                    //Logger.LogInfo($"[{botOwner.name}] Found Heavy Bleed Med: {med.Name}");
                 }
                 if (
                     !foundLightBleed
@@ -142,7 +69,6 @@ public class SAINBotMedicalClass : BotComponentClassBase
                 )
                 {
                     Meds.Add(EDamageEffectType.LightBleeding, med);
-                    //Logger.LogInfo($"[{botOwner.name}] Found Light Bleed Med: {med.Name}");
                 }
                 if (
                     !foundPainKiller
@@ -151,7 +77,6 @@ public class SAINBotMedicalClass : BotComponentClassBase
                 )
                 {
                     Meds.Add(EDamageEffectType.Pain, med);
-                    //Logger.LogInfo($"[{botOwner.name}] Found PainKiller Med: {med.Name}");
                 }
             }
             if (foundPainKiller && foundHeavyBleed && foundLightBleed)
@@ -170,9 +95,6 @@ public class SAINBotMedicalClass : BotComponentClassBase
         if (_nextCancelTime < Time.time)
         {
             _nextCancelTime = Time.time + _cancelFreq;
-            //BotOwner.Medecine?.Stimulators?.CancelCurrent();
-            //BotOwner.Medecine?.FirstAid?.CancelCurrent();
-            //BotOwner.Medecine?.SurgicalKit?.CancelCurrent();
         }
     }
 

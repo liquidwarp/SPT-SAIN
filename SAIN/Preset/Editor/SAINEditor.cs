@@ -26,11 +26,6 @@ public static class SAINEditor
         CursorSettings.InitCursor();
     }
 
-    public static bool AdvancedBotConfigs
-    {
-        get { return PresetHandler.EditorDefaults.AdvancedBotConfigs; }
-    }
-
     [ConsoleCommand("Toggle SAIN GUI Editor")]
     private static void ToggleGUI()
     {
@@ -192,13 +187,6 @@ public static class SAINEditor
     {
         if (string.IsNullOrEmpty(GUI.tooltip))
         {
-            //var sb = new StringBuilder();
-            //
-            //sb.AppendLine(Event.current.rawType.ToString());
-            //sb.AppendLine(Event.current.type.ToString());
-            //sb.AppendLine(Event.current.control.ToString());
-            //sb.AppendLine(Event.current.commandName.ToString());
-            //GUI.tooltip = sb.ToString();
             return;
         }
 

@@ -324,11 +324,6 @@ public class BotExtractManager(BotManagerComponent botController) : BotManagerBa
         // If the VEX is just about to leave, don't select it
         if (GetTimeRemainingForExfil(exfil) < 1)
         {
-            /*if (SAINPlugin.DebugMode)
-            {
-                Logger.LogInfo($"Not enough time remaining for exfil {exfil.Settings.Name}");
-            }*/
-
             return false;
         }
 

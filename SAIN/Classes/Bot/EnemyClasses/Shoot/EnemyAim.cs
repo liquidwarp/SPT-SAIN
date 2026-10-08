@@ -94,7 +94,6 @@ public class EnemyAim : EnemyBase
                 float num2 = enemyDistance - min;
                 float scaled = 1f - num2 / num;
                 float result = Mathf.Lerp(multi, 1f, scaled);
-                //Logger.LogInfo($"{result} : Dist: {enemyDistance}");
                 return result;
             }
             return 1f;

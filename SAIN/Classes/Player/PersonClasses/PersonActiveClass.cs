@@ -3,7 +3,7 @@ using EFT;
 
 namespace SAIN.Components.PlayerComponentSpace.PersonClasses;
 
-public class PersonActiveClass(PlayerComponent playerComponent)
+public class PersonActiveClass
 {
     public event Action<bool> OnPlayerActiveChanged;
 
@@ -19,7 +19,6 @@ public class PersonActiveClass(PlayerComponent playerComponent)
         if (wasActive != PlayerActive)
         {
             OnPlayerActiveChanged?.Invoke(PlayerActive);
-            //Logger.LogDebug($"Player {_person.Nickname} Active [{PlayerActive}]");
         }
     }
 

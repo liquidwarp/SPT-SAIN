@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 namespace SAIN.Layers.Combat.Run;
 
-internal class RunningAction(BotOwner bot) : BotAction(bot, nameof(RunningAction)), IBotAction
+internal class RunningAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

@@ -10,21 +10,11 @@ public class GearInfo
 {
     public bool HasEarPiece { get; private set; }
 
-    public bool HasHelmet
-    {
-        get { return HelmetArmorClass > 0; }
-    }
-
     public bool HasHeavyHelmet { get; private set; }
 
     public int HelmetArmorClass { get; private set; }
 
     public bool HasFaceShield { get; private set; }
-
-    public bool HasArmor
-    {
-        get { return BodyArmorClass != 0; }
-    }
 
     public int BodyArmorClass { get; private set; }
 
@@ -107,17 +97,6 @@ public class GearInfo
             _armorList.Clear();
 
             BodyArmorClass = Mathf.Max(vestAC, bodyAC);
-
-            //if (SAINPlugin.DebugMode)
-            //{
-            //    Logger.LogInfo(
-            //        $" Found GearInfo: " +
-            //        $" Body Armor Class: [{BodyArmorClass}]" +
-            //        $" Helmet Armor Class [{HelmetArmorClass}]" +
-            //        $" Has Heavy Helmet? [{HasHeavyHelmet}]" +
-            //        $" Has EarPiece? [{HasEarPiece}]" +
-            //        $" Has Face Shield? [{HasFaceShield}]");
-            //}
 
             yield return wait;
         }

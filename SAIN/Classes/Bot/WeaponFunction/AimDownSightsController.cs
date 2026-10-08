@@ -81,8 +81,6 @@ public class AimDownSightsController : BotComponentClassBase
                 break;
 
             //case EAimDownSightsStatus.DogFight:
-            //    result = Bot.Mover.DogFight.Status == Mover.EDogFightStatus.Shooting;
-            //    break;
 
             case EAimDownSightsStatus.None:
             case EAimDownSightsStatus.Sprinting:
@@ -100,13 +98,10 @@ public class AimDownSightsController : BotComponentClassBase
 
             case EAimDownSightsStatus.StandAndShoot:
             case EAimDownSightsStatus.Suppressing:
-                //result = enemy != null && enemy.RealDistance > (AimingDownSights ? 10f : 15f);
                 result = true;
                 break;
 
             //case EAimDownSightsStatus.Suppressing:
-            //    result = enemy != null && enemy.KnownPlaces.BotDistanceFromLastKnown > (AimingDownSights ? 10f : 15f);
-            //    break;
 
             default:
                 result = enemy != null && enemy.KnownPlaces.BotDistanceFromLastKnown > (AimingDownSights ? 5f : 10f);

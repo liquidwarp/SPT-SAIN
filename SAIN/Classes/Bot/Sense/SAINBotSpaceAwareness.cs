@@ -34,7 +34,6 @@ public class SAINBotSpaceAwareness : BotComponentClassBase
             }
         }
         float ratio = sameCount / path1Length;
-        //Logger.LogDebug($"Result = [{ratio <= minRatio}]Path 1 length: {path1.corners.Length} Path2 length: {path2.corners.Length} Same Node Count: {sameCount} ratio: {ratio}");
         return ratio <= minRatio;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using SAIN.Editor.Util;
-using SAIN.Helpers;
 using UnityEngine;
 using static SAIN.Editor.Util.ApplyToStyle;
 using Color = UnityEngine.Color;
@@ -303,14 +302,6 @@ public static class StylesClass
         Styles.Add(Style.verticalSliderThumb, VerticalSliderThumbStyle);
         Styles.Add(Style.blankbox, BlankBackgroundStyle);
         Styles.Add(Style.tooltip, ToolTipStyle);
-
-        foreach (var style in EnumValues.GetEnum<Style>())
-        {
-            if (!Styles.ContainsKey(style))
-            {
-                //Logger.LogWarning(style);
-            }
-        }
     }
 
     private sealed class DynamicStyle

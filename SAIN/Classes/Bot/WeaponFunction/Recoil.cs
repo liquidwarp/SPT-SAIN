@@ -69,7 +69,6 @@ public class Recoil(BotComponent sain) : BotBase(sain)
     {
         if (Bot.IsCheater)
         {
-            //Logger.LogDebug("cheato");
             return;
         }
         calculateRecoil(WeaponInfo.Weapon);

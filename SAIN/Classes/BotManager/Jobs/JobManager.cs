@@ -11,7 +11,6 @@ public class JobManager : IDisposable
     {
         Jobs.Add(new FlashlightRaycastJob(Owner));
         Jobs.Add(new EnemyPathVisibilityRaycastJob(Owner));
-        //Jobs.Add(new RandomVisiblePointGeneratorJob(Owner));
     }
 
     public void Start()
@@ -20,11 +19,6 @@ public class JobManager : IDisposable
         {
             job?.Start();
         }
-    }
-
-    public void Stop()
-    {
-        Dispose();
     }
 
     public readonly List<ISainJob> Jobs = [];

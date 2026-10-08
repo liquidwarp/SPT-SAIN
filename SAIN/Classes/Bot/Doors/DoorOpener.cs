@@ -44,15 +44,6 @@ public class DoorOpener : BotComponentClassBase
         return true;
     }
 
-    public DoorDataStruct GetActiveDoor()
-    {
-        if (_interactionDoors.Count > 0 && _interactionDoorIndex < _interactionDoors.Count)
-        {
-            return _interactionDoors[_interactionDoorIndex];
-        }
-        return ActiveDoor;
-    }
-
     public bool SelectDoor(out EInteractionType interactionType, out DoorDataStruct currentDoor, IBotPathData pathData)
     {
         const float RAY_LENGTH = 3f;
@@ -97,7 +88,6 @@ public class DoorOpener : BotComponentClassBase
         }
         _interactionDoorIndex = index;
         _interactionDoors[index] = data;
-        //bool value = TryInteractWithDoor(interactionType, time, ref data);
         currentDoor = data;
         return true;
     }
@@ -129,7 +119,6 @@ public class DoorOpener : BotComponentClassBase
                 _allDoors.Clear();
                 if (CurrentVoxel != null)
                 {
-                    //Logger.LogDebug($"{CurrentVoxel.DoorLinks.Count} doors in voxel");
                     foreach (var link in CurrentVoxel.DoorLinks)
                     {
                         if (IsDoorOpenable(link.Door))
@@ -138,7 +127,6 @@ public class DoorOpener : BotComponentClassBase
                         }
                     }
                 }
-                //Logger.LogDebug($"{AllDoors.Count} door data created");
             }
 
             _interactionDoors.Clear();
@@ -212,10 +200,6 @@ public class DoorOpener : BotComponentClassBase
                     return true;
                 }
             }
-            else
-            {
-                //Logger.LogDebug($"Failed to find door, but we hit something on [PlayerStaticDoorMask] [{hit.collider.name}]");
-            }
         }
         if (Physics.SphereCast(ray, SPHERECAST_RADIUS, out hit, SPHERECAST_DISTANCE, LayersMaskController.DoorLayer))
         {
@@ -235,10 +219,6 @@ public class DoorOpener : BotComponentClassBase
                     interactionType = EInteractionType.Open;
                     return true;
                 }
-            }
-            else
-            {
-                //Logger.LogDebug($"Failed to find door, but we hit something on [DoorLayer] [{hit.collider.name}]");
             }
         }
         for (index = 0; index < doors.Count; index++)
@@ -288,12 +268,6 @@ public class DoorOpener : BotComponentClassBase
         {
             return false;
         }
-        //if (!ModDetection.ProjectFikaLoaded &&
-        //    GlobalSettingsClass.Instance.General.Doors.DisableAllDoors &&
-        //    GameWorldComponent.Instance.Doors.DisableDoor(door))
-        //{
-        //    return false;
-        //}
         return true;
     }
 
@@ -337,7 +311,6 @@ public class DoorOpener : BotComponentClassBase
         var interactionResult = Door.Interact(Player, type);
         if (interactionResult.Succeeded)
         {
-            //Logger.LogDebug("Success");
             switch (type)
             {
                 case EInteractionType.Breach:

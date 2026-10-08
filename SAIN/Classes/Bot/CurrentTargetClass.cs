@@ -29,7 +29,6 @@ public class CurrentTargetClass : BotComponentClassBase
                 if ((Target.Value - Bot.Position).sqrMagnitude < 1f || goalTarget.CreatedTime > 120f)
                 {
                     goalTarget.Clear();
-                    //BotOwner.CalcGoal();
                 }
             }
         }

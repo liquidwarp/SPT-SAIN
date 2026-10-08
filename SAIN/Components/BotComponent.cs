@@ -23,7 +23,7 @@ using UnityEngine;
 
 namespace SAIN.Components;
 
-public class BotComponent : BotComponentBase, ISPlayer
+public class BotComponent : BotComponentBase
 {
     public Vector3 NavMeshPosition
     {
@@ -33,11 +33,6 @@ public class BotComponent : BotComponentBase, ISPlayer
     public float GetDistanceToPlayer(string ProfileId)
     {
         return PlayerComponent.GetDistanceToPlayer(ProfileId);
-    }
-
-    public bool IsPlayerInRange(string ProfileId, float maxDistance, out float playerDistance)
-    {
-        return PlayerComponent.IsPlayerInRange(ProfileId, maxDistance, out playerDistance);
     }
 
     public void ActivateIfBotActive(BotOwner botOwner)
@@ -124,13 +119,11 @@ public class BotComponent : BotComponentBase, ISPlayer
     public ManualShootClass ManualShoot { get; private set; }
     public BotFlashedClass Flashed { get; private set; }
     public CurrentTargetClass CurrentTarget { get; private set; }
-    public BotBackpackDropClass BackpackDropper { get; private set; }
     public BotLightController BotLight { get; private set; }
     public SAINBotSpaceAwareness SpaceAwareness { get; private set; }
     public AimDownSightsController AimDownSightsController { get; private set; }
     public SAINAILimit AILimit { get; private set; }
     public SAINBotSuppressClass Suppression { get; private set; }
-    public SAINVaultClass Vault { get; private set; }
     public SearchClass Search { get; private set; }
     public SAINMemoryClass Memory { get; private set; }
     public SAINEnemyController EnemyController { get; private set; }
@@ -167,10 +160,6 @@ public class BotComponent : BotComponentBase, ISPlayer
     {
         get
         {
-            //if (BotOwner.AimingManager.CurrentAiming != null)
-            //{
-            //    return BotOwner.AimingManager.CurrentAiming.LastDist2Target;
-            //}
             if (EnemyController.GoalEnemy != null)
             {
                 return EnemyController.GoalEnemy.KnownPlaces.BotDistanceFromLastKnown;
@@ -274,7 +263,6 @@ public class BotComponent : BotComponentBase, ISPlayer
             FriendlyFire = new SAINFriendlyFireClass(this);
             Vision = new SAINVisionClass(this);
             Search = new SearchClass(this);
-            Vault = new SAINVaultClass(this);
             Suppression = new SAINBotSuppressClass(this);
             AILimit = new SAINAILimit(this);
             AimDownSightsController = new AimDownSightsController(this);
@@ -282,7 +270,6 @@ public class BotComponent : BotComponentBase, ISPlayer
             DoorOpener = new DoorOpener(this);
             Medical = new SAINBotMedicalClass(this);
             BotLight = new BotLightController(this);
-            BackpackDropper = new BotBackpackDropClass(this);
             CurrentTarget = new CurrentTargetClass(this);
             ManualShoot = new ManualShootClass(this);
             Flashed = new BotFlashedClass(this);
@@ -533,7 +520,7 @@ public class BotComponent : BotComponentBase, ISPlayer
 
     private void ResetBot(EBotState state)
     {
-        Decision.ResetDecisions(false);
+        Decision.ResetDecisions();
     }
 
     /// <summary>

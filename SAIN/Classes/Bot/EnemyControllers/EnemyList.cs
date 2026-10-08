@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.EnemyClasses;
 
-public class EnemyList(string name) : List<Enemy>
+public class EnemyList : List<Enemy>
 {
     public enum EBotListSortType
     {
@@ -16,8 +16,6 @@ public class EnemyList(string name) : List<Enemy>
         VisiblePathPointDistanceToBot,
         VisiblePathPointDistanceToEnemy,
     }
-
-    public string Name { get; } = name;
 
     public event Action<bool, float> OnListEmptyOrGetFirst;
 
@@ -74,12 +72,10 @@ public class EnemyList(string name) : List<Enemy>
     {
         if (value)
         {
-            //Logger.LogDebug($"EnemyList {Name} added {enemy.EnemyName} IsAI? {enemy.IsAI}");
             this.AddEnemy(enemy);
         }
         else
         {
-            //Logger.LogDebug($"EnemyList {Name} removed {enemy.EnemyName} IsAI? {enemy.IsAI}");
             this.RemoveEnemy(enemy);
         }
     }

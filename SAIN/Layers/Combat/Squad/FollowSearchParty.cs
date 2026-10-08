@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 namespace SAIN.Layers.Combat.Squad;
 
-internal class FollowSearchParty(BotOwner bot) : BotAction(bot, nameof(FollowSearchParty)), IBotAction
+internal class FollowSearchParty(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

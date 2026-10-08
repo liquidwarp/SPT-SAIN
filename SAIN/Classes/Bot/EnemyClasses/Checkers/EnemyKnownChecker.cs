@@ -46,21 +46,13 @@ public class EnemyKnownChecker(EnemyData enemyData)
         var places = Enemy.KnownPlaces;
         if (places.LastKnownPlace == null)
         {
-            //if (Enemy.EnemyKnown)
-            //    Logger.LogDebug("enemy null lastknown");
             return false;
         }
 
         float timeSinceUpdate = currentTime - places.TimeLastKnownUpdated;
 
-        //if (Enemy.EnemyKnown && Enemy.EnemyPlayer.IsYourPlayer)
-        //    Logger.LogDebug($"timesince update [{timeSinceUpdate}]");
-
         if (timeSinceUpdate > LAST_KNOWN_TIME_UPDATE_UPPER_LIMIT)
         {
-            //if (Enemy.EnemyKnown)
-            //    Logger.LogDebug("enemy forgotten becuz update too long");
-
             return false;
         }
 
@@ -73,9 +65,6 @@ public class EnemyKnownChecker(EnemyData enemyData)
         {
             return true;
         }
-
-        //if (Enemy.EnemyKnown)
-        //    Logger.LogDebug($"enemy forgotten. timesinceupdate: {timeSinceUpdate} forgetenemytime: {Bot.Info.ForgetEnemyTime}");
 
         return false;
     }

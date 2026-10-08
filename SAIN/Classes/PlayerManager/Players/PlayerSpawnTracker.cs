@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using EFT;
-using UnityEngine;
 
 namespace SAIN.Components.PlayerComponentSpace;
 
@@ -31,28 +30,6 @@ public class PlayerSpawnTracker
         return null;
     }
 
-    public PlayerComponent FindClosestHumanPlayer(out float closestPlayerSqrMag, Vector3 targetPosition, out Player player)
-    {
-        PlayerComponent closestPlayer = null;
-        closestPlayerSqrMag = float.MaxValue;
-        player = null;
-
-        foreach (var component in AlivePlayersDictionary.Values)
-        {
-            if (component != null && component.Player != null && !component.IsAI)
-            {
-                float sqrMag = (component.Position - targetPosition).sqrMagnitude;
-                if (sqrMag < closestPlayerSqrMag)
-                {
-                    player = component.Player;
-                    closestPlayer = component;
-                    closestPlayerSqrMag = sqrMag;
-                }
-            }
-        }
-        return closestPlayer;
-    }
-
     public PlayerComponent FindClosestHumanPlayer(out float distance, PlayerComponent quierrier, out Player player)
     {
         List<OtherPlayerData> otherPlayers = quierrier.OtherPlayersData.DataList;
@@ -78,7 +55,6 @@ public class PlayerSpawnTracker
         {
             return null;
         }
-        //Logger.LogDebug($"Manually trying to recreate Player Component for [{player.Profile?.Nickname} : {player.ProfileId}]");
         AddPlayer(player);
         if (AlivePlayersDictionary.TryGetValue(player.ProfileId, out var component))
         {

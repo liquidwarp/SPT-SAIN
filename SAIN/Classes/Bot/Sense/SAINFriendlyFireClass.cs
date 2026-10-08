@@ -7,11 +7,6 @@ namespace SAIN.SAINComponent.Classes;
 
 public class SAINFriendlyFireClass : BotComponentClassBase
 {
-    public bool ClearShot
-    {
-        get { return FriendlyFireStatus != FriendlyFireStatus.FriendlyBlock; }
-    }
-
     public FriendlyFireStatus FriendlyFireStatus { get; private set; }
 
     public SAINFriendlyFireClass(BotComponent sain)

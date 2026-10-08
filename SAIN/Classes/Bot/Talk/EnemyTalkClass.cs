@@ -373,7 +373,6 @@ public class EnemyTalk : BotBase
         {
             _nextGestureTime = Time.time + 6f;
             Player.HandsController.ShowGesture(EInteraction.FriendlyGesture);
-            //Bot.Steering.LookToPoint(sourcePlayer.Position + Vector3.up * 1.4f);
         }
         Bot.Talk.Say(trigger, mask, false);
     }

@@ -48,22 +48,6 @@ public class PoseClass : BotBase
         }
     }
 
-    public void SetTargetSpeed(float value)
-    {
-        SpeedValue.Set(value);
-    }
-
-    private void SetPlayerSpeed(float value)
-    {
-        const float SPEED_CHANGE_SPEED_COEF = 1f;
-        float difference = value - this.Player.Speed;
-        BotOwner?.SetTargetMoveSpeed(value);
-        if (Math.Abs(difference) >= 1E-45f)
-        {
-            this.Player.ChangeSpeed(difference * SPEED_CHANGE_SPEED_COEF);
-        }
-    }
-
     public bool SetPoseToCover(Enemy enemy)
     {
         if (enemy == null)
@@ -96,11 +80,6 @@ public class PoseClass : BotBase
         return num != null && SetTargetPose(num.Value);
     }
 
-    public bool ObjectInFront
-    {
-        get { return ObjectTargetPoseCover != null; }
-    }
-
     public float? ObjectTargetPoseCover { get; private set; }
 
     private void FindObjectsInFront(Enemy enemy)
@@ -121,7 +100,6 @@ public class PoseClass : BotBase
     }
 
     private float UpdateFindObjectTimer { get; set; }
-    private float UpdateFindObjectInCoverTimer { get; set; }
 
     private bool FindCrouchFromCover(Enemy enemy, out float targetPose, bool useCollider = false)
     {
@@ -138,7 +116,6 @@ public class PoseClass : BotBase
                 targetPose = FindCrouchHeightRaycast(position);
             }
         }
-        //}
         return targetPose < 1f;
     }
 

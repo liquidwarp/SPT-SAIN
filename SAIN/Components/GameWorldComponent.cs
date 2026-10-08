@@ -17,14 +17,12 @@ public class GameWorldComponent : MonoBehaviour
     {
         if (Player == null)
         {
-            //Logger.LogError("Player Null");
             PlayerComponent = null;
             return false;
         }
         PlayerSpawnTracker PlayerTracker = Instance?.PlayerTracker;
         if (PlayerTracker == null)
         {
-            //Logger.LogError("GameWorld Component Null, can't get Player Component");
             PlayerComponent = null;
             return false;
         }
@@ -37,29 +35,12 @@ public class GameWorldComponent : MonoBehaviour
         if (TryGetPlayerComponent(Player, out PlayerComponent PlayerComponent))
         {
             StartCoroutine(TrackBullet(PlayerComponent, Bullet));
-            //var OtherPlayerData = PlayerComponent.OtherPlayersData.DataHashSet;
-            //Vector3 PlayerLookDir = PlayerComponent.LookDirection;
-            //
             //// Add any other AI Controlled players that are in the direction this shot is going
-            //_tempOtherPlayerCache.AddRange(from Data in OtherPlayerData
-            //                               let OtherPlayerDirNormal = Data.DistanceData.DirectionNormal
-            //                               let BotPlayerComponent = Data.PlayerComponent
-            //                               where BotPlayerComponent != null && BotPlayerComponent.IsAI && BotPlayerComponent.IsActive && Vector3.Dot(OtherPlayerDirNormal, PlayerLookDir) > 0.75f
-            //                               select Data);
-            //
-            //if (_tempOtherPlayerCache.Count > 0)
-            //{
-            //    List<OtherPlayerData> RelevantPlayers = [];
-            //    RelevantPlayers.AddRange(_tempOtherPlayerCache);
-            //    _tempOtherPlayerCache.Clear();
-            //    ActiveBullets.Add(new(Bullet, PlayerComponent, RelevantPlayers));
-            //}
         }
     }
 
     private IEnumerator TrackBullet(PlayerComponent Player, Shot Bullet)
     {
-        //Vector3 LastPosition = Bullet.StartPosition;
         var OtherPlayerData = Player.OtherPlayersData.DataDictionary;
         Vector3 PlayerLookDir = Player.LookDirection;
 
@@ -85,8 +66,6 @@ public class GameWorldComponent : MonoBehaviour
             while (!Bullet.IsShotFinished && Player?.IsActive == true && PlayersToCheck.Count > 0)
             {
                 Vector3 BulletPosition = Bullet.CurrentPosition;
-                //DebugGizmos.Sphere(BulletPosition, 0.3f, Color.red, true, 3.0f);
-                //DebugGizmos.Line(BulletPosition, LastPosition, Color.red, 0.05f, true, 3, true);
 
                 for (int i = PlayersToCheck.Count - 1; i >= 0; i--)
                 {
@@ -105,7 +84,6 @@ public class GameWorldComponent : MonoBehaviour
                         continue;
                     }
                 }
-                //LastPosition = BulletPosition;
                 yield return null;
             }
         }
@@ -267,7 +245,6 @@ public class GameWorldComponent : MonoBehaviour
         SAINBotController.BotSpawner = botsController.BotSpawner;
         _activated = true;
         JobManager.Start();
-        // StartCoroutine(CalcPathsJobs());
     }
 
     private bool _activated = false;
@@ -302,8 +279,6 @@ public class GameWorldComponent : MonoBehaviour
             Logger.LogError(e);
         }
 
-        //Logger.LogDebug("SAIN GameWorld Created.");
-
         Doors.Init();
         Location.Init();
     }
@@ -336,7 +311,6 @@ public class GameWorldComponent : MonoBehaviour
         Instance = null;
         GameWorld.OnDispose -= DestroyComponent;
         Destroy(this);
-        //Logger.LogDebug("SAIN GameWorld Destroyed.");
     }
 
     private float _Sounds_PlayerCache_Time;

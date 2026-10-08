@@ -4,7 +4,7 @@ using SAIN.SAINComponent.Classes.EnemyClasses;
 
 namespace SAIN.Layers.Combat.Solo;
 
-internal class FightZombiesAction(BotOwner bot) : BotAction(bot, "Fight Zombies"), IBotAction
+internal class FightZombiesAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {
@@ -31,7 +31,7 @@ internal class FightZombiesAction(BotOwner bot) : BotAction(bot, "Fight Zombies"
 internal class MeleeAttackAction : BotAction
 {
     public MeleeAttackAction(BotOwner bot)
-        : base(bot, "Melee Attack") { }
+        : base(bot) { }
 
     public override void OnSteeringTicked()
     {

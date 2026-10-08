@@ -115,24 +115,6 @@ public class SAINSelfActionClass : BotComponentClassBase
 
     private float _firstAidTimer;
 
-    public bool DoSurgery()
-    {
-        var surgery = BotOwner.Medecine?.SurgicalKit;
-        if (surgery == null || BotOwner.IsDead)
-        {
-            return false;
-        }
-        if (_trySurgeryTime < Time.time && surgery.ShallStartUse())
-        {
-            _trySurgeryTime = Time.time + 5f;
-            surgery.ApplyToCurrentPart();
-            return true;
-        }
-        return false;
-    }
-
-    private float _trySurgeryTime;
-
     public bool DoStims()
     {
         var stims = BotOwner.Medecine?.Stimulators;
@@ -154,19 +136,6 @@ public class SAINSelfActionClass : BotComponentClassBase
     }
 
     private float _stimTimer;
-
-    private bool HaveStimsToHelp()
-    {
-        return false;
-    }
-
-    public void BotCancelReload()
-    {
-        if (BotOwner.WeaponManager.Reload.Reloading)
-        {
-            //BotOwner.WeaponManager.Reload.TryStopReload();
-        }
-    }
 
     private float _nextHealTime = 0f;
 }

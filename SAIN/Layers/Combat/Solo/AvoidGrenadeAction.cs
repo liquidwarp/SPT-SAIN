@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Solo;
 
-internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot, "Avoid Grenade"), IBotAction
+internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     private const float RETREAT_DISTANCE = 22f;
     private const float SCATTER_DISTANCE = 14f;

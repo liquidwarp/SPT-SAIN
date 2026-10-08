@@ -82,33 +82,6 @@ public static class Vector
         return NormalizeFastSelf(v) * num + from;
     }
 
-    public static bool CanShootToTarget(ShootToPoint shootToPoint, Vector3 firePos, LayerMask mask, bool doubleSide = false)
-    {
-        if (shootToPoint == null)
-        {
-            return false;
-        }
-        bool flag = false;
-        Vector3 vector = shootToPoint.Point - firePos;
-        Ray ray = new(firePos, vector);
-        float magnitude = vector.magnitude;
-        if (!Physics.Raycast(ray, out RaycastHit raycastHit, magnitude * shootToPoint.DistCoef, mask))
-        {
-            if (doubleSide)
-            {
-                if (!Physics.Raycast(new Ray(shootToPoint.Point, -vector), out raycastHit, magnitude, mask))
-                {
-                    flag = true;
-                }
-            }
-            else
-            {
-                flag = true;
-            }
-        }
-        return flag;
-    }
-
     public static Vector3 Rotate(Vector3 direction, float degX, float degY, float degZ)
     {
         return Quaternion.Euler(degX, degY, degZ) * direction;
@@ -131,15 +104,5 @@ public static class Vector
         v.y /= num;
         v.z /= num;
         return v;
-    }
-
-    public static Vector3 RotateOnAngUp(Vector3 b, float angDegree)
-    {
-        float f = angDegree * 0.017453292f;
-        float num = Mathf.Sin(f);
-        float num2 = Mathf.Cos(f);
-        float x = b.x * num2 - b.z * num;
-        float z = b.z * num2 + b.x * num;
-        return new Vector3(x, 0f, z);
     }
 }

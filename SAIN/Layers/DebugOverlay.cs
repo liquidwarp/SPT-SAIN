@@ -85,7 +85,6 @@ public static class DebugOverlay
                             + $"CurrentLeanSetting:{bot.Mover.Lean.LeanDirection}",
                         Color.white
                     );
-                    //stringBuilder.AppendLine($"AILimit [{bot.CurrentAILimit}] : HumanDist: [{bot.AILimit.ClosestPlayerDistanceSqr.Sqrt().Round10()}]");
                     stringBuilder.AppendLine(
                         $"Suppression Num: [{bot.Suppression?.SuppressionNumber}] State: [{bot.Suppression?.CurrentState}] Last State: [{bot.Suppression?.LastState}]"
                     );
@@ -223,7 +222,6 @@ public static class DebugOverlay
 
         stringBuilder.AppendLabeledValue("Move Status", $"{moveData.Status}", Color.white, Color.yellow);
         stringBuilder.AppendLabeledValue("Moving", $"{moveData.Moving}", Color.white, Color.yellow);
-        //stringBuilder.AppendLabeledValue("Crawling", $"{moveData.Crawling}", Color.white, Color.yellow);
         stringBuilder.AppendLabeledValue("Running", $"{moveData.Running}", Color.white, Color.yellow);
         stringBuilder.AppendLabeledValue(
             "Want To Sprint : Reason",
@@ -232,10 +230,6 @@ public static class DebugOverlay
             Color.yellow
         );
         stringBuilder.AppendLabeledValue("Sprint Status", $"{moveData.CurrentSprintStatus}", Color.white, Color.yellow);
-        //stringBuilder.AppendLabeledValue("Move CornerCount", $"{moveData.PathCorners.Count}", Color.white, Color.yellow);
-        //stringBuilder.AppendLabeledValue("Move CurrentIndex", $"{moveData.CurrentIndex}", Color.white, Color.yellow);
-        //stringBuilder.AppendLabeledValue("Move Corner Distance", $"{moveData.CurrentCornerDistanceSqr.Sqrt()}", Color.white, Color.yellow);
-        //stringBuilder.AppendLabeledValue("Time Since Start Corner", $"{Time.time - moveData.GetCurrentCorner().TimeStarted}", Color.white, Color.yellow);
     }
 
     private static Enemy getEnemy2Show(BotComponent bot)
@@ -338,11 +332,6 @@ public static class DebugOverlay
             Color.yellow,
             true
         );
-        /*
-        float highestPercent = getPercentSpotted(enemy, out var partType);
-        if (highestPercent > 0)
-            stringBuilder.AppendLabeledValue("Percent Spotted", $"{partType} : {highestPercent}", Color.white, Color.yellow, true);
-        */
 
         addPlaceInfo(stringBuilder, enemy.KnownPlaces.LastKnownPlace, "Last Known Position");
         if (enemy.Seen && _expandedEnemyInfo)
@@ -411,27 +400,6 @@ public static class DebugOverlay
             addPlaceInfo(stringBuilder, enemy.KnownPlaces.LastHeardPlace, "Last Heard");
         }
     }
-
-    /*
-    private static float getPercentSpotted(Enemy enemy, out BodyPartType partType)
-    {
-
-        float highestPercent = enemy.EnemyInfo.BodyData().Value?.GetVisibilityLevel() ?? 0f;
-        partType = BodyPartType.body;
-        foreach (var part in enemy.EnemyInfo.AllActiveParts)
-        {
-            float percent = part.Value.GetVisibilityLevel();
-            if (percent > highestPercent)
-            {
-                highestPercent = percent;
-                partType = part.Key.BodyPartType;
-            }
-        }
-
-        highestPercent = Mathf.Clamp(highestPercent.Round100(), 0f, 100f);
-        return highestPercent;
-    }
-    */
 
     private static void addPlaceInfo(StringBuilder stringBuilder, EnemyPlace place, string name)
     {

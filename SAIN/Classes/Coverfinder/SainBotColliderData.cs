@@ -28,16 +28,6 @@ public struct SainBotColliderData(Collider collider)
         return !(left == right);
     }
 
-    public static bool operator ==(Collider left, SainBotColliderData right)
-    {
-        return Equals(left, right.Collider);
-    }
-
-    public static bool operator !=(Collider left, SainBotColliderData right)
-    {
-        return !(left == right);
-    }
-
     public override bool Equals(object obj)
     {
         if (obj is SainBotColliderData other)

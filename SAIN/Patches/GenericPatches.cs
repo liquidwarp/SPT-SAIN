@@ -239,18 +239,6 @@ namespace SAIN.Patches.Generic
                 return true;
             }
             // ORIGINAL METHOD:
-            //if (__instance.Settings.FileSettings.Boss.EFFECT_PAINKILLER)
-            //{
-            //	__instance.GetPlayer.ActiveHealthController.DoPainKiller();
-            //}
-            //if (__instance.Settings.FileSettings.Boss.DISABLE_METABOLISM)
-            //{
-            //	__instance.GetPlayer.HealthController.DisableMetabolism();
-            //}
-            //if (__instance.Settings.FileSettings.Boss.EFFECT_REGENERATION_PER_MIN > 0f)
-            //{
-            //	__instance.GetPlayer.ActiveHealthController.DoScavRegeneration(__instance.Settings.FileSettings.Boss.EFFECT_REGENERATION_PER_MIN);
-            //}
             // END ORIGINAL METHOD
             __instance.GetPlayer.HealthController.DisableMetabolism();
             return false;

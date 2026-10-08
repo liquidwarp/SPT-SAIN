@@ -25,11 +25,6 @@ public sealed class Category
         return CategoryInfo.GetValue(obj);
     }
 
-    public void SetValue(object obj, object value)
-    {
-        CategoryInfo.SetValue(obj, value);
-    }
-
     public readonly ConfigInfoClass CategoryInfo;
 
     public readonly List<ConfigInfoClass> FieldAttributesList = new();

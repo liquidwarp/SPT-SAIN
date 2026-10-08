@@ -19,11 +19,6 @@ public class FlashLightClass(PlayerComponent component) : PlayerComponentBase(co
     public bool UsingLight { get; private set; }
     public bool UsingLaser { get; private set; }
 
-    public bool LaserOnly
-    {
-        get { return !WhiteLight && !IRLight && (Laser || IRLaser); }
-    }
-
     public bool DeviceActive
     {
         get { return ActiveModes != 0; }

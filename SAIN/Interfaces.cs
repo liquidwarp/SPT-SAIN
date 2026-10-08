@@ -1,6 +1,5 @@
 ﻿using System;
 using SAIN.Components;
-using SAIN.SAINComponent.Classes.EnemyClasses;
 
 namespace SAIN;
 
@@ -22,16 +21,7 @@ public interface IBotClass : IDisposable
 
     void ManualUpdate();
 
-    bool ShallTick(float CurrentTime);
-
     BotComponent Bot { get; }
     ESAINTickState TickRequirement { get; }
     bool CanEverTick { get; }
-    float TickInterval { get; }
-    float LastTickTime { get; }
-}
-
-public interface IBotDecisionClass
-{
-    bool GetDecision(Enemy enemy, out string reason);
 }

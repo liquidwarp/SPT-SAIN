@@ -13,10 +13,7 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
     public HashSet<Enemy> EnemiesArray { get; } = [];
 
     public EnemyListController(SAINEnemyController controller)
-        : base(controller)
-    {
-        //TickInterval = 1.0f;
-    }
+        : base(controller) { }
 
     public override void Init()
     {
@@ -118,10 +115,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
             destroyEnemy(enemy);
             Enemies.Remove(profileID);
             EnemiesArray.Remove(enemy);
-            //if (enemy.EnemyPlayer.IsYourPlayer)
-            //{
-            //    Logger.LogDebug($"Removed Player Enemy for [{Bot.name}]");
-            //}
             return null;
         }
         if (mustBeActive && !Enemy.IsEnemyActive(enemy))
@@ -143,11 +136,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
             destroyEnemy(enemy);
             Enemies.Remove(profileId);
             EnemiesArray.Remove(enemy);
-
-            //if (enemy.EnemyPlayer.IsYourPlayer)
-            //{
-            //    Logger.LogDebug($"Removed Player Enemy for [{Bot.name}]");
-            //}
         }
     }
 
@@ -201,19 +189,14 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
     {
         if (enemyPlayer == null)
         {
-            //Logger.LogDebug("Cannot add null player as an enemy.");
             return null;
         }
         if (!enemyPlayer.HealthController.IsAlive)
         {
-            //Logger.LogDebug("Cannot add dead player as an enemy.");
             return null;
         }
         if (enemyPlayer.ProfileId == Bot.ProfileId)
         {
-            //string debugString = $"Cannot add enemy that matches this bot: ";
-            //debugString = findSourceDebug(debugString);
-            //Logger.LogDebug(debugString);
             return null;
         }
 
@@ -222,12 +205,10 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
             BotOwner botOwner = enemyPlayer.AIData?.BotOwner;
             if (botOwner == null)
             {
-                //Logger.LogDebug("Cannot add ai as enemy with null Botowner");
                 return null;
             }
             if (IsBotInBotsGroup(botOwner))
             {
-                //Logger.LogDebug("Cannot add ai that is in my group");
                 return null;
             }
         }
@@ -235,7 +216,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
         PlayerComponent enemyPlayerComponent = getEnemyPlayerComponent(enemyPlayer);
         if (enemyPlayerComponent == null)
         {
-            //Logger.LogWarning("Cannot add enemy with null Player Component.");
             return null;
         }
 
@@ -247,7 +227,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
         EnemyInfo enemyInfo = getEnemyInfo(enemyPlayer);
         if (enemyInfo == null)
         {
-            //Logger.LogWarning("Cannot add enemy that doesn't have an enemyInfo");
             return null;
         }
 
@@ -260,18 +239,12 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
         PlayerComponent enemyPlayerComponent = playerTracker.GetPlayerComponent(enemyPlayer.ProfileId);
         if (enemyPlayerComponent == null)
         {
-            //Logger.LogDebug("Cannot add enemy with null Player Component");
             if (Enemies.TryGetValue(enemyPlayer.ProfileId, out Enemy oldEnemy))
             {
                 destroyEnemy(oldEnemy);
                 Enemies.Remove(enemyPlayer.ProfileId);
-                //Logger.LogDebug($"Removed Old Enemy.");
             }
             enemyPlayerComponent = playerTracker.AddPlayerManual(enemyPlayer);
-            if (enemyPlayerComponent == null)
-            {
-                //Logger.LogError("Failed to recreate component!");
-            }
         }
         return enemyPlayerComponent;
     }
@@ -283,7 +256,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
             && BotOwner.BotsGroup.Enemies.TryGetValue(enemyPlayer, out BotGroupEnemyInfo value)
         )
         {
-            //Logger.LogDebug($"Got EnemyInfo from Bot's Group Enemies.");
             enemyInfo = BotOwner.EnemiesController.AddNew(BotOwner.BotsGroup, enemyPlayer, value);
             BotEnemiesController controller = BotOwner.EnemiesController;
             if (enemyInfo != null && controller._countEnemies < controller.SortedInfos.Length)
@@ -306,10 +278,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
         Enemies.Add(enemy.EnemyProfileId, enemy);
         EnemiesArray.Add(enemy);
         BaseClass.Events.EnemyAdded(enemy);
-        //if (enemyPlayerComponent.Player.IsYourPlayer)
-        //{
-        //    Logger.LogDebug($"Created Player Enemy for [{Bot.name}]");
-        //}
         return enemy;
     }
 
@@ -353,8 +321,6 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
         {
             _nextCompareListsTime = Time.time + COMPARE_ENEMY_LIST_FREQ;
 
-            int enemyCount = Enemies.Count;
-            int failedGroupAdds = 0;
             var groupEnemies = BotOwner.BotsGroup.Enemies;
             foreach (var person in groupEnemies.Keys)
             {
@@ -364,14 +330,9 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
                     continue;
                 }
 
-                Enemy enemy = tryAddEnemy(person);
-                if (enemy == null)
-                {
-                    failedGroupAdds++;
-                }
+                tryAddEnemy(person);
             }
 
-            int failedMyAdds = 0;
             var myEnemies = BotOwner.EnemiesController.EnemyInfos;
             foreach (var person in myEnemies.Keys)
             {
@@ -380,16 +341,7 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
                     continue;
                 }
 
-                Enemy enemy = tryAddEnemy(person);
-                if (enemy == null)
-                {
-                    failedMyAdds++;
-                }
-            }
-
-            if (failedMyAdds > 0 || failedGroupAdds > 0)
-            {
-                //Logger.LogDebug($"Failed to add [{failedGroupAdds}] enemies from botsgroup and [{failedMyAdds}] enemies from enemyInfos");
+                tryAddEnemy(person);
             }
         }
     }

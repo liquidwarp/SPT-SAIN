@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using EFT.UI;
-using SAIN.Attributes;
 using SAIN.Editor.Util;
 using SAIN.Helpers;
 using SAIN.Plugin;
@@ -12,11 +11,6 @@ namespace SAIN.Editor;
 
 public static class BuilderClass
 {
-    private static float ExpandMenuWidth
-    {
-        get { return 250f; }
-    }
-
     public static string SearchBox(SettingsContainer container, float height = 30, SearchParams config = null)
     {
         container.SearchPattern = SearchBox(container.SearchPattern, height, config);
@@ -248,37 +242,6 @@ public static class BuilderClass
         Box(content, style, Height(height));
     }
 
-    public static void MinValueBox(object value, params GUILayoutOption[] options)
-    {
-        if (value == null)
-        {
-            return;
-        }
-
-        Box(value.ToString(), "Minimum", options);
-    }
-
-    public static void MaxValueBox(object value, params GUILayoutOption[] options)
-    {
-        if (value == null)
-        {
-            return;
-        }
-
-        Box(value.ToString(), "Maximum", options);
-    }
-
-    public static object ResultBox(object value, params GUILayoutOption[] options)
-    {
-        if (value != null)
-        {
-            Box(value.ToString(), "The Rounding this option is set to", options);
-            string dirtyString = TextField(value.ToString(), null, options);
-            value = CleanString(dirtyString, value);
-        }
-        return value;
-    }
-
     public static object CleanString(string input, object currentValue)
     {
         if (currentValue is float floatValue)
@@ -348,24 +311,7 @@ public static class BuilderClass
         return SelectionGrid(value, 25, 3, valueOptions);
     }
 
-    public static T SelectionGrid<T>(T value, List<T> list)
-    {
-        return SelectionGrid(value, 25, 3, list);
-    }
-
     public static T SelectionGrid<T>(T value, float height, int optionsPerLine, List<T> list)
-    {
-        int count = StartSelection(optionsPerLine, height, out GUILayoutOption[] options);
-        for (var i = 0; i < list.Count; i++)
-        {
-            value = CheckToggle(value, list[i], options);
-            count = HorizontalSpacing(count, optionsPerLine);
-        }
-        EndHorizontal();
-        return value;
-    }
-
-    public static T SelectionGrid<T>(T value, List<T> list, float height = 25, int optionsPerLine = 3)
     {
         int count = StartSelection(optionsPerLine, height, out GUILayoutOption[] options);
         for (var i = 0; i < list.Count; i++)
@@ -476,97 +422,6 @@ public static class BuilderClass
         return style;
     }
 
-    public static string SelectionGridExpandWidth(
-        Rect menuRect,
-        string[] options,
-        string selectedOption,
-        Rect[] optionRects,
-        float min = 15f,
-        float incPerFrame = 3f,
-        float closeMulti = 0.66f
-    )
-    {
-        BeginGroup(menuRect);
-        for (int i = 0; i < options.Length; i++)
-        {
-            string option = options[i];
-            bool selected = selectedOption == option;
-
-            optionRects[i] = AnimateWidth(optionRects[i], selected, menuRect.width, out bool hovering, min, incPerFrame, closeMulti);
-
-            GUIStyle style = StyleHandler(selected, hovering);
-            bool toggleActivated = GUI.Button(optionRects[i], option, style);
-            if (toggleActivated && selected)
-            {
-                Sounds.PlaySound(EUISoundType.ButtonClick);
-                selectedOption = "None";
-            }
-            if (toggleActivated && !selected)
-            {
-                Sounds.PlaySound(EUISoundType.ButtonClick);
-                selectedOption = option;
-            }
-        }
-        EndGroup();
-        return selectedOption;
-    }
-
-    public static void SelectionGridExpandWidth(
-        Rect menuRect,
-        string[] options,
-        List<string> selectedList,
-        Rect[] optionRects,
-        float min = 15f,
-        float incPerFrame = 3f,
-        float closeMulti = 0.66f
-    )
-    {
-        for (int i = 0; i < options.Length; i++)
-        {
-            string option = options[i];
-            bool selected = selectedList.Contains(option);
-
-            optionRects[i] = AnimateWidth(optionRects[i], selected, menuRect.width, out bool hovering, min, incPerFrame, closeMulti);
-
-            GUIStyle style = StyleHandler(selected, hovering);
-
-            bool toggleActivated = GUI.Toggle(optionRects[i], selected, option, style);
-            if (toggleActivated != selected)
-            {
-                Sounds.PlaySound(EUISoundType.MenuDropdownSelect);
-                if (selected)
-                {
-                    selectedList.Remove(option);
-                }
-                else
-                {
-                    selectedList.Add(option);
-                }
-            }
-        }
-    }
-
-    public static Rect[] VerticalGridRects(Rect MenuRect, int count, float startWidth)
-    {
-        Rect[] rects = new Rect[count];
-
-        float optionHeight = MenuRect.height / count;
-        float X = 0;
-
-        for (int i = 0; i < rects.Length; i++)
-        {
-            float Y = optionHeight * i;
-            rects[i] = new Rect
-            {
-                x = X,
-                y = Y,
-                width = startWidth,
-                height = optionHeight,
-            };
-        }
-        return rects;
-    }
-
     public static Rect[] HorizontalGridRects(Rect MenuRect, int count, float startHeight)
     {
         Rect[] rects = new Rect[count];
@@ -602,23 +457,6 @@ public static class BuilderClass
         detectRect.height = max;
         hovering = MouseFunctions.IsMouseInside(detectRect);
         rect.height = Animate(rect.height, hovering, selected, max, min, incPerFrame, closeMulti);
-        return rect;
-    }
-
-    private static Rect AnimateWidth(
-        Rect rect,
-        bool selected,
-        float max,
-        out bool hovering,
-        float min = 15f,
-        float incPerFrame = 3f,
-        float closeMulti = 0.66f
-    )
-    {
-        Rect detectRect = rect;
-        detectRect.width = max;
-        hovering = MouseFunctions.IsMouseInside(detectRect);
-        rect.width = Animate(rect.width, hovering, selected, max, min, incPerFrame, closeMulti);
         return rect;
     }
 
@@ -667,19 +505,6 @@ public static class BuilderClass
         if (!MouseFunctions.MouseIsMoving)
         {
             value = value.Round(rounding);
-        }
-        return value;
-    }
-
-    public static float CreateSlider(float value, ConfigInfoClass info, GUIEntryConfig config)
-    {
-        float oldValue = value;
-        value = HorizontalSlider(value, info.Min, info.Max, null, config.Toggle);
-        Backgrounds(value, info.Min, info.Max);
-        Box(value.Round(info.Rounding).ToString(), config.Result);
-        if (!MouseFunctions.MouseIsMoving)
-        {
-            value = value.Round(info.Rounding);
         }
         return value;
     }

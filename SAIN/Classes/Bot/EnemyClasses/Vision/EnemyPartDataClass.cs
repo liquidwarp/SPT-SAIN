@@ -108,7 +108,6 @@ public class EnemyPartDataClass
     private Vector3 GetCastPoint(BodyPartCollider collider)
     {
         float size = GetColliderMinSize(collider);
-        //Logger.LogInfo(size);
         Vector3 random = UnityEngine.Random.insideUnitSphere * size;
         Vector3 result = collider.Collider.ClosestPoint(collider.transform.position + random);
         return result;

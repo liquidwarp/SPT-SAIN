@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Flashed;
 
-internal class FlashedAction(BotOwner bot) : BotAction(bot, "Flashed"), IBotAction
+internal class FlashedAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     private const float SEARCH_MIN_TIME = 0.7f;
     private const float SEARCH_MAX_TIME = 1.6f;
@@ -90,7 +90,7 @@ internal class FlashedAction(BotOwner bot) : BotAction(bot, "Flashed"), IBotActi
             return;
         }
 
-        Bot.ManualShoot.TryShoot(enemy, aimPoint, true, EShootReason.Blindfire);
+        Bot.ManualShoot.TryShoot(enemy, aimPoint, EShootReason.Blindfire);
     }
 
     private void PickBehaviour()

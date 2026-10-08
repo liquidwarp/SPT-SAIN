@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Squad;
 
-internal class RegroupAction(BotOwner bot) : BotAction(bot, nameof(RegroupAction)), IBotAction
+internal class RegroupAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

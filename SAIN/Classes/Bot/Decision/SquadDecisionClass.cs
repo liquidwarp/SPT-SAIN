@@ -4,7 +4,6 @@ using SAIN.Models.Enums;
 using SAIN.Preset.Shared.Enums;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using SAIN.SAINComponent.Classes.Info;
-using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.Decision;
 
@@ -30,12 +29,6 @@ public class SquadDecisionClass : BotBase
         {
             return true;
         }
-
-        //if (shallRegroup())
-        //{
-        //    Decision = SquadDecision.Regroup;
-        //    return true;
-        //}
 
         return false;
     }
@@ -179,25 +172,8 @@ public class SquadDecisionClass : BotBase
         return memberDistance <= SquadDecision_SuppressFriendlyDistStart && ammo >= 0.5f;
     }
 
-    private bool shallGroupSearch(BotComponent member)
-    {
-        bool squadSearching =
-            member.Decision.CurrentCombatDecision == ECombatDecision.Search
-            || member.Decision.CurrentSquadDecision == ESquadDecision.Search;
-        if (squadSearching)
-        {
-            return true;
-        }
-        return false;
-    }
-
     private bool shallGroupSearch()
     {
-        if (Bot.Info.Profile.IsBoss && Bot.Info.Profile.WildSpawnType != WildSpawnType.bossKnight)
-        {
-            //return false;
-        }
-
         foreach (var member in Bot.Squad.Members.Values)
         {
             if (member.Decision.CurrentCombatDecision == ECombatDecision.Search && Bot.GoalEnemy != null && doesMemberShareEnemy(member))
@@ -233,65 +209,5 @@ public class SquadDecisionClass : BotBase
                 && member.GoalEnemy.TimeSinceSeen < SquadDecision_EndHelp_FriendsEnemySeenRecentTime;
         }
         return distance < SquadDecision_StartHelpFriendDist && visible;
-    }
-
-    float SquadDecision_Regroup_NoEnemy_StartDist = 125f;
-    float SquadDecision_Regroup_NoEnemy_EndDistance = 50f;
-    float SquadDecision_Regroup_Enemy_StartDist = 50f;
-    float SquadDecision_Regroup_Enemy_EndDistance = 15f;
-    float SquadDecision_Regroup_EnemySeenRecentTime = 60f;
-
-    public bool shallRegroup()
-    {
-        var squad = Bot.Squad;
-        if (squad.IAmLeader)
-        {
-            return false;
-        }
-
-        float maxDist = SquadDecision_Regroup_NoEnemy_StartDist;
-        float minDist = SquadDecision_Regroup_NoEnemy_EndDistance;
-
-        var enemy = Bot.GoalEnemy;
-        if (enemy != null)
-        {
-            if (enemy.IsVisible || (enemy.Seen && enemy.TimeSinceSeen < SquadDecision_Regroup_EnemySeenRecentTime))
-            {
-                return false;
-            }
-            maxDist = SquadDecision_Regroup_Enemy_StartDist;
-            minDist = SquadDecision_Regroup_Enemy_EndDistance;
-        }
-
-        var lead = squad.LeaderComponent;
-        if (lead != null)
-        {
-            Vector3 BotPos = BotOwner.Position;
-            Vector3 leadPos = lead.Transform.Position;
-            Vector3 directionToLead = leadPos - BotPos;
-            float leadDistance = directionToLead.magnitude;
-            if (enemy != null)
-            {
-                Vector3 EnemyPos = enemy.EnemyPosition;
-                Vector3 directionToEnemy = EnemyPos - BotPos;
-                float EnemyDistance = directionToEnemy.magnitude;
-                if (EnemyDistance < leadDistance)
-                {
-                    if (EnemyDistance < 30f && Vector3.Dot(directionToEnemy.normalized, directionToLead.normalized) > 0.25f)
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (Bot.Decision.CurrentSquadDecision == ESquadDecision.Regroup)
-            {
-                return leadDistance > minDist;
-            }
-            else
-            {
-                return leadDistance > maxDist;
-            }
-        }
-        return false;
     }
 }

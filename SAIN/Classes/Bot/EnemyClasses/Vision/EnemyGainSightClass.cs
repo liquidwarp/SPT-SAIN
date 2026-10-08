@@ -157,24 +157,6 @@ public static class EnemyGainSightClass
             * unknownMod
             * poseMod;
 
-        //if (enemy.EnemyPlayer.IsYourPlayer)
-        //{
-        //    Logger.LogWarning($"GainSight Time Result: [{result}] :" +
-        //        $": underFireMod {underFireMod} " +
-        //        $": partMod {partMod} " +
-        //        $": gearMod {gearMod} " +
-        //        $": weatherMod {weatherMod} " +
-        //        $": timeMod {timeMod} " +
-        //        $": moveMod {moveMod} " +
-        //        $": elevMod {elevMod} " +
-        //        $": thirdPartyMod {thirdPartyMod} " +
-        //        $": angleMod {angleMod} " +
-        //        $": notLookMod {notLookMod} " +
-        //        $": unknownMod {unknownMod} " +
-        //        $": poseMod {poseMod} " +
-        //        "");
-        //}
-
         return result;
     }
 
@@ -246,7 +228,6 @@ public static class EnemyGainSightClass
         float num2 = distance - minDist;
         float ratio = num2 / num;
         float result = Mathf.Lerp(minSpeedCoef, 1f, ratio);
-        //Logger.LogInfo($"{check} Distance from Position: {distance} Result: {result}");
         return result;
     }
 
@@ -377,10 +358,6 @@ public static class EnemyGainSightClass
             return min;
         }
 
-        //bool moving = Enemy.Vision.EnemyVelocity > 0.1f;
-        //if (!moving)
-        //    max += 1f;
-
         float num = maxDist - minDist;
         float num2 = enemyDist - minDist;
         float ratio = num2 / num;
@@ -405,8 +382,6 @@ public static class EnemyGainSightClass
         }
         return BotManagerComponent.Instance.TimeVision.TimeGainSightModifier;
     }
-
-    // private static float _nextLogTime;
 
     private static VisionSpeedSettings Settings
     {

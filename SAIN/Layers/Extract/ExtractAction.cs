@@ -11,7 +11,7 @@ using UnityEngine.AI;
 
 namespace SAIN.Layers;
 
-internal class ExtractAction(BotOwner bot) : BotAction(bot, "Extract"), IBotAction
+internal class ExtractAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public static float MinDistanceToStartExtract { get; } = 6f;
 

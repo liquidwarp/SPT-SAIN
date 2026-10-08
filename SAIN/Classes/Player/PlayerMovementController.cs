@@ -171,10 +171,6 @@ public class PlayerMovementController
             target = 57.29578f * Mathf.Atan2(lookDirection.x, lookDirection.z);
         }
         float num = Mathf.DeltaAngle(botOwner.GetPlayer.Rotation.x, target);
-        //if (botOwner.BotLay.IsLay && num > botOwner.Settings.FileSettings.Look.ANGLE_FOR_GETUP)
-        //{
-        //    botOwner.BotLay.GetUp(true);
-        //}
         botOwner.AimingManager.CurrentAiming.RotateX(num);
         botOwner.GetPlayer.Rotate(new Vector2(num, 0f), true);
     }
@@ -369,8 +365,6 @@ public class PlayerMovementController
             Vector3 bulletDropOffset =
                 horizontalDistance < 0.01f ? Vector3.zero : CalculateSimpleBallisticOffset(displacement, muzzleVelocity, gravity);
             Vector3 leadOffset = playerVelocity * (displacement.magnitude / muzzleVelocity);
-            //DebugGizmos.DrawLine(targetPosition, targetPosition + playerVelocity, Color.blue, 0.015f, 5f);
-            //DebugGizmos.DrawLine(targetPosition, targetPosition + leadOffset, Color.green, 0.015f, 5f);
             DebugGizmos.DrawLine(targetPosition, targetPosition + leadOffset + bulletDropOffset, Color.green, 0.015f, 5f);
             return bulletDropOffset + leadOffset;
         }

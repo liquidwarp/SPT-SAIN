@@ -1,6 +1,5 @@
 using SAIN.Components;
 using SAIN.Helpers;
-using SAIN.Models.Enums;
 using SAIN.Preset.Shared.GlobalSettings.Categories.Look;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
@@ -22,11 +21,6 @@ public class BotFlashedClass : BotComponentClassBase
     public bool IsFlashed
     {
         get { return _flashEndTime > Time.time; }
-    }
-
-    public float TimeRemaining
-    {
-        get { return Mathf.Max(0f, _flashEndTime - Time.time); }
     }
 
     public Vector3? LastSeenEnemyPoint { get; private set; }

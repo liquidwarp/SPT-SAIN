@@ -120,7 +120,6 @@ public static class PredictiveLookSmoothing
 
         return adaptiveFactor;
         // Ensure we don't overshoot with large delta times
-        //return Mathf.Clamp01(adaptiveFactor * (deltaTime * 60f)); // Normalize for 60 FPS baseline
     }
 
     private static Vector3 SmoothTowardsTarget(Vector3 current, Vector3 target, float smoothingFactor, SmoothTurnConfig config)
@@ -130,7 +129,6 @@ public static class PredictiveLookSmoothing
         var targetRotation = Quaternion.LookRotation(target, Vector3.up);
 
         var smoothedRotation = Quaternion.Slerp(currentRotation, targetRotation, smoothingFactor);
-        //return smoothedRotation * Vector3.forward; // Already normalized due to quaternion math
 
         // Limit pitch angle
         var eulerAngles = smoothedRotation.eulerAngles;

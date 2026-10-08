@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Squad;
 
-internal class SuppressAction(BotOwner bot) : BotAction(bot, nameof(SuppressAction)), IBotAction
+internal class SuppressAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

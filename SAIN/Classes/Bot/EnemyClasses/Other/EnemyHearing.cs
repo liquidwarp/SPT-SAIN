@@ -2,7 +2,6 @@ using SAIN.Helpers;
 using SAIN.Models.Enums;
 using SAIN.Models.Structs;
 using SAIN.Preset.Shared.Enums;
-using SAIN.SAINComponent.Classes;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
@@ -17,7 +16,6 @@ public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.
         get { return Heard ? Time.time - _timeLastHeard : float.MaxValue; }
     }
 
-    public BotSound LastSoundHeard { get; set; }
     public Vector3? LastHeardPosition { get; private set; }
 
     private const float REPORT_HEARD_FREQUENCY = 1f;
@@ -52,7 +50,6 @@ public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.
         if (!known)
         {
             Heard = false;
-            LastSoundHeard = null;
             LastHeardPosition = null;
             _timeLastHeard = 0f;
             EnemyHeardFromPeace = false;

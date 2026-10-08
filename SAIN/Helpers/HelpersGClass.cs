@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using EFT;
 using Newtonsoft.Json;
 using SAIN.Preset.Server;
 using SAIN.Preset.Shared;
@@ -9,11 +7,6 @@ namespace SAIN.Helpers;
 
 internal class HelpersGClass
 {
-    public static float LAY_DOWN_ANG_SHOOT
-    {
-        get { return BotInternalSettingsController.Core.LAY_DOWN_ANG_SHOOT; }
-    }
-
     public static float Gravity
     {
         get { return BotInternalSettingsController.Core.G; }
@@ -124,29 +117,4 @@ public class EFTCoreSettings
     {
         BotInternalSettingsController.Core.ARMOR_CLASS_COEF = coef;
     }
-}
-
-public class EFTBotSettings
-{
-    [JsonConstructor]
-    public EFTBotSettings() { }
-
-    public EFTBotSettings(string name, WildSpawnType type, BotDifficulty[] difficulties)
-    {
-        Name = name;
-        WildSpawnType = type;
-        foreach (BotDifficulty diff in difficulties)
-        {
-            Settings.Add(diff, BotInternalSettingsController.GetSettings(diff, type, true));
-        }
-    }
-
-    [JsonProperty]
-    public string Name;
-
-    [JsonProperty]
-    public WildSpawnType WildSpawnType;
-
-    [JsonProperty]
-    public Dictionary<BotDifficulty, BotSettingsComponents> Settings = new();
 }

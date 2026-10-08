@@ -67,50 +67,6 @@ public static class SAINEnableClass
         return false;
     }
 
-    /// <summary>
-    /// Checks if this IPlayer has SAIN enabled or if it is a vanilla bot.
-    /// </summary>
-    public static bool IsSAINDisabledForBot(IPlayer iPlayer)
-    {
-        if (iPlayer == null || !iPlayer.IsAI)
-        {
-            return true;
-        }
-
-        BotOwner botOwner = iPlayer.AIData?.BotOwner;
-        if (botOwner == null)
-        {
-            return true;
-        }
-
-        string id = iPlayer.ProfileId;
-        if (_excludedBots.Contains(id))
-        {
-            return true;
-        }
-
-        if (_enabledBots.Contains(id))
-        {
-            return false;
-        }
-
-        ProfileSettings settings = iPlayer.Profile?.Info?.Settings;
-        if (settings == null)
-        {
-            return true;
-        }
-
-        botOwner.GetPlayer.OnIPlayerDeadOrUnspawn += ClearBot;
-
-        if (IsBotExcluded(botOwner))
-        {
-            _excludedBots.Add(id);
-            return true;
-        }
-        _enabledBots.Add(id);
-        return false;
-    }
-
     private static void Clear()
     {
         _excludedBots.Clear();
@@ -126,14 +82,6 @@ public static class SAINEnableClass
             _excludedBots.Remove(id);
             _enabledBots.Remove(id);
         }
-    }
-
-    /// <summary>
-    /// Checks if this bot has SAIN enabled or if it is a vanilla bot.
-    /// </summary>
-    public static bool IsBotExcluded(string profileId)
-    {
-        return !_enabledBots.Contains(profileId);
     }
 
     /// <summary>

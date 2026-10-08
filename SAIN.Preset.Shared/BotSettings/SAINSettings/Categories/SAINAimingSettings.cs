@@ -78,11 +78,6 @@ public class SAINAimingSettings : SAINSettingsBase<SAINAimingSettings>, ISAINSet
     [MinMax(0.05f, 0.75f, 100f)]
     public float FasterCQBReactionsMinimum = 0.33f;
 
-    //[Name("Accuracy Spread Multiplier")]
-    //[Description("Higher = less accurate. Modifies a bot's base accuracy and spread. 1.5 = 1.5x higher accuracy spread")]
-    //[MinMax(0.1f, 10f, 10f)]
-    //public float AccuracySpreadMulti = 1f;
-
     [DataMember]
     [Category("Time to Aim")]
     [Name("Max Aiming Upgrade By Time")]
@@ -127,12 +122,6 @@ public class SAINAimingSettings : SAINSettingsBase<SAINAimingSettings>, ISAINSet
     [Hidden]
     [IgnoreDataMember]
     public int AIMING_TYPE = 1;
-
-    //[Name("Friendly Fire Spherecast Size")]
-    //[Description("")]
-    //[MinMax(0f, 0.5f, 100f)]
-    //[Advanced]
-    //public float SHPERE_FRIENDY_FIRE_SIZE = 0.15f;
 
     [DataMember]
     [Hidden]
@@ -180,8 +169,4 @@ public class SAINAimingSettings : SAINSettingsBase<SAINAimingSettings>, ISAINSet
     [Hidden]
     [IgnoreDataMember]
     public float OFFSET_RECAL_ANYWAY_TIME = 30f;
-
-    //[Hidden]
-    //[JsonIgnore]
-    //public float RECALC_SQR_DIST = 2f * 2f;
 }

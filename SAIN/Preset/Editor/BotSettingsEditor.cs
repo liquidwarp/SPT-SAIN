@@ -56,22 +56,6 @@ public static class BotSettingsEditor
         EndScrollView();
     }
 
-    public static bool CheckIfOpen(SettingsContainer container, float height = 30f)
-    {
-        BeginHorizontal();
-        container.Open = BuilderClass.ExpandableMenu(container.Name, container.Open, null, height);
-        if (Button("Clear", "Clear Selected Options in this Menu", EFT.UI.EUISoundType.MenuDropdownSelect, Width(100), Height(height)))
-        {
-            container.SelectedCategories.Clear();
-            foreach (var category in container.Categories)
-            {
-                category.SelectedList.Clear();
-            }
-        }
-        EndHorizontal();
-        return container.Open;
-    }
-
     public static bool WasEdited;
 
     private static void CategoryOpenable(List<Category> categories, object settingsObject, out bool wasEdited, string search = null)

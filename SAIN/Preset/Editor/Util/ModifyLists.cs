@@ -13,15 +13,6 @@ namespace SAIN.Editor.Util;
 
 public static class ModifyLists
 {
-    public static void EditDictionary(Dictionary<ELocation, float> dictionary, out bool wasEdited)
-    {
-        wasEdited = false;
-        if (dictionary != null)
-        {
-            foreach (var item in EnumValues.GetEnum<ELocation>()) { }
-        }
-    }
-
     public static void AddOrRemove(List<WildSpawnType> list, out bool wasEdited, int optionsPerLine = 4)
     {
         wasEdited = false;
@@ -39,60 +30,6 @@ public static class ModifyLists
                 i = ListSpacing(i, optionsPerLine);
             }
             EndListEdit();
-        }
-    }
-
-    public static void AddOrRemoveConfigOptions(SettingsContainer container, out bool wasEdited, string search = null)
-    {
-        var dimensions = new GUILayoutOption[] { Height(PresetHandler.EditorDefaults.ConfigEntryHeight), Width(500f) };
-
-        wasEdited = false;
-        foreach (var category in container.Categories)
-        {
-            string categoryName = category.CategoryInfo.Name;
-            string categoryDesciption = category.CategoryInfo.Description;
-            // Display the value of the category. And make it a openable dropdown menu
-            if (string.IsNullOrEmpty(search))
-            {
-                category.Open = BuilderClass.ExpandableMenu(
-                    categoryName,
-                    category.Open,
-                    categoryDesciption,
-                    PresetHandler.EditorDefaults.ConfigEntryHeight
-                );
-                if (!category.Open)
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                Label(categoryName, categoryDesciption, Height(PresetHandler.EditorDefaults.ConfigEntryHeight));
-            }
-
-            bool newEdit;
-            // Get the fields in this category
-            foreach (var fieldAtt in category.FieldAttributesList)
-            {
-                // Check if the user is searching
-                if (!string.IsNullOrEmpty(search) && !fieldAtt.Name.ToLower().Contains(search))
-                {
-                    continue;
-                }
-
-                // Add or remove this field from the list
-                AddOrRemove(fieldAtt, category.SelectedList, out newEdit, fieldAtt.Name, fieldAtt.Description, dimensions);
-                if (newEdit)
-                {
-                    wasEdited = true;
-                }
-            }
-
-            AddOrRemove(category, container.SelectedCategories, category.SelectedList.Count > 0, out newEdit);
-            if (newEdit)
-            {
-                wasEdited = true;
-            }
         }
     }
 

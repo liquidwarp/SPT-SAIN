@@ -25,7 +25,6 @@ public class SetGrenadePatch : ModulePatch
         {
             return;
         }
-        //__instance.Mass = potentialGrenade.Weight;
         botComponent.Grenade.MyGrenade = potentialGrenade;
     }
 }

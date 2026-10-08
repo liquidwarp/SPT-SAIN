@@ -40,10 +40,6 @@ public static class BotPersonalityEditor
     }
 
     private static EPersonality _selected = EPersonality.None;
-    public static bool PersonalitiesWereEdited
-    {
-        get { return ConfigEditingTracker.UnsavedChanges; }
-    }
 
     private static List<EPersonality> _options = new();
 

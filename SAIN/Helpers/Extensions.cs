@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using EFT;
 using JetBrains.Annotations;
 using SAIN.Preset.Shared.Enums;
 using SAIN.SAINComponent.Classes.Mover;
@@ -25,19 +24,6 @@ public static class Extensions
         {
             case EBodyPart.LeftLeg:
             case EBodyPart.RightLeg:
-                return true;
-
-            default:
-                return false;
-        }
-    }
-
-    public static bool IsPMC(this WildSpawnType type)
-    {
-        switch (type)
-        {
-            case WildSpawnType.pmcBEAR:
-            case WildSpawnType.pmcUSEC:
                 return true;
 
             default:

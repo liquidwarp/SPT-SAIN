@@ -14,9 +14,4 @@ public abstract class AIDataBase
     {
         get { return AIData.PlayerComponent.Equipment.GearInfo; }
     }
-
-    protected bool IsAI
-    {
-        get { return AIData.IsAI; }
-    }
 }

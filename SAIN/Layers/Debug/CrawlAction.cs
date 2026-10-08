@@ -6,11 +6,10 @@ using UnityEngine.AI;
 
 namespace SAIN.Layers.Combat.Run;
 
-internal class CrawlAction(BotOwner bot) : BotAction(bot, nameof(CrawlAction)), IBotAction
+internal class CrawlAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {
-        //Bot.Mover.SetTargetPose(1f);
         Bot.Mover.SetTargetMoveSpeed(1f);
 
         if (nextRandomRunTime > Time.time && (_runDestination - Bot.Position).sqrMagnitude < 1f)

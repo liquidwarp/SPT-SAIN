@@ -39,18 +39,8 @@ public class BodyPartStatus
         }
     }
 
-    public float PartHealth
-    {
-        get { return _healthController.GetBodyPartHealth(_bodyPart, false).Current; }
-    }
-
     public float PartHealthNormalized
     {
         get { return _healthController.GetBodyPartHealth(_bodyPart, false).Normalized; }
-    }
-
-    public bool PartDestoyed
-    {
-        get { return _healthController.IsBodyPartDestroyed(_bodyPart); }
     }
 }

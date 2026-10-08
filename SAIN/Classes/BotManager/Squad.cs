@@ -12,7 +12,6 @@ using SAIN.Preset;
 using SAIN.Preset.Shared.Enums;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace SAIN.BotController.Classes;
 
@@ -46,13 +45,6 @@ public class Squad
     }
 
     public float TimeThatLeaderDied { get; private set; }
-    public List<PlaceForCheck> GroupPlacesForCheck
-    {
-        get { return BotsGroup?.PlacesForCheck; }
-    }
-
-    public Dictionary<ESquadRole, BotComponent> Roles { get; } = new Dictionary<ESquadRole, BotComponent>();
-    public Dictionary<string, PlaceForCheck> PlayerPlaceChecks { get; } = new Dictionary<string, PlaceForCheck>();
 
     public bool MemberIsRegrouping
     {
@@ -201,11 +193,6 @@ public class Squad
 
         position.y = enemy.EnemyPosition.y;
 
-        //AISoundType baseSoundType = soundType.Convert();
-        //PlaceForCheckType checkType = isDanger ? PlaceForCheckType.danger : PlaceForCheckType.simple;
-        //PlaceForCheck newPlace = addNewPlaceForCheck(bot.BotOwner, position, checkType, enemy.EnemyIPlayer);
-        //Vector3 pos = newPlace?.Position ?? position;
-
         SAINHearingReport report = new()
         {
             position = position,
@@ -234,152 +221,11 @@ public class Squad
         Enemy enemy = sain.EnemyController.CheckAddEnemy(player);
         if (enemy == null)
         {
-            //Logger.LogError($"Could not find enemy!");
             return;
         }
 
         bool isDanger = (position - sain.Position).sqrMagnitude < SOUND_DIST_ALWAYS_DANGER * SOUND_DIST_ALWAYS_DANGER;
         AddPlaceForCheck(position, soundType.Convert(), sain, enemy, false, isDanger, Time.time);
-    }
-
-    private PlaceForCheck addNewPlaceForCheck(BotOwner botOwner, Vector3 position, PlaceForCheckType checkType, IPlayer player)
-    {
-        const float navSampleDist = 10f;
-        const float dontLerpDist = 50f;
-
-        if (findNavMesh(position, out Vector3 hitPosition, navSampleDist))
-        {
-            // Too many places were being sent to a bot, causing confused behavior.
-            // This way I'm tying 1 placeforcheck to each player and updating it based on new info.
-            if (PlayerPlaceChecks.TryGetValue(player.ProfileId, out PlaceForCheck oldPlace))
-            {
-                if (oldPlace != null && (oldPlace.BasePoint - position).sqrMagnitude <= dontLerpDist * dontLerpDist)
-                {
-                    Vector3 averagePosition = averagePosition = Vector3.Lerp(oldPlace.BasePoint, hitPosition, 0.5f);
-
-                    if (
-                        findNavMesh(averagePosition, out hitPosition, navSampleDist)
-                        && canPathToPoint(hitPosition, botOwner) != NavMeshPathStatus.PathInvalid
-                    )
-                    {
-                        GroupPlacesForCheck.Remove(oldPlace);
-                        PlaceForCheck replacementPlace = new(hitPosition, checkType);
-                        GroupPlacesForCheck.Add(replacementPlace);
-                        PlayerPlaceChecks[player.ProfileId] = replacementPlace;
-                        calcGoalForBot(botOwner);
-                        return replacementPlace;
-                    }
-                }
-            }
-
-            if (canPathToPoint(hitPosition, botOwner) != NavMeshPathStatus.PathInvalid)
-            {
-                PlaceForCheck newPlace = new(position, checkType);
-                GroupPlacesForCheck.Add(newPlace);
-                AddOrUpdatePlaceForPlayer(newPlace, player);
-                calcGoalForBot(botOwner);
-                return newPlace;
-            }
-        }
-        return null;
-    }
-
-    private bool findNavMesh(Vector3 position, out Vector3 hitPosition, float navSampleDist = 2f)
-    {
-        if (NavMesh.SamplePosition(position, out NavMeshHit hit, navSampleDist, -1))
-        {
-            hitPosition = hit.position;
-            return true;
-        }
-        hitPosition = Vector3.zero;
-        return false;
-    }
-
-    private NavMeshPathStatus canPathToPoint(Vector3 point, BotOwner botOwner)
-    {
-        NavMeshPath path = new();
-        NavMesh.CalculatePath(botOwner.Position, point, -1, path);
-        return path.status;
-    }
-
-    private void calcGoalForBot(BotOwner botOwner)
-    {
-        try
-        {
-            //if (!botOwner.Memory.GoalTarget.HavePlaceTarget() && botOwner.Memory.GoalEnemy == null)
-            //{
-            //    botOwner.BotsGroup.CalcGoalForBot(botOwner);
-            //}
-        }
-        catch (Exception e)
-        {
-            Logger.LogError(e);
-        }
-    }
-
-    private void AddOrUpdatePlaceForPlayer(PlaceForCheck place, IPlayer player)
-    {
-        string id = player.ProfileId;
-        if (PlayerPlaceChecks.ContainsKey(id))
-        {
-            PlayerPlaceChecks[id] = place;
-        }
-        else
-        {
-            player.OnIPlayerDeadOrUnspawn += clearPlayerPlace;
-            PlayerPlaceChecks.Add(id, place);
-        }
-    }
-
-    private void clearPlayerPlace(IPlayer player)
-    {
-        if (player == null)
-        {
-            return;
-        }
-
-        player.OnIPlayerDeadOrUnspawn -= clearPlayerPlace;
-        string id = player.ProfileId;
-
-        if (PlayerPlaceChecks.ContainsKey(id))
-        {
-            GroupPlacesForCheck.Remove(PlayerPlaceChecks[id]);
-            PlayerPlaceChecks.Remove(id);
-
-            foreach (var bot in Members.Values)
-            {
-                if (bot != null && bot.BotOwner != null)
-                {
-                    try
-                    {
-                        BotsGroup?.CalcGoalForBot(bot.BotOwner);
-                    }
-                    catch
-                    {
-                        // Was throwing error with Project fika, causing players to not be able to extract
-                    }
-                }
-            }
-        }
-    }
-
-    public bool MemberHasDecision(params ECombatDecision[] decisionsToCheck)
-    {
-        foreach (var member in MemberInfos.Values)
-        {
-            if (member != null && member.Bot != null)
-            {
-                var memberDecision = member.SoloDecision;
-                foreach (var decision in decisionsToCheck)
-                {
-                    if (decision == memberDecision)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     public bool MemberHasDecision(params ESquadDecision[] decisionsToCheck)
@@ -389,25 +235,6 @@ public class Squad
             if (member != null && member.Bot != null)
             {
                 var memberDecision = member.SquadDecision;
-                foreach (var decision in decisionsToCheck)
-                {
-                    if (decision == memberDecision)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    public bool MemberHasDecision(params ESelfActionType[] decisionsToCheck)
-    {
-        foreach (var member in MemberInfos.Values)
-        {
-            if (member != null && member.Bot != null)
-            {
-                var memberDecision = member.SelfDecision;
                 foreach (var decision in decisionsToCheck)
                 {
                     if (decision == memberDecision)
@@ -595,18 +422,6 @@ public class Squad
         }
 
         RemoveMember(player?.ProfileId);
-    }
-
-    public void MemberExtracted(BotComponent sain)
-    {
-#if DEBUG
-        if (SAINPlugin.DebugMode)
-        {
-            Logger.LogInfo($"Leader [{sain?.Player?.Profile.Nickname}] Extracted for Squad: [{Id}]");
-        }
-#endif
-
-        RemoveMember(sain?.ProfileId);
     }
 
     private void findSquadLeader()

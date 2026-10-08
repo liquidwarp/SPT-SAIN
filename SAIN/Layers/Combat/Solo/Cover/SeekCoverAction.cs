@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Solo.Cover;
 
-internal class SeekCoverAction(BotOwner bot) : BotAction(bot, nameof(SeekCoverAction)), IBotAction
+internal class SeekCoverAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {
@@ -102,10 +102,6 @@ internal class SeekCoverAction(BotOwner bot) : BotAction(bot, nameof(SeekCoverAc
 
             default:
                 newLean = Bot.Mover.Lean.FindLeanFromBlindCornerAngle(Bot.GoalEnemy);
-                //if (newLean == LeanSetting.None)
-                //{
-                //    newLean = EFTMath.RandomBool() ? LeanSetting.Left : LeanSetting.Right;
-                //}
                 ChangeLeanTimer = Time.time + Random.Range(0.5f, 2f);
                 break;
         }
@@ -186,7 +182,6 @@ internal class SeekCoverAction(BotOwner bot) : BotAction(bot, nameof(SeekCoverAc
         var cover = Bot.Cover;
         stringBuilder.AppendLabeledValue("Cover Seeking State", $"{cover.CoverSeekingState}", Color.white, Color.yellow, true);
         stringBuilder.AppendLabeledValue("Running To Cover", $"{cover.SprintingToCover}", Color.white, Color.yellow, true);
-        //stringBuilder.AppendLabeledValue("CoverFinder State", $"{cover.CurrentCoverFinderState}", Color.white, Color.yellow, true);
         stringBuilder.AppendLabeledValue("Cover Count", $"{cover.CoverPoints.Count}", Color.white, Color.yellow, true);
         DebugOverlay.AddMoveData(Bot, stringBuilder);
         CoverPoint point = Bot.Cover.CoverInUse;

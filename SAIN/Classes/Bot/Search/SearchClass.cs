@@ -142,7 +142,6 @@ public class SearchClass : BotComponentClassBase
         EnemyPlace targetPlace = PathFinder.TargetPlace;
         if (targetPlace == null)
         {
-            //Logger.LogWarning($"{BotOwner.name}'s targetPlace is null, cannot search!");
             return;
         }
 
@@ -169,18 +168,6 @@ public class SearchClass : BotComponentClassBase
         }
 
         // if a bot is looking towards something they heard or got shot, pause their search movement temporarily
-        //switch (Bot.Steering.CurrentSteerPriority)
-        //{
-        //    case ESteerPriority.LastHit:
-        //    case ESteerPriority.HeardThreat:
-        //        Bot.Mover.PathFollower.Pause(0.33f);
-        //        break;
-        //
-        //    default:
-        //        if (CurrentState != ESearchMove.Wait)
-        //            Bot.Mover.PathFollower.Unpause();
-        //        break;
-        //}
 
         ESearchMove previousState = CurrentState;
         switch (CurrentState)
@@ -223,7 +210,6 @@ public class SearchClass : BotComponentClassBase
             case ESearchMove.Wait:
                 if (WaitAtPoint())
                 {
-                    //Bot.Mover.SetTargetMoveSpeed(0f);
                     Bot.Mover.SetTargetPose(0.75f);
                     break;
                 }
@@ -347,15 +333,5 @@ public class SearchClass : BotComponentClassBase
         CurrentState = ESearchMove.None;
         LastState = ESearchMove.None;
         NextState = ESearchMove.None;
-    }
-
-    public bool BotIsAtPoint(Vector3 point, float reachDist = 0.5f)
-    {
-        return DistanceToDestination(point) < reachDist;
-    }
-
-    public float DistanceToDestination(Vector3 point)
-    {
-        return (point - Bot.Position).magnitude;
     }
 }

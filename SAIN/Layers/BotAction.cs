@@ -4,29 +4,22 @@ using EFT;
 using SAIN.Components;
 using SAIN.SAINComponent.Classes;
 using SAIN.SAINComponent.Classes.EnemyClasses;
-using SAIN.SAINComponent.Classes.Mover;
 
 namespace SAIN.Layers;
 
 public interface IBotAction
 {
-    public string Name { get; }
-
-    public void OnPathSteeringTicked(BotPathCorner cornerDestination, int currentCornerIndex, int totalCorners);
-
     public void OnSteeringTicked();
 
     public void UpdateMovement();
 }
 
-public abstract class BotAction(BotOwner botOwner, string name) : CustomLogic(botOwner), IBotAction
+public abstract class BotAction(BotOwner botOwner) : CustomLogic(botOwner), IBotAction
 {
     protected SAINShootData Shoot
     {
         get { return Bot.Shoot; }
     }
-
-    public string Name { get; private set; } = name;
 
     public override void BuildDebugText(StringBuilder stringBuilder)
     {
@@ -56,11 +49,6 @@ public abstract class BotAction(BotOwner botOwner, string name) : CustomLogic(bo
     protected EnemyList KnownEnemies { get; private set; }
 
     public virtual void UpdateMovement() { }
-
-    public virtual void OnPathSteeringTicked(BotPathCorner cornerDestination, int currentCornerIndex, int totalCorners)
-    {
-        OnSteeringTicked();
-    }
 
     public virtual void OnSteeringTicked()
     {

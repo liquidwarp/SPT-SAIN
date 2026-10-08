@@ -45,8 +45,6 @@ public class SquadPersonalityManager
         {
             stringbuilder.AppendLine($"[{personality.Key}] : [{personality.Value}]");
         }
-
-        //Logger.LogAndNotifyInfo(stringbuilder.ToString());
     }
 
     private static EPersonality GetMostFrequentPersonality(Dictionary<EPersonality, int> PersonalityCounts, out int count)
@@ -62,7 +60,6 @@ public class SquadPersonalityManager
             }
         }
 
-        //Logger.LogAndNotifyInfo($"Most Frequent Personality [{mostFrequent}] : Count {count}");
         return mostFrequent;
     }
 
@@ -92,7 +89,6 @@ public class SquadPersonalityManager
                 break;
         }
 
-        //Logger.LogAndNotifyInfo($"Assigned Squad Personality of [{result}] because most frequent personality is [{mostFrequentPersonality}]");
         return result;
     }
 

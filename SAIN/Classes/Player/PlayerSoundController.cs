@@ -39,12 +39,6 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
             case EPlayerState.Idle:
             case EPlayerState.IdleZombieState:
             case EPlayerState.TurnZombieState:
-                /*
-                if (_idleCoroutine != null)
-                {
-                    player.StopCoroutine(_idleCoroutine);
-                }
-                */
                 break;
             case EPlayerState.Run:
             case EPlayerState.MoveZombieState:
@@ -127,7 +121,6 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
             case EPlayerState.Idle:
             case EPlayerState.IdleZombieState:
             case EPlayerState.TurnZombieState:
-                //_idleCoroutine = StartCoroutine(method_72(nextstate));
                 break;
             case EPlayerState.Run:
             case EPlayerState.MoveZombieState:

@@ -12,12 +12,6 @@ namespace SAIN.SAINComponent.Classes.Mover;
 
 public interface IBotPathFinder
 {
-    public IBotPathData ActivePath { get; }
-    public bool Moving { get; }
-    public bool Running { get; }
-    public bool Crawling { get; }
-
-    public event Action<OperationResult, IBotPathData> OnPathComplete;
 
     public void PathComplete(OperationResult result, IBotPathData pathData);
 
@@ -57,7 +51,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
 
         if (InteractWithDoor())
         {
-            //Logger.LogDebug($"[{Bot.name}] door interaction");
             Status = EBotMoveStatus.DoorInteraction;
             PathFinder.PathSteeringTicked(currentCorner, CurrentIndex, PathCorners.Count);
             return;
@@ -65,7 +58,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
 
         if (CheckPaused())
         {
-            //Logger.LogDebug($"[{Bot.name}] paused");
             Status = EBotMoveStatus.Paused;
             PathFinder.PathSteeringTicked(currentCorner, CurrentIndex, PathCorners.Count);
             return;
@@ -73,7 +65,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
 
         Status = EBotMoveStatus.Moving;
 
-        //Util.StopVanillaMover(Bot.BotOwner.Mover);
         Bot.Mover.Prone.SetProne(Crawling);
 
 #if DEBUG
@@ -104,7 +95,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
         else
         {
             Bot.BotOwner.ShootData.EndShoot();
-            //Bot.BotOwner.ShootData.BlockFor(0.05f);
             Bot.Aim.LoseAimTarget();
             Bot.ManualShoot.Reset();
             Bot.Suppression.ResetSuppressing();
@@ -162,11 +152,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
         return true;
     }
 
-    public void UpdateSprint(ESprintUrgency urgency)
-    {
-        SprintUrgency = urgency;
-    }
-
     public void RequestStartSprint(ESprintUrgency urgency, string reason)
     {
         WantToSprint = true;
@@ -183,16 +168,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
     public string SprintReason { get; private set; }
 
     public bool Crawling { get; private set; }
-
-    public void RequestStartCrawl()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void RequestEndCrawl()
-    {
-        throw new NotImplementedException();
-    }
 
     public bool Moving
     {
@@ -237,24 +212,12 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
     public bool PausedRequested { get; private set; }
     public bool CancelRequested { get; private set; }
 
-    public bool OnLastCorner
-    {
-        get { return CurrentIndex == PathCorners.Count - 1; }
-    }
-
     public float CurrentCornerDistanceSqr
     {
         get { return CurrentCornerMoveData.SqrMagnitude; }
     }
 
-    public float CurrentCornerDistance
-    {
-        get { return CurrentCornerMoveData.Magnitude; }
-    }
-
     public NavMeshPathStatus PathStatus { get; set; }
-
-    public int Id { get; private set; } = _moveID++;
 
     /// <summary>
     /// Prepare a path, but dont start it yet. Must call Start() to start the path.
@@ -286,7 +249,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
     private float _unpauseTime;
     private float _pauseStartTime;
     private float _cancelTime;
-    private static int _moveID = 0;
 
     protected readonly BotComponent Bot = bot;
 
@@ -320,11 +282,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             }
         }
         return false;
-    }
-
-    public void RecalcPath()
-    {
-        throw new NotImplementedException();
     }
 
     public BotPathCorner GetCurrentCorner()
@@ -389,7 +346,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
     {
         Status = EBotMoveStatus.Complete;
         PathFinder.PathComplete(new OperationResult(success, reason), this);
-        //Logger.LogDebug($"[{Bot.name}]:[{Id}]: Complete Move: Duration [{Time.time - TimeStarted}] Reason: [{reason}]");
         ClearCachedData();
     }
 
@@ -436,29 +392,13 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             Bot.AimDownSightsController.SetADS(false);
             if (Bot.DoorOpener.Interacting || Bot.DoorOpener.TryInteractWithDoor(type, Time.time, data))
             {
-                //DoorDataStruct doorData = Bot.DoorOpener.GetActiveDoor();
-                //Logger.LogDebug($"[{Bot.name}]:[{Id}]: Reverse Path");
                 Vector3 position = CurrentIndex == 0 ? StartPosition : PathCorners[CurrentIndex - 1].Position;
                 Vector3 dirNormal = (position - Bot.Position).normalized;
                 Bot.PlayerComponent.CharacterController.SetTargetMoveDirection(position, position, Bot.PlayerComponent, 0.33f, 1.33f);
                 return true;
             }
         }
-        //if (!_activeDoorInteraction.lookedAtHandle) _activeDoorInteraction.lookedAtHandle = Bot.Steering.IsLookingAtPoint(_activeDoorInteraction.doorHandleLook, out _);
-        //if (_activeDoorInteraction.lookedAtHandle)
-        //{
-        //DebugGizmos.DrawLine(Bot.Transform.WeaponData.WeaponRoot, _activeDoorInteraction.doorHandleLook, Color.green, 0.05f, 1f / 60f, true);
-        //Logger.LogDebug($"[{Bot.name}]:[{Id}]:[{doorData.Link.Id}] looking at handle. DoorState: [{doorData.Door.DoorState}] Desired State: [{desiredDoorState}]");
 
-        //Bot.Steering.Unlock();
-        //if (_activeDoorInteraction.pullOpenDoor) BackUpFromDoor(doorData);
-        //return true;
-        //}
-        //Logger.LogDebug($"[{Bot.name}]:[{Id}]:[{doorData.Link.Id}] Look To Handle. DoorState: [{doorData.Door.DoorState}] Desired State: [{_activeDoorInteraction.desiredDoorState}]");
-        //MoveToInteract(_activeDoorInteraction.doorHandleLook, _activeDoorInteraction.movePosition);
-        //return true;
-
-        //Bot.Steering.Unlock();
         return false;
     }
 
@@ -468,12 +408,10 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
         {
             if (_unpauseTime < Time.time)
             {
-                //Logger.LogDebug($"[{Bot.name}]:[{Id}]: unpaused");
                 UnPause();
             }
             else if (_pauseStartTime < Time.time)
             {
-                //Logger.LogDebug($"[{Bot.name}]:[{Id}]: paused");
                 SetSprint(false);
                 return true;
             }
@@ -493,11 +431,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             var currentMoveData = CurrentCornerMoveData;
             if (currentMoveData.Dot < 0.75f)
             {
-                //Logger.LogDebug($"[{Bot.name}]:[{Id}]: recalc from Dot MoveData: " +
-                //    $"{currentMoveData.CornerDirectionFromBot}:" +
-                //    $"{currentMoveData.CornerDirectionFromBotNormal}:" +
-                //    $"{currentMoveData.Dot}:" +
-                //    $"{currentMoveData.SqrMagnitude}");
                 PathRecalcRequested = true;
                 return true;
             }
@@ -515,22 +448,12 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             {
                 if (CheckObjectInWay(BotPosition(), CurrentCornerMoveData.CornerDirectionFromBot, 1f, 0.2f, 1f))
                 {
-                    //Logger.LogDebug($"[{Bot.name}]:[{Id}]: recalc from object in way: " +
-                    //    $"{currentMoveData.CornerDirectionFromBot}:" +
-                    //    $"{currentMoveData.CornerDirectionFromBotNormal}:" +
-                    //    $"{currentMoveData.Dot}:" +
-                    //    $"{currentMoveData.SqrMagnitude}");
                     PathRecalcRequested = true;
                     return true;
                 }
                 float timeSinceNoMove = Time.time - _timeNotMoving;
                 if (timeSinceNoMove > 2)
                 {
-                    //Logger.LogDebug($"[{Bot.name}]:[{Id}]: recalc from no move: " +
-                    //    $"{currentMoveData.CornerDirectionFromBot}:" +
-                    //    $"{currentMoveData.CornerDirectionFromBotNormal}:" +
-                    //    $"{currentMoveData.Dot}:" +
-                    //    $"{currentMoveData.SqrMagnitude}");
                     PathRecalcRequested = true;
                     return true;
                 }
@@ -681,7 +604,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             //if (CurrentCornerDistance >= START_SPRINT_CORNER_MIN_DIST && Util.ShallStartSprintStamina(stamina, SprintUrgency))
             if (Util.ShallStartSprintStamina(stamina, SprintUrgency))
             {
-                //Logger.LogDebug($"start sprint {staminaNormal}");
                 return EBotSprintStatus.Running;
             }
         }
@@ -723,23 +645,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
 
     private static class Util
     {
-        public static void PrepareBot(BotComponent bot, bool sprinting)
-        {
-            if (bot == null || bot.BotOwner == null)
-            {
-                return;
-            }
-
-            StopVanillaMover(bot.BotOwner.Mover);
-            bot.BotOwner.WeaponManager?.Stationary?.StartMove();
-            if (sprinting)
-            {
-                bot.Aim.LoseAimTarget();
-                bot.AimDownSightsController.SetADS(false);
-                bot.Mover.Prone.SetProne(false);
-            }
-        }
-
         public static EBotCornerType FindCornerType(int count, int i)
         {
             if (i == count - 1) // LastCorner?
@@ -753,22 +658,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             else
             {
                 return EBotCornerType.PathPoint;
-            }
-        }
-
-        public static void StopVanillaMover(BotMover botOwnerMover)
-        {
-            if (botOwnerMover == null)
-            {
-                return;
-            }
-            // Make sure the vanilla path finder is NOT active
-            if (botOwnerMover.IsMoving || botOwnerMover.HasPathAndNoComplete)
-            {
-                botOwnerMover.Stop(); // Backwards sprint / moonwalking fix
-#if DEBUG
-                Logger.LogDebug($"vanilla mover stopped");
-#endif
             }
         }
 

@@ -7,10 +7,8 @@ using UnityEngine;
 
 namespace SAIN.Components;
 
-public class DoorHandler : GameWorldBase, IGameWorldClass
+public class DoorHandler : GameWorldBase
 {
-    public event Action<Door, EDoorState, bool> OnDoorStateChanged;
-
     public event Action<bool> OnDoorsDisabled;
 
     public DoorHandler(GameWorldComponent component)
@@ -37,27 +35,6 @@ public class DoorHandler : GameWorldBase, IGameWorldClass
         _doorsWithTriggers.Clear();
     }
 
-    public void ChangeDoorState(Door door, EDoorState state, bool shallInvert)
-    {
-        if (shallInvert)
-        {
-            door.OpenAngle = -door.OpenAngle;
-        }
-
-        door.SetDoorState(state);
-        OnDoorStateChanged?.Invoke(door, state, shallInvert);
-
-        if (shallInvert)
-        {
-            door.OpenAngle = -door.OpenAngle;
-        }
-    }
-
-    public void HostDisabledDoors(bool value)
-    {
-        _doorsDisabledByHost = value;
-    }
-
     private void checkDoors()
     {
         if (Singleton<IBotGame>.Instance == null)
@@ -65,7 +42,7 @@ public class DoorHandler : GameWorldBase, IGameWorldClass
             return;
         }
 
-        bool shallDisable = _doorsDisabledByHost || GlobalSettingsClass.Instance.General.Doors.DisableAllDoors;
+        bool shallDisable = GlobalSettingsClass.Instance.General.Doors.DisableAllDoors;
 
         if (!_doorsDisabled && shallDisable)
         {
@@ -144,6 +121,4 @@ public class DoorHandler : GameWorldBase, IGameWorldClass
     private bool _doorsDisabled;
     private readonly Dictionary<string, Door> _disabledDoors = new();
     private readonly Dictionary<int, GameObject> _doorsWithTriggers = new();
-
-    private bool _doorsDisabledByHost;
 }

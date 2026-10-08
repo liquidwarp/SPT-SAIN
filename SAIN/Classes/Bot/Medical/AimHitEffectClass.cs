@@ -71,7 +71,6 @@ public class AimHitEffectClass : BotBase
             this.decayAffect();
             Vector3 affect = this._affectVector * this._affectAmount;
             Vector3 result = dir.normalized + affect;
-            //DebugGizmos.Ray(Bot.Transform.WeaponRoot, result, Color.yellow, 1f, 0.05f, true, 5f);
             return result;
         }
         return dir;
@@ -91,13 +90,9 @@ public class AimHitEffectClass : BotBase
     private Vector3 getHitReactionDir(DamageInfo DamageInfo)
     {
         Vector3 hitPoint = DamageInfo.HitPoint;
-        //DebugGizmos.Sphere(hitPoint, 0.25f, Color.red, true, 0.25f);
         Vector3 center = Bot.Transform.BodyPosition;
-        //DebugGizmos.Sphere(center, 0.25f, Color.blue, true, 0.25f);
         Vector3 offset = hitPoint - center;
         Vector3 result = offset.normalized * DAMAGE_HIT_OFFSET_BASE_DIST;
-        //result.x *= 1.5f;
-        //result.z *= 1.5f;
         result.y *= 0.5f;
         return result;
     }

@@ -5,14 +5,11 @@ namespace SAIN.SAINComponent.SubComponents.CoverFinder;
 
 public class SainBotCoverData()
 {
-    public List<CoverPoint> CoverPoints { get; } = [];
     public List<SainBotColliderData> ValidCollidersList { get; } = [];
 
     private const int PRELLOCATED_SIZE = 500;
     private readonly Collider[] _preAllocatedColliderArray = new Collider[PRELLOCATED_SIZE];
     private readonly HashSet<Collider> validCollidersHashSet = [];
-
-    //private readonly HashSet<Collider> _preAllocColliderHashSet = [];
 
     /// <returns>Number of valid colliders found in query</returns>
     public int OverlapBoxAndFilter(BotColliderQueryParams parameters)
@@ -46,7 +43,6 @@ public class SainBotCoverData()
         UpdateColliderDistances(ValidCollidersList, origin);
         SortCollidersByDistance(ValidCollidersList, origin);
         ClearCollidersOverDistance(ValidCollidersList, validCollidersHashSet, MAX_DISTANCE, MIN_COLLIDERS);
-        //Logger.LogDebug($"Currently {ValidCollidersList.Count} valid colliders");
     }
 
     private static void UpdateColliderDistances(List<SainBotColliderData> list, Vector3 origin)

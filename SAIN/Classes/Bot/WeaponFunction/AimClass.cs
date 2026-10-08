@@ -128,14 +128,6 @@ public class AimClass : BotComponentClassBase, IBotClass
         {
             return false;
         }
-        if (BotOwner.WeaponManager.Reload.Reloading)
-        {
-            //return false;
-        }
-        if (!Bot.HasEnemy)
-        {
-            //return false;
-        }
         return true;
     }
 

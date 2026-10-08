@@ -48,30 +48,6 @@ public class EnemyPlace : IDisposable
         return Position + Vector3.up * 1.5f;
     }
 
-    public bool ShallClear
-    {
-        get { return PlayerLeftArea; }
-    }
-
-    private bool PlayerLeftArea
-    {
-        get
-        {
-            if (_nextCheckLeaveTime < Time.time)
-            {
-                _nextCheckLeaveTime = Time.time + ENEMY_DIST_TO_PLACE_CHECK_FREQ;
-                // If the person this place was created for is AI and left the area, just forget it and move on.
-                float dist = DistanceToEnemyRealPosition;
-                if (PlaceData.IsAI)
-                {
-                    return dist > ENEMY_DIST_TO_PLACE_FOR_LEAVE_AI;
-                }
-                return dist > ENEMY_DIST_TO_PLACE_FOR_LEAVE;
-            }
-            return false;
-        }
-    }
-
     public void SetDistances(float BotDistanceToPlace, float EnemyDistanceToPlace, BotComponent bot)
     {
         if (bot == PlaceData.Owner)
@@ -199,16 +175,6 @@ public class EnemyPlace : IDisposable
         DistanceToEnemyRealPosition = (position - PlaceData.OwnerEnemy.EnemyTransform.Position).magnitude;
     }
 
-    public float Distance(Vector3 point)
-    {
-        return (_position - point).magnitude;
-    }
-
-    public float DistanceSqr(Vector3 toPoint)
-    {
-        return (_position - toPoint).sqrMagnitude;
-    }
-
     public bool HasArrivedPersonal
     {
         get { return _hasArrivedPers; }
@@ -263,7 +229,6 @@ public class EnemyPlace : IDisposable
     }
 
     private Vector3 _position;
-    private float _nextCheckLeaveTime;
     public float _timeLastUpdated;
     private bool _hasArrivedPers;
     public float _timeArrivedPers;

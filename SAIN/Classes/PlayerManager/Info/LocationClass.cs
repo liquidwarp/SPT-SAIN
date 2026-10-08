@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SAIN.Components;
 
-public class LocationClass : GameWorldBase, IGameWorldClass
+public class LocationClass : GameWorldBase
 {
     public bool WinterActive
     {

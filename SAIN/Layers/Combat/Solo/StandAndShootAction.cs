@@ -8,15 +8,12 @@ using UnityEngine.AI;
 
 namespace SAIN.Layers.Combat.Solo;
 
-public class StandAndShootAction(BotOwner bot) : BotAction(bot, nameof(StandAndShootAction)), IBotAction
+public class StandAndShootAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {
         Enemy enemy = Bot.GoalEnemy;
-        //if (!shallMoveShoot)
-        //{
         Bot.Mover.Pose.SetPoseToCover(enemy);
-        //}
     }
 
     private bool shallMoveShoot = false;

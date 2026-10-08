@@ -130,7 +130,7 @@ public class BlindFireController : BotBase, IBotClass
 
     private void TryShoot(Enemy enemy)
     {
-        if (Bot.ManualShoot.TryShoot(enemy, BlindFireTargetPos, false, EShootReason.Blindfire))
+        if (Bot.ManualShoot.TryShoot(enemy, BlindFireTargetPos, EShootReason.Blindfire))
         {
             _manualShooting = true;
         }
@@ -158,11 +158,6 @@ public class BlindFireController : BotBase, IBotClass
     }
 
     private Vector3 BlindFireTargetPos;
-
-    public bool BlindFireActive
-    {
-        get { return ActiveBlindFireSetting != 0; }
-    }
 
     public int ActiveBlindFireSetting
     {

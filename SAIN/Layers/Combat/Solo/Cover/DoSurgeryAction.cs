@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Solo.Cover;
 
-internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner, "Surgery"), IBotAction
+internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {
@@ -31,12 +31,11 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner, "Surgery
             else if (_actionStartedTime + 30f < Time.time)
             {
                 bot.Player?.ActiveHealthController?.RestoreFullHealth();
-                bot.Decision.ResetDecisions(true);
+                bot.Decision.ResetDecisions();
             }
         }
         else
         {
-            //Bot.Mover.SetTargetMoveSpeed(1);
             bot.Mover.SetTargetPose(1);
 
             bot.Medical.Surgery.SurgeryStarted = false;
@@ -62,11 +61,11 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner, "Surgery
             if (Bot.GoalEnemy == null || Bot.GoalEnemy.TimeSinceSeen > 90f)
             {
                 Bot.Player?.ActiveHealthController?.RestoreFullHealth();
-                Bot.Decision.ResetDecisions(true);
+                Bot.Decision.ResetDecisions();
             }
             return;
         }
-        Bot.Decision.ResetDecisions(true);
+        Bot.Decision.ResetDecisions();
     }
 
     public override void Start()

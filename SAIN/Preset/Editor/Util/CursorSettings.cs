@@ -62,8 +62,6 @@ internal static class CursorSettings
         if (_curLockState != null)
         {
             // Do through reflection for unity 4 compat
-            //Cursor.lockState = CursorLockMode.None;
-            //Cursor.visible = true;
             if (_obsoleteCursor)
             {
                 _curLockState.SetValue(null, Convert.ToBoolean(lockState), null);

@@ -1,5 +1,4 @@
 ﻿using EFT;
-using EFT.Interactive;
 using SAIN.Components;
 using UnityEngine;
 
@@ -62,18 +61,8 @@ public class SAINLootingBotsIntegration
         {
             UpdateInfoTimer = Time.time + 5f;
             NetLootValue = LootingBots.LootingBotsInterop.GetNetLootValue(BotOwner);
-            if (NetLootValue != 0)
-            {
-                //Logger.LogWarning(NetLootValue);
-            }
             FullInventory = LootingBots.LootingBotsInterop.CheckIfInventoryFull(BotOwner);
         }
-    }
-
-    private int GetItemPrice(LootItem item)
-    {
-        float price = LootingBots.LootingBotsInterop.GetItemPrice(item);
-        return Mathf.RoundToInt(price);
     }
 
     public bool FullOnLoot { get; private set; }

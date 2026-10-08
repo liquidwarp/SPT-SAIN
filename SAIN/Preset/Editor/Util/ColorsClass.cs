@@ -49,26 +49,6 @@ public static class ColorsClass
         }
     }
 
-    public static Color GetRandomColor(string key)
-    {
-        if (!RandomColors.ContainsKey(key))
-        {
-            RandomColors.Add(key, CreateRandom());
-        }
-        return RandomColors[key];
-    }
-
-    private static Color CreateRandom()
-    {
-        float random = UnityEngine.Random.Range(0.3f, 2.00f) * 0.151f;
-        return new Color(random * Randomize, random, random);
-    }
-
-    private static float Randomize
-    {
-        get { return UnityEngine.Random.Range(0.81f, 1.21f); }
-    }
-
     private static readonly Dictionary<string, Color> RandomColors = new();
 
     public static readonly string SchemeName;

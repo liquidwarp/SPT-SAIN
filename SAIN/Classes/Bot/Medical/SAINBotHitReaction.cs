@@ -3,14 +3,11 @@ using EFT;
 using EFT.Ballistics;
 using EFT.HealthSystem;
 using SAIN.Components;
-using SAIN.Models.Enums;
-using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes;
 
 public class SAINBotHitReaction : BotBase
 {
-    public EHitReaction HitReaction { get; private set; }
     public IHealthController HealthController
     {
         get { return Player.HealthController; }
@@ -70,37 +67,6 @@ public class SAINBotHitReaction : BotBase
 
     private const float StunDamageThreshold = 50;
     private const float BaseStunTime = 3f;
-
-    private float TimeStunHappened;
-    private float StunTime;
-
-    public bool IsStunned
-    {
-        get
-        {
-            if (_isStunned && StunTime < Time.time)
-            {
-                _isStunned = false;
-            }
-            return _isStunned;
-        }
-        set
-        {
-            if (value)
-            {
-                TimeStunHappened = Time.time;
-                StunTime = Time.time + BaseStunTime * UnityEngine.Random.Range(0.75f, 1.25f);
-            }
-            _isStunned = value;
-        }
-    }
-
-    private bool _isStunned;
-
-    private bool IsStunnedFromDamage(DamageInfo DamageInfo)
-    {
-        return false;
-    }
 
     public Dictionary<EBodyPart, BodyPartStatus> BodyParts = new();
 }

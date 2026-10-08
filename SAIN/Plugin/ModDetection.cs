@@ -4,7 +4,6 @@ using BepInEx.Bootstrap;
 using SAIN.Helpers;
 using UnityEngine;
 using static SAIN.AssemblyInfoClass;
-using static SAIN.Editor.SAINLayout;
 
 namespace SAIN;
 
@@ -56,16 +55,6 @@ public static class ModDetection
             FikaBackendUtils = FikaAssembly.GetType("Fika.Core.Main.Utils.FikaBackendUtils");
             IsServerProperty = FikaBackendUtils.GetProperty("IsServer", BindingFlags.Public | BindingFlags.Static);
             IsClientProperty = FikaBackendUtils.GetProperty("IsClient", BindingFlags.Public | BindingFlags.Static);
-        }
-
-        public static bool IsServer()
-        {
-            if (IsServerProperty == null)
-            {
-                return false;
-            }
-
-            return (bool)IsServerProperty.GetValue(null);
         }
 
         public static bool IsClient()
@@ -124,25 +113,6 @@ public static class ModDetection
         {
             EFTCoreSettings.UpdateArmorClassCoef(6f);
         }
-    }
-
-    public static void ModDetectionGUI()
-    {
-        BeginVertical();
-
-        BeginHorizontal();
-        IsDetected(LootingBotsLoaded, "Looting Bots");
-        IsDetected(QuestingBotsLoaded, "Questing Bots");
-        IsDetected(RealismLoaded, "Realism Mod");
-        EndHorizontal();
-
-        EndVertical();
-    }
-
-    private static void IsDetected(bool value, string name)
-    {
-        Label(name);
-        Box(value ? "Detected" : "Not Detected");
     }
 
     private static readonly float ModsCheckTimer = -1f;

@@ -66,8 +66,6 @@ public class BotLightController : BotComponentClassBase
 
     private bool wantLightOn;
 
-    public void ToggleLaser(bool value) { }
-
     public void HandleLightForSearch(float distanceToCurrentCornerSqr)
     {
         const float DISTANCE_TO_CORNER_TURN_LIGHT_ON = 15f;

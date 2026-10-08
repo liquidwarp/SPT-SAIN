@@ -77,15 +77,6 @@ public class SAINBotInfoClass : BotComponentClassBase
         get { return Difficulty.AggressionModifier; }
     }
 
-    public void SetPersonality(EPersonality personality)
-    {
-        if (SAINPlugin.LoadedPreset.PersonalityManager.PersonalityDictionary.TryGetValue(personality, out var personalitySettings))
-        {
-            PersonalitySettingsClass = personalitySettings;
-            Personality = personality;
-        }
-    }
-
     private void ConfigureBot(SAINPresetClass preset)
     {
         Personality = GetPersonality(out var settings);

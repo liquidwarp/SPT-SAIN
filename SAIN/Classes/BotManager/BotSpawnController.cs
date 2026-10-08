@@ -102,23 +102,19 @@ public class BotSpawnController : BotManagerBase
 
     public void AddBot(BotOwner botOwner)
     {
-        //Logger.LogDebug($"Checking {botOwner.name} for adding sain");
         PlayerComponent playerComponent = null;
         BotComponent botComponent = null;
         try
         {
             CheckExisting(botOwner);
-            //Logger.LogDebug($"Checking {botOwner.name}...");
             playerComponent = botOwner.gameObject.GetComponent<PlayerComponent>();
             playerComponent.InitializeBotOwner(botOwner);
 
-            //Logger.LogDebug($"Checking if {botOwner.name} excluded...");
             if (SAINEnableClass.IsSAINDisabledForBot(botOwner))
             {
                 return;
             }
 
-            //Logger.LogDebug($"Adding SAIN to {botOwner.name}...");
             botComponent = botOwner.gameObject.AddComponent<BotComponent>();
         }
         catch (Exception e)
@@ -173,8 +169,6 @@ public class BotSpawnController : BotManagerBase
 
     public HashSet<BotComponent> BotGroup1 { get; } = [];
     public HashSet<BotComponent> BotGroup2 { get; } = [];
-
-    public HashSet<BotOwner> VanillaBots { get; } = [];
     public HashSet<BotComponent> SAINBots { get; } = [];
 
     public void Subscribe(BotSpawner botSpawner)

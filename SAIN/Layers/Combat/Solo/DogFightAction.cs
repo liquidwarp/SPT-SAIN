@@ -5,7 +5,7 @@ using SAIN.SAINComponent.Classes.EnemyClasses;
 
 namespace SAIN.Layers.Combat.Solo;
 
-internal class DogFightAction(BotOwner bot) : BotAction(bot, "Dog Fight"), IBotAction
+internal class DogFightAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     public override void Update(CustomLayer.ActionData data)
     {

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Reflection;
 using BepInEx.Logging;
 using EFT.Communications;
-using EFT.UI;
 using UnityEngine;
 
 namespace SAIN;
@@ -34,67 +33,11 @@ internal static class Logger
         Log(LogLevel.Error, data);
     }
 
-    public static void NotifyInfo(object data, ENotificationDurationType duration = ENotificationDurationType.Default)
-    {
-        NotifyMessage(data, duration, ENotificationIconType.Note);
-    }
-
-    public static void NotifyDebug(object data, ENotificationDurationType duration = ENotificationDurationType.Default)
-    {
-        NotifyMessage(data, duration, ENotificationIconType.Note, Color.gray);
-    }
-
-    public static void NotifyWarning(object data, ENotificationDurationType duration = ENotificationDurationType.Default)
-    {
-        NotifyMessage(data, duration, ENotificationIconType.Alert, Color.yellow);
-    }
-
-    public static void NotifyError(object data, ENotificationDurationType duration = ENotificationDurationType.Long)
-    {
-        NotifyMessage(data, duration, ENotificationIconType.Alert, Color.red, true);
-    }
-
-    public static void LogAndNotifyInfo(object data, ENotificationDurationType duration = ENotificationDurationType.Default)
-    {
-        Log(LogLevel.Info, data);
-        NotifyMessage(data, duration, ENotificationIconType.Note);
-    }
-
-    public static void LogAndNotifyDebug(object data, ENotificationDurationType duration = ENotificationDurationType.Default)
-    {
-        Log(LogLevel.Debug, data);
-        NotifyMessage(data, duration, ENotificationIconType.Note, Color.gray);
-    }
-
-    public static void LogAndNotifyWarning(object data, ENotificationDurationType duration = ENotificationDurationType.Default)
-    {
-        Log(LogLevel.Warning, data);
-        NotifyMessage(data, duration, ENotificationIconType.Alert, Color.yellow);
-    }
-
     public static void LogAndNotifyError(object data, ENotificationDurationType duration = ENotificationDurationType.Long)
     {
         Log(LogLevel.Error, data);
         string message = CreateErrorMessage(data);
         NotificationManager.DisplayMessageNotification(message, duration, ENotificationIconType.Alert, Color.red);
-    }
-
-    public static void NotifyMessage(
-        object data,
-        ENotificationDurationType durationType = ENotificationDurationType.Default,
-        ENotificationIconType iconType = ENotificationIconType.Default,
-        UnityEngine.Color? textColor = null,
-        bool Error = false
-    )
-    {
-#if DEBUG
-        if (_nextNotification < Time.time && SAINPlugin.DebugMode)
-        {
-            _nextNotification = Time.time + 0.1f;
-            string message = Error ? CreateErrorMessage(data) : data.ToString();
-            NotificationManager.DisplayMessageNotification(message, durationType, iconType, textColor);
-        }
-#endif
     }
 
     private static string CreateErrorMessage(object data)
@@ -154,20 +97,8 @@ internal static class Logger
         {
             SAINLogger = BepInEx.Logging.Logger.CreateLogSource("SAIN");
         }
-        if (level == LogLevel.Error || level == LogLevel.Fatal)
-        {
-            //NotifyError(data);
-            if (MonoBehaviourSingleton<PreloaderUI>.Instance?.Console != null)
-            {
-                //ConsoleScreen.LogError(data.ToString());
-            }
-        }
         SAINLogger.Log(level, result);
     }
-
-#if DEBUG
-    private static float _nextNotification;
-#endif
 
     private static int GetMaxFrames(LogLevel level)
     {

@@ -17,13 +17,8 @@ using UnityEngine;
 
 namespace SAIN.Components.PlayerComponentSpace;
 
-public class PlayerComponent : MonoBehaviour, IDisposable, ISPlayer
+public class PlayerComponent : MonoBehaviour, IDisposable
 {
-    public Vector3 NavMeshPosition
-    {
-        get { return Transform.NavData.Position; }
-    }
-
     private const int MaxCachedSounds = 4;
 
     public event Action<WeaponInfo, Vector3> OnShoot;
@@ -238,12 +233,6 @@ public class PlayerComponent : MonoBehaviour, IDisposable, ISPlayer
         return float.MaxValue;
     }
 
-    public bool IsPlayerInRange(string ProfileId, float maxDistance, out float playerDistance)
-    {
-        playerDistance = GetDistanceToPlayer(ProfileId);
-        return playerDistance <= maxDistance;
-    }
-
     public void ManualUpdate(float currentTime, float deltaTime)
     {
         ActivationClass.CheckActive(this);
@@ -305,7 +294,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable, ISPlayer
             Player = iPlayer as Player;
             Name = Player.name;
 
-            ActivationClass = new PersonActiveClass(this);
+            ActivationClass = new PersonActiveClass();
 
             OtherPlayersData = new OtherPlayersData(this);
             PlayerTickData = new PlayerTickData(this);
@@ -323,9 +312,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable, ISPlayer
             Logger.LogError(ex);
             return false;
         }
-        //Logger.LogDebug($"{Person.Nickname} Player Component Created");
         StartCoroutine(DelayInit());
-        //StartCoroutine(voiceTest());
         return true;
     }
 
@@ -383,24 +370,6 @@ public class PlayerComponent : MonoBehaviour, IDisposable, ISPlayer
         {
             return false;
         }
-
-        //if (aggressive &&
-        //    speaker.PhrasesBanks.TryGetValue(phrase, out var phrasesBank)) {
-        //    _aggroIndexes.Clear();
-        //    int count = phrasesBank.Clips.Length;
-        //    for (int i = 0; i < count; i++) {
-        //        if (phrasesBank.Clips[i].Clip.name.EndsWith("_bl")) {
-        //            _aggroIndexes.Add(i);
-        //        }
-        //    }
-        //
-        //    if (_aggroIndexes.Count > 0) {
-        //        int index = _aggroIndexes.PickRandom();
-        //        speaker.PlayDirect(phrase, index);
-        //        //Logger.LogInfo($"{phrase} :: {phrasesBank.Clips[index].Clip.name} :: {index}");
-        //        return true;
-        //    }
-        //}
 
         return speaker.Play(phrase, mask, true, null) != null;
     }

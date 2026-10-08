@@ -105,11 +105,6 @@ internal class EditTabsClass
         SAINLayout.EndScrollView();
     }
 
-    public static bool IsTabSelected(EEditorTab tab)
-    {
-        return SelectedTab == tab;
-    }
-
     public static EEditorTab SelectedTab = EEditorTab.Home;
     public static readonly string[] Tabs;
     public static readonly string[] TabTooltips;

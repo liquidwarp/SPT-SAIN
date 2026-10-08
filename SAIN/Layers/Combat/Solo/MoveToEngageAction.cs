@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SAIN.Layers.Combat.Solo;
 
-internal class MoveToEngageAction(BotOwner bot) : BotAction(bot, nameof(MoveToEngageAction)), IBotAction
+internal class MoveToEngageAction(BotOwner bot) : BotAction(bot), IBotAction
 {
     private const float RECALC_PATH_INTERVAL = 2f;
     private const float SPRINT_MIN_DISTANCE = 15f;

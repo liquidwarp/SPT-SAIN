@@ -285,7 +285,7 @@ public class SAINBotSuppressClass : BotComponentClassBase
 
     public bool SuppressPosition(Vector3 position, Enemy Enemy)
     {
-        if (Enemy == null || !Bot.ManualShoot.TryShoot(Enemy, position, true, EShootReason.Suppress))
+        if (Enemy == null || !Bot.ManualShoot.TryShoot(Enemy, position, EShootReason.Suppress))
         {
             ResetSuppressing();
             return false;
@@ -306,8 +306,6 @@ public class SAINBotSuppressClass : BotComponentClassBase
 
     public void ResetSuppressing()
     {
-        //if (EnemyBeingSuppressed != null || SuppressingTarget)
-        //{
         if (EnemyBeingSuppressed != null)
         {
             EnemyBeingSuppressed.Status.EnemyIsSuppressed = false;
@@ -317,7 +315,6 @@ public class SAINBotSuppressClass : BotComponentClassBase
         SuppressingTarget = false;
         Bot.ManualShoot.Reset();
         _suppressTime = 0;
-        //}
     }
 
     private Enemy LastSuppressedEnemy;

@@ -5,11 +5,6 @@ namespace SAIN.SAINComponent.Classes.Decision;
 
 public class SAINDecisionClass : BotComponentClassBase
 {
-    public bool HasDecision
-    {
-        get { return DecisionManager.HasDecision; }
-    }
-
     public ECombatDecision CurrentCombatDecision
     {
         get { return DecisionManager.CurrentCombatDecision; }
@@ -125,8 +120,8 @@ public class SAINDecisionClass : BotComponentClassBase
         base.Dispose();
     }
 
-    public void ResetDecisions(bool active)
+    public void ResetDecisions()
     {
-        DecisionManager.ResetDecisions(active);
+        DecisionManager.ResetDecisions();
     }
 }

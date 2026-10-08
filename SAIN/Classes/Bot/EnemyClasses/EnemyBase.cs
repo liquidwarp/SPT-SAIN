@@ -4,7 +4,6 @@ using SAIN.Components;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Plugin;
 using SAIN.Preset;
-using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.EnemyClasses;
 
@@ -60,10 +59,5 @@ public abstract class EnemyBase
         PresetHandler.OnPresetUpdated -= UpdatePresetSettings;
         Enemy.Events.OnEnemyKnownChanged.OnToggle -= OnEnemyKnownChanged;
         Enemy.OnEnemyDisposed -= Dispose;
-    }
-
-    protected Vector3 EnemyCurrentPosition
-    {
-        get { return EnemyTransform.Position; }
     }
 }

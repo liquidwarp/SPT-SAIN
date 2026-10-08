@@ -15,7 +15,6 @@ internal class ComponentHelpers
     {
         if (component == null)
         {
-            //LogDebug("Component is already null, no need to dispose");
             return;
         }
 
