@@ -1,73 +1,34 @@
-using EFT;
 using SAIN.Preset.Shared.GlobalSettings.Categories.Look;
+using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes;
 
 public static class SAINNotLooking
 {
-    private static LookSettings Settings
+    public static float GetVisionSpeedDecrease(Enemy enemy)
     {
-        get { return SAINPlugin.LoadedPreset.GlobalSettings.Look; }
-    }
-
-    public static float GetSpreadIncrease(IPlayer person, BotOwner botOwner)
-    {
-        if (Settings.NotLooking.NotLookingToggle && CheckIfPlayerNotLooking(person, botOwner))
+        NotLookingSettings settings = SAINPlugin.LoadedPreset.GlobalSettings.Look.NotLooking;
+        if (settings.NotLookingToggle && CheckIfPlayerNotLooking(enemy, settings))
         {
-            return Settings.NotLooking.NotLookingAccuracyAmount;
-        }
-        return 0f;
-    }
-
-    public static float GetVisionSpeedDecrease(EnemyInfo enemyInfo)
-    {
-        if (CheckIfPlayerNotLooking(enemyInfo))
-        {
-            return Settings.NotLooking.NotLookingVisionSpeedModifier;
+            return settings.NotLookingVisionSpeedModifier;
         }
         return 1f;
     }
 
-    private static bool CheckIfPlayerNotLooking(IPlayer player, BotOwner botOwner)
+    private static bool CheckIfPlayerNotLooking(Enemy enemy, NotLookingSettings settings)
     {
-        if (player == null || botOwner == null)
-        {
-            return false;
-        }
-        if (botOwner.EnemiesController.EnemyInfos.TryGetValue(player, out EnemyInfo enemyInfo))
-        {
-            return CheckIfPlayerNotLooking(enemyInfo);
-        }
-        return false;
-    }
-
-    private static bool CheckIfPlayerNotLooking(EnemyInfo enemyInfo)
-    {
-        if (enemyInfo == null || enemyInfo.Owner == null)
-        {
-            return false;
-        }
-        IPlayer player = enemyInfo.Person;
-        if (player == null)
-        {
-            return false;
-        }
-
         if (
-            !enemyInfo.HaveSeenPersonal
-            || Time.time - enemyInfo.PersonalSeenTime <= Settings.NotLooking.NotLookingTimeLimit
-            || !enemyInfo.IsVisible
+            enemy.InLineOfSight
+            && Time.time - enemy.Events.OnEnemyLineOfSightChanged.TimeLastTrue > settings.NotLookingTimeLimit
         )
         {
-            Vector3 lookDir = player.LookDirection.normalized;
-            Vector3 playerPos = player.Position;
-            Vector3 botPos = enemyInfo.Owner.Position;
-            Vector3 botDir = (botPos - playerPos).normalized;
-            float angle = Vector3.Angle(botDir, lookDir);
-            return angle >= Settings.NotLooking.NotLookingAngle;
+            return false;
         }
 
-        return false;
+        // Eye to chest, so the player's look pitch is compared against a matching vector.
+        Vector3 botDir = enemy.Bot.Transform.BodyPosition - enemy.EnemyTransform.EyePosition;
+        float angle = Vector3.Angle(botDir, enemy.EnemyTransform.LookDirection);
+        return angle >= settings.NotLookingAngle;
     }
 }

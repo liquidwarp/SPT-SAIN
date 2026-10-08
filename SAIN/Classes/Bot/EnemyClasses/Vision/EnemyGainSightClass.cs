@@ -139,7 +139,7 @@ public static class EnemyGainSightClass
         float notLookMod = 1f;
         if (!enemy.IsAI)
         {
-            notLookMod = SAINNotLooking.GetVisionSpeedDecrease(enemy.EnemyInfo);
+            notLookMod = SAINNotLooking.GetVisionSpeedDecrease(enemy);
         }
 
         float result =
