@@ -235,17 +235,24 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
 
     [DataMember]
     [Name("No Headphones")]
-    [Description("If a bot does not have headphones, reduce audible range of all sounds by this amount.")]
+    [Description("If a bot does not have headphones, multiply the audible range of all sounds except unsuppressed gunshots by this amount.")]
     [Category("Hearing Modifiers")]
-    [MinMax(0.01f, 1f, 1000f)]
-    public float HEAR_MODIFIER_NO_EARS = 0.6f;
+    [MinMax(0.01f, 1f, 100f)]
+    public float HEAR_MODIFIER_NO_EARS = 0.7f;
+
+    [DataMember]
+    [Name("Light Helmet")]
+    [Description("If a bot without headphones is wearing a helmet or face cover that slightly muffles hearing, multiply the audible range of all sounds except unsuppressed gunshots by this amount, on top of No Headphones.")]
+    [Category("Hearing Modifiers")]
+    [MinMax(0.01f, 1f, 100f)]
+    public float HEAR_MODIFIER_LIGHT_HELMET = 0.9f;
 
     [DataMember]
     [Name("Heavy Helmet")]
-    [Description("If a bot is wearing a heavy helmet, reduce audible range of all sounds by this amount.")]
+    [Description("If a bot without headphones is wearing a helmet or face cover that strongly muffles hearing, multiply the audible range of all sounds except unsuppressed gunshots by this amount, on top of No Headphones.")]
     [Category("Hearing Modifiers")]
     [MinMax(0.01f, 1f, 100f)]
-    public float HEAR_MODIFIER_HEAVY_HELMET = 0.8f;
+    public float HEAR_MODIFIER_HEAVY_HELMET = 0.69f;
 
     [DataMember]
     [Name("Dying")]

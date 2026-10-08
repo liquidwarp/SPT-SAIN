@@ -1,10 +1,12 @@
 using EFT;
+using EFT.InventoryLogic;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.GlobalSettings;
 using SAIN.Preset.Shared.GlobalSettings.Categories;
 using SAIN.SAINComponent;
 using SAIN.SAINComponent.Classes.EnemyClasses;
+using SAIN.SAINComponent.Classes.Info;
 using UnityEngine;
 
 namespace SAIN.Classes.Bot.Sense.Hearing;
@@ -186,13 +188,19 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
 
         if (SoundType != SAINSoundType.Shot)
         {
-            if (!Bot.PlayerComponent.Equipment.GearInfo.HasEarPiece)
+            GearInfo gearInfo = Bot.PlayerComponent.Equipment.GearInfo;
+            if (!gearInfo.HasEarPiece)
             {
                 modifier *= _settings.HEAR_MODIFIER_NO_EARS;
             }
-            if (Bot.PlayerComponent.Equipment.GearInfo.HasHeavyHelmet)
+
+            if (gearInfo.Deafness == EDeafStrength.High)
             {
                 modifier *= _settings.HEAR_MODIFIER_HEAVY_HELMET;
+            }
+            else if (gearInfo.Deafness == EDeafStrength.Low)
+            {
+                modifier *= _settings.HEAR_MODIFIER_LIGHT_HELMET;
             }
             if (Bot.Memory.Health.Dying && !Bot.Memory.Health.OnPainKillers)
             {

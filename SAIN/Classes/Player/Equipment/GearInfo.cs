@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using EFT.InventoryLogic;
 using SAIN.Components.PlayerComponentSpace.Classes.Equipment;
 using UnityEngine;
@@ -10,13 +9,7 @@ public class GearInfo
 {
     public bool HasEarPiece { get; private set; }
 
-    public bool HasHeavyHelmet { get; private set; }
-
-    public int HelmetArmorClass { get; private set; }
-
-    public bool HasFaceShield { get; private set; }
-
-    public int BodyArmorClass { get; private set; }
+    public EDeafStrength Deafness { get; private set; }
 
     protected SAINEquipmentClass Equipment { get; private set; }
 
@@ -41,99 +34,110 @@ public class GearInfo
         WaitForSeconds wait = new(GEAR_UPDATE_FREQ);
         while (true)
         {
-            HasEarPiece = GetItem(EquipmentSlot.Earpiece) != null;
-
-            yield return null;
-
-            // Reset previous results if any
-            HasFaceShield = false;
-
-            // Get the headwear item on this player
-            Item helmetItem = GetItem(EquipmentSlot.Headwear);
-
-            if (helmetItem != null)
-            {
-                // Get a list of faceshield components attached to the headwear item, see if any have AC.
-                helmetItem.GetItemComponentsInChildrenNonAlloc(_faceShieldComponents);
-
-                yield return null;
-
-                foreach (var faceComponent in _faceShieldComponents)
-                {
-                    if (faceComponent.Item.IsArmorMod())
-                    {
-                        HasFaceShield = true;
-                        break;
-                    }
-                }
-                _faceShieldComponents.Clear();
-            }
-
-            yield return null;
-
-            // Reset previous results if any
-            HasHeavyHelmet = false;
-
-            // Get a list of armor components attached to the headwear item, check to see which has the highest AC, and check if any make the user deaf.
-            HelmetArmorClass = findMaxAC(helmetItem);
-            foreach (ArmorComponent armor in _armorList)
-            {
-                if (armor.Deaf == EDeafStrength.High)
-                {
-                    HasHeavyHelmet = true;
-                    break;
-                }
-            }
-            _armorList.Clear();
-
-            yield return null;
-
-            int vestAC = findMaxAC(EquipmentSlot.ArmorVest);
-            _armorList.Clear();
-
-            yield return null;
-
-            int bodyAC = findMaxAC(EquipmentSlot.TacticalVest);
-            _armorList.Clear();
-
-            BodyArmorClass = Mathf.Max(vestAC, bodyAC);
-
+            updateHeadGear();
             yield return wait;
         }
     }
 
     public Item GetItem(EquipmentSlot slot)
     {
-        return _equipment.GetSlot(slot).ContainedItem;
+        return _equipment.GetSlot(slot)?.ContainedItem;
     }
 
-    private int findMaxAC(Item item)
+    /// <summary>
+    /// Mirrors Player.UpdatePhonesReally: headphones come from the Earpiece slot, or anywhere on the headwear.
+    /// Without headphones, deafness comes from an armored helmet, or failing that from the face cover's armor.
+    /// </summary>
+    private void updateHeadGear()
     {
-        if (item == null)
+        bool headphones = HasHeadphones(_equipment);
+        EDeafStrength deafness = EDeafStrength.None;
+        if (!headphones)
         {
-            return 0;
-        }
-
-        item.GetItemComponentsInChildrenNonAlloc(_armorList, true);
-
-        int result = 0;
-        for (int i = 0; i < _armorList.Count; i++)
-        {
-            ArmorComponent armor = _armorList[i];
-            if (armor.ArmorClass > result)
+            if (GetItem(EquipmentSlot.Headwear) is CompoundItem helmet && helmet.Template is ArmoredEquipmentTemplate template)
             {
-                result = armor.ArmorClass;
+                deafness = maxDeafness(template.DeafStrength, mergedArmorDeafness(helmet));
+            }
+            if (deafness == EDeafStrength.None && GetItem(EquipmentSlot.FaceCover) is CompoundItem faceCover)
+            {
+                deafness = mergedArmorDeafness(faceCover);
             }
         }
-        return result;
+        HasEarPiece = headphones;
+        Deafness = deafness;
     }
 
-    private int findMaxAC(EquipmentSlot slot)
+    // Replicates the headphones lookup in Player.UpdatePhonesReally
+    public static bool HasHeadphones(InventoryEquipment equipment)
     {
-        Item item = _equipment.GetSlot(slot).ContainedItem;
-        return findMaxAC(item);
+        if (equipment.GetSlot(EquipmentSlot.Earpiece)?.ContainedItem is Headphones)
+        {
+            return true;
+        }
+        return equipment.GetSlot(EquipmentSlot.Headwear)?.ContainedItem is CompoundItem headwear && containsHeadphones(headwear);
     }
 
-    private readonly List<FaceShieldComponent> _faceShieldComponents = new();
-    private readonly List<ArmorComponent> _armorList = new();
+    // Replicates GetAllItemsFromCollection().OfType<Headphones>().Any(), slots only
+    private static bool containsHeadphones(Item item)
+    {
+        if (item is Headphones)
+        {
+            return true;
+        }
+        if (item is not CompoundItem compound)
+        {
+            return false;
+        }
+        Slot[] slots = compound.Slots;
+        if (slots == null)
+        {
+            return false;
+        }
+        for (int i = 0; i < slots.Length; i++)
+        {
+            Item contained = slots[i].ContainedItem;
+            if (contained != null && containsHeadphones(contained))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Replicates the max Deaf over GetItemComponentsInChildren<CompositeArmorComponent>()
+    private static EDeafStrength mergedArmorDeafness(Item item)
+    {
+        EDeafStrength deafness = armorDeafness(item);
+        if (deafness == EDeafStrength.High || item is not CompoundItem compound || compound.Slots == null)
+        {
+            return deafness;
+        }
+        Slot[] slots = compound.Slots;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            Slot slot = slots[i];
+            Item contained = slot.ContainedItem;
+            if (contained == null || !slot.MergesWithChildren())
+            {
+                continue;
+            }
+            deafness = maxDeafness(deafness, mergedArmorDeafness(contained));
+            if (deafness == EDeafStrength.High)
+            {
+                break;
+            }
+        }
+        return deafness;
+    }
+
+    private static EDeafStrength armorDeafness(Item item)
+    {
+        CompositeArmorComponent armor = item.GetItemComponent<CompositeArmorComponent>();
+        return armor != null ? armor.Deaf : EDeafStrength.None;
+    }
+
+    private static EDeafStrength maxDeafness(EDeafStrength a, EDeafStrength b)
+    {
+        return a > b ? a : b;
+    }
 }

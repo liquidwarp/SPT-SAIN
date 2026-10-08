@@ -140,7 +140,7 @@ public static class PowerCalcSettingsExtensions
             return result;
         }
 
-        var armorVest = GetEquippedItem(equipment, EquipmentSlot.ArmorVest);
+        var armorVest = equipment.GetSlot(EquipmentSlot.ArmorVest)?.ContainedItem;
         if (armorVest != null)
         {
             armorVest.GetItemComponentsInChildrenNonAlloc(_armorComponents, true);
@@ -150,7 +150,7 @@ public static class PowerCalcSettingsExtensions
         }
         else
         {
-            var rig = GetEquippedItem(equipment, EquipmentSlot.TacticalVest);
+            var rig = equipment.GetSlot(EquipmentSlot.TacticalVest)?.ContainedItem;
             if (rig != null)
             {
                 rig.GetItemComponentsInChildrenNonAlloc(_armorComponents, true);
@@ -163,7 +163,7 @@ public static class PowerCalcSettingsExtensions
             }
         }
 
-        var helmet = GetEquippedItem(equipment, EquipmentSlot.Headwear);
+        var helmet = equipment.GetSlot(EquipmentSlot.Headwear)?.ContainedItem;
         if (helmet != null)
         {
             helmet.GetItemComponentsInChildrenNonAlloc(_armorComponents, true);
@@ -182,7 +182,7 @@ public static class PowerCalcSettingsExtensions
             }
         }
 
-        var faceProtection = GetEquippedItem(equipment, EquipmentSlot.FaceCover);
+        var faceProtection = equipment.GetSlot(EquipmentSlot.FaceCover)?.ContainedItem;
         if (faceProtection != null)
         {
             faceProtection.GetItemComponentsInChildrenNonAlloc(_armorComponents, true);
@@ -192,24 +192,13 @@ public static class PowerCalcSettingsExtensions
             }
         }
 
-        var earPro = GetEquippedItem(equipment, EquipmentSlot.Earpiece);
-        if (earPro != null)
+        if (GearInfo.HasHeadphones(equipment))
         {
             result += settings.EARPRO_POWER;
         }
 
         _armorComponents.Clear();
         return result;
-    }
-
-    private static Item GetEquippedItem(InventoryEquipment equipment, EquipmentSlot slot)
-    {
-        var container = equipment.GetSlot(slot);
-        if (container == null)
-        {
-            return null;
-        }
-        return container.ContainedItem;
     }
 
     private static float FindHighestArmorClass(List<ArmorComponent> armorComponents)
