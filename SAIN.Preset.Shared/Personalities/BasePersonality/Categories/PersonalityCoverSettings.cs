@@ -16,10 +16,6 @@ public class PersonalityCoverSettings : SAINSettingsBase<PersonalityCoverSetting
     public bool CanShiftCoverPosition = true;
 
     [DataMember]
-    [Advanced]
-    public float ShiftCoverTimeMultiplier = 1f;
-
-    [DataMember]
     [Percentage0to1]
     [Advanced]
     public float MoveToCoverNoEnemySpeed = 1f;

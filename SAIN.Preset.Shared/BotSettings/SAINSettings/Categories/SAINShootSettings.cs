@@ -38,12 +38,4 @@ public class SAINShootSettings : SAINSettingsBase<SAINShootSettings>, ISAINSetti
     [Category("Aim")]
     [MinMax(50f, 500f, 1f)]
     public float MaxPointFireDistance = 150f;
-
-    [DataMember]
-    [Category("Firerate")]
-    [Name("Full Auto Scatter Multiplier")]
-    [MinMax(1f, 5f, 100f)]
-    [Advanced]
-    [CopyValue]
-    public float AUTOMATIC_FIRE_SCATTERING_COEF = 1.4f;
 }

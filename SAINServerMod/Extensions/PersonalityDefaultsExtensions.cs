@@ -27,14 +27,11 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.KickOpenAllDoors = true;
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 1.25f;
         behavior.General.HoldGroundMaxRandom = 1.5f;
         behavior.General.HoldGroundMinRandom = 0.65f;
 
         behavior.Cover.CanShiftCoverPosition = true;
-        behavior.Cover.ShiftCoverTimeMultiplier = 0.5f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 1f;
         behavior.Cover.MoveToCoverHasEnemyPose = 1f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 1f;
@@ -62,7 +59,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.Rush.CanRushEnemyReloadHeal = true;
         behavior.Rush.CanJumpCorners = true;
         behavior.Rush.JumpCornerChance = 40f;
-        behavior.Rush.CanBunnyHop = true;
         behavior.Rush.BunnyHopChance = 5;
 
         settings.Assignment.AllowedTypes.AddPmcs();
@@ -88,8 +84,6 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.KickOpenAllDoors = true;
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 2f;
         behavior.General.HoldGroundMaxRandom = 2.5f;
         behavior.General.HoldGroundMinRandom = 0.75f;
@@ -99,7 +93,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.General.TimeSinceShotToSuppress = 30f;
 
         behavior.Cover.CanShiftCoverPosition = true;
-        behavior.Cover.ShiftCoverTimeMultiplier = 0.5f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 1f;
         behavior.Cover.MoveToCoverHasEnemyPose = 1f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 1f;
@@ -127,7 +120,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.Rush.CanRushEnemyReloadHeal = true;
         behavior.Rush.CanJumpCorners = true;
         behavior.Rush.JumpCornerChance = 80f;
-        behavior.Rush.CanBunnyHop = true;
         behavior.Rush.BunnyHopChance = 40;
 
         settings.Assignment.AllowedTypes.AddAllBotTypes();
@@ -153,14 +145,12 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 1.5f;
         behavior.General.HoldGroundMaxRandom = 1.2f;
         behavior.General.HoldGroundMinRandom = 0.8f;
         behavior.General.TARGET_SUPPRESS_TOGGLE = false;
 
         behavior.Cover.CanShiftCoverPosition = true;
-        behavior.Cover.ShiftCoverTimeMultiplier = 2f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 1f;
         behavior.Cover.MoveToCoverHasEnemyPose = 1f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 1f;
@@ -189,7 +179,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.Rush.CanRushEnemyReloadHeal = true;
         behavior.Rush.CanJumpCorners = true;
         behavior.Rush.JumpCornerChance = 100f;
-        behavior.Rush.CanBunnyHop = true;
         behavior.Rush.BunnyHopChance = 20;
 
         settings.Assignment.AllowedTypes.AddPmcs();
@@ -215,13 +204,11 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 1.5f;
         behavior.General.HoldGroundMaxRandom = 1.5f;
         behavior.General.HoldGroundMinRandom = 0.75f;
 
         behavior.Cover.CanShiftCoverPosition = true;
-        behavior.Cover.ShiftCoverTimeMultiplier = 1f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 1f;
         behavior.Cover.MoveToCoverHasEnemyPose = 1f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 1f;
@@ -252,7 +239,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.Rush.CanRushEnemyReloadHeal = true;
         behavior.Rush.CanJumpCorners = false;
         behavior.Rush.JumpCornerChance = 0f;
-        behavior.Rush.CanBunnyHop = false;
         behavior.Rush.BunnyHopChance = 0f;
 
         settings.Assignment.AllowedTypes.AddPmcs();
@@ -279,14 +265,12 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 1f;
         behavior.General.HoldGroundMaxRandom = 1.5f;
         behavior.General.HoldGroundMinRandom = 0.75f;
         behavior.General.TARGET_SUPPRESS_TOGGLE = false;
 
         behavior.Cover.CanShiftCoverPosition = false;
-        behavior.Cover.ShiftCoverTimeMultiplier = 1f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 0.5f;
         behavior.Cover.MoveToCoverHasEnemyPose = 0.5f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 0.5f;
@@ -316,7 +300,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.Rush.CanRushEnemyReloadHeal = false;
         behavior.Rush.CanJumpCorners = false;
         behavior.Rush.JumpCornerChance = 0f;
-        behavior.Rush.CanBunnyHop = false;
         behavior.Rush.BunnyHopChance = 0f;
 
         settings.Assignment.AllowedTypes.AddAllExceptRaiders();
@@ -344,7 +327,6 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 0.5f;
         behavior.General.HoldGroundMaxRandom = 1.5f;
         behavior.General.HoldGroundMinRandom = 0.75f;
@@ -354,7 +336,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.General.TimeSinceShotToSuppress = 60f;
 
         behavior.Cover.CanShiftCoverPosition = false;
-        behavior.Cover.ShiftCoverTimeMultiplier = 0.5f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 0.5f;
         behavior.Cover.MoveToCoverHasEnemyPose = 0.5f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 0.5f;
@@ -384,7 +365,6 @@ internal static class PersonalityDefaultsExtensions
         behavior.Rush.CanRushEnemyReloadHeal = false;
         behavior.Rush.CanJumpCorners = false;
         behavior.Rush.JumpCornerChance = 0f;
-        behavior.Rush.CanBunnyHop = false;
         behavior.Rush.BunnyHopChance = 0f;
 
         settings.Assignment.AllowedTypes.AddAllExceptRaiders();
@@ -412,7 +392,6 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 0.25f;
         behavior.General.HoldGroundMaxRandom = 1.5f;
         behavior.General.HoldGroundMinRandom = 0.75f;
@@ -459,13 +438,11 @@ internal static class PersonalityDefaultsExtensions
 
         var behavior = settings.Behavior;
 
-        behavior.General.AggressionMultiplier = 1;
         behavior.General.HoldGroundBaseTime = 1f;
         behavior.General.HoldGroundMaxRandom = 1.5f;
         behavior.General.HoldGroundMinRandom = 0.5f;
 
         behavior.Cover.CanShiftCoverPosition = true;
-        behavior.Cover.ShiftCoverTimeMultiplier = 1f;
         behavior.Cover.MoveToCoverHasEnemySpeed = 0.75f;
         behavior.Cover.MoveToCoverHasEnemyPose = 1f;
         behavior.Cover.MoveToCoverNoEnemySpeed = 0.75f;

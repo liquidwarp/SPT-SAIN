@@ -353,49 +353,6 @@ public class DoorOpener : BotComponentClassBase
         return false;
     }
 
-    public bool ShallKickOpen(Door door, EInteractionType Etype)
-    {
-        if (Etype != EInteractionType.Open)
-        {
-            return false;
-        }
-        if (!WantToKick())
-        {
-            return false;
-        }
-        var breakInParameters = door.GetBreakInParameters(Bot.Position);
-        return door.BreachSuccessRoll(breakInParameters.InteractionPosition);
-    }
-
-    private bool WantToKick()
-    {
-        var enemy = Bot.GoalEnemy;
-        if (enemy != null)
-        {
-            if (Bot.Info.PersonalitySettings.General.KickOpenAllDoors)
-            {
-                return true;
-            }
-            if (BotOwner.Memory.IsUnderFire)
-            {
-                return true;
-            }
-            float? timeSinceSeen = enemy.TimeSinceSeen;
-            if (timeSinceSeen != null)
-            {
-                if (timeSinceSeen.Value < 3f)
-                {
-                    return true;
-                }
-                if (timeSinceSeen.Value < 5f && enemy.InLineOfSight)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static bool IsDoorPullOpen(DoorDataStruct doorData, Vector3 botPosition)
     {
         Vector3 doorOpenPos = doorData.Link.Open2;

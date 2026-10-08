@@ -36,11 +36,6 @@ public class SAINPlugin : BaseUnityPlugin
         get { return DebugSettings.Logs.GlobalDebugMode; }
     }
 
-    public static bool ProfilingMode
-    {
-        get { return DebugSettings.Logs.GlobalProfilingToggle; }
-    }
-
     public static bool DrawDebugGizmos
     {
         get { return DebugSettings.Gizmos.DrawDebugGizmos; }

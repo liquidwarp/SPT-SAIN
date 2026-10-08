@@ -50,41 +50,12 @@ public class DebugGizmoSettings : SAINSettingsBase<DebugGizmoSettings>
     public bool DrawTransformGizmos;
 
     [DataMember]
-    [Name("Draw Player Navmesh Sampling Gizmos")]
-    public bool DrawNavMeshSamplingGizmos;
-
-    [DataMember]
     [Name("Draw Line of Sight Checks")]
     public bool DrawLineOfSightGizmos;
 
     [DataMember]
-    [Name("Draw Volumetric Light Gizmos")]
-    public bool DrawLightGizmos;
-
-    [DataMember]
-    [Name("Draw Door Links")]
-    public bool DrawDoorLinks;
-
-    [DataMember]
-    [Name("Draw Recoil Gizmos")]
-    public bool DebugDrawRecoilGizmos = false;
-
-    [DataMember]
     [Name("Draw Aim Gizmos")]
     public bool DebugDrawAimGizmos = false;
-
-    [DataMember]
-    [Name("Draw Blind Corner Raycasts")]
-    public bool DebugDrawBlindCorner = false;
-
-    [DataMember]
-    [Name("Draw Debug Suppression Points")]
-    [Hidden]
-    public bool DebugDrawProjectionPoints = false;
-
-    [DataMember]
-    [Name("Draw Search Peek Start and End Gizmos")]
-    public bool DebugSearchGizmos = false;
 
     [Name("Draw Debug Path Safety Tester")]
     [Hidden]
@@ -107,11 +78,6 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [DataMember]
     [Name("Global Debug Mode")]
     public bool GlobalDebugMode;
-
-    [DataMember]
-    [Name("Global Performance Profiling Mode")]
-    [Description("Enables function sampling for Unity Profiling.")]
-    public bool GlobalProfilingToggle;
 
     [DataMember]
     [Name("Test Bot Sprint Pathfinder")]
@@ -140,10 +106,6 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [DataMember]
     [Name("Debug Aim Calculations")]
     public bool DebugAimCalculations = false;
-
-    [DataMember]
-    [Name("Debug Hearing Calc Results")]
-    public bool DebugHearing = false;
 
     [DataMember]
     [Name("Debug Extracts")]

@@ -272,11 +272,6 @@ public static class PresetTunerExtensions
             hard.Core.VisibleAngle = 170f;
             impossible.Core.VisibleAngle = 180f;
 
-            easy.Core.VisibleDistance = 150f;
-            normal.Core.VisibleDistance = 225f;
-            hard.Core.VisibleDistance = 250f;
-            impossible.Core.VisibleDistance = 275f;
-
             easy.Aiming.FasterCQBReactions = false;
             normal.Aiming.FasterCQBReactions = true;
             hard.Aiming.FasterCQBReactions = true;
@@ -323,11 +318,6 @@ public static class PresetTunerExtensions
                     hard.Core.VisibleAngle = 170f;
                     impossible.Core.VisibleAngle = 180f;
 
-                    easy.Core.VisibleDistance = 200f;
-                    normal.Core.VisibleDistance = 225f;
-                    hard.Core.VisibleDistance = 250f;
-                    impossible.Core.VisibleDistance = 275f;
-
                     break;
 
                 case ESainWildSpawnType.assault:
@@ -341,20 +331,10 @@ public static class PresetTunerExtensions
                     hard.Move.STRAFE_SPEED = 0.6f;
                     impossible.Move.STRAFE_SPEED = 0.65f;
 
-                    easy.Core.GainSightCoef = 1f;
-                    normal.Core.GainSightCoef = 1f;
-                    hard.Core.GainSightCoef = 1f;
-                    impossible.Core.GainSightCoef = 1f;
-
                     easy.Core.VisibleAngle = 120f;
                     normal.Core.VisibleAngle = 135f;
                     hard.Core.VisibleAngle = 140f;
                     impossible.Core.VisibleAngle = 150f;
-
-                    easy.Core.VisibleDistance = 100f;
-                    normal.Core.VisibleDistance = 125f;
-                    hard.Core.VisibleDistance = 150f;
-                    impossible.Core.VisibleDistance = 200f;
 
                     easy.Difficulty.HearingDistanceCoef = 0.5f;
                     normal.Difficulty.HearingDistanceCoef = 0.65f;
@@ -532,8 +512,6 @@ public static class PresetTunerExtensions
                 // Set for all difficulties
                 foreach (var diff in pmcSettings.Values)
                 {
-                    //diff.Core.ScatteringPerMeter = 0.03f;
-                    //diff.Core.ScatteringClosePerMeter = 0.080f;
                     diff.Mind.WeaponProficiency = 0.75f;
                     diff.Difficulty.ScatteringCoef = 0.6f;
                     diff.Difficulty.PRECISION_SPEED_COEF = 1.33f;
@@ -549,7 +527,6 @@ public static class PresetTunerExtensions
                 easy.Aiming.MAX_AIMING_UPGRADE_BY_TIME = 0.35f;
                 easy.Aiming.MAX_AIM_TIME = 1.5f;
                 easy.Aiming.BASE_HIT_AFFECTION_DELAY_SEC = 0.65f;
-                easy.Core.VisibleDistance = 200f;
 
                 var normal = pmcSettings[ESainBotDifficulty.normal];
                 normal.Aiming.FasterCQBReactionsDistance = 35f;
@@ -557,7 +534,6 @@ public static class PresetTunerExtensions
                 normal.Aiming.MAX_AIMING_UPGRADE_BY_TIME = 0.4f;
                 normal.Aiming.MAX_AIM_TIME = 1.35f;
                 normal.Aiming.BASE_HIT_AFFECTION_DELAY_SEC = 0.5f;
-                normal.Core.VisibleDistance = 225f;
 
                 var hard = pmcSettings[ESainBotDifficulty.hard];
                 hard.Aiming.FasterCQBReactionsDistance = 50f;
@@ -565,7 +541,6 @@ public static class PresetTunerExtensions
                 hard.Aiming.MAX_AIMING_UPGRADE_BY_TIME = 0.2f;
                 hard.Aiming.MAX_AIM_TIME = 1.15f;
                 hard.Aiming.BASE_HIT_AFFECTION_DELAY_SEC = 0.35f;
-                hard.Core.VisibleDistance = 250f;
 
                 var impossible = pmcSettings[ESainBotDifficulty.impossible];
                 impossible.Aiming.FasterCQBReactionsDistance = 60f;
@@ -573,7 +548,6 @@ public static class PresetTunerExtensions
                 impossible.Aiming.MAX_AIMING_UPGRADE_BY_TIME = 0.15f;
                 impossible.Aiming.MAX_AIM_TIME = 1.0f;
                 impossible.Aiming.BASE_HIT_AFFECTION_DELAY_SEC = 0.25f;
-                impossible.Core.VisibleDistance = 275f;
             }
         }
     }

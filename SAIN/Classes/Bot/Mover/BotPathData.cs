@@ -525,7 +525,6 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
                 }
                 float timeSinceNoMove = Time.time - _timeNotMoving;
                 if (timeSinceNoMove > 2)
-                //if (timeSinceNoMove > GlobalSettingsClass.Instance.Move.BOT_NOMOVE_RECALC_TIME)
                 {
                     //Logger.LogDebug($"[{Bot.name}]:[{Id}]: recalc from no move: " +
                     //    $"{currentMoveData.CornerDirectionFromBot}:" +

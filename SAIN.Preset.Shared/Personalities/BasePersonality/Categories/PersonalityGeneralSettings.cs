@@ -7,16 +7,6 @@ namespace SAIN.Preset.Shared.Personalities.BasePersonality.Categories;
 [DataContract]
 public class PersonalityGeneralSettings : SAINSettingsBase<PersonalityGeneralSettings>, ISAINSettings
 {
-    [DataMember]
-    [Name("Aggression Multiplier")]
-    [Description("Linearly increases or decreases search time and hold ground time.")]
-    [MinMax(0.01f, 5f, 100)]
-    public float AggressionMultiplier = 1f;
-
-    [DataMember]
-    [Name("Kick Open All Possible Doors")]
-    [Description("If this personality has an enemy, always kick open doors if they can.")]
-    public bool KickOpenAllDoors = false;
 
     [DataMember]
     [Name("Dogfight - Path Distance - Start")]

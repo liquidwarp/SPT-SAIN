@@ -13,11 +13,6 @@ public struct TurnSettings(float smoothingValue = 0.5f, float maxTurnSpeed = 360
     [DataMember]
     [MinMax(0.01f, 1000f, 100f)]
     public float MaxTurnSpeed = maxTurnSpeed;
-
-    [DataMember]
-    [Advanced]
-    [Hidden]
-    public EBotLookSmoothingMode SmoothingMode = EBotLookSmoothingMode.SmoothDamp;
 }
 
 public enum EBotLookMode
@@ -28,11 +23,4 @@ public enum EBotLookMode
     CombatVisibleEnemy,
     Aiming,
     RandomLook,
-}
-
-public enum EBotLookSmoothingMode
-{
-    Linear,
-    SmoothDamp,
-    SmoothDampAngle,
 }

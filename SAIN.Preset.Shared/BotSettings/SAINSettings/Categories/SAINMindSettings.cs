@@ -8,15 +8,6 @@ namespace SAIN.Preset.Shared.BotSettings.SAINSettings.Categories;
 public class SAINMindSettings : SAINSettingsBase<SAINMindSettings>, ISAINSettings
 {
     [DataMember]
-    [Category("Personality")]
-    [Name("Global Aggression Multiplier")]
-    [Description(
-        "How quickly bots will move to search for enemies after losing sight, and how carefully they will search. Higher number equals higher aggression."
-    )]
-    [MinMax(0.01f, 3f, 10f)]
-    public float Aggression = 1f;
-
-    [DataMember]
     [Category("Weapon Control")]
     [Name("Weapon Proficiency")]
     [Description(

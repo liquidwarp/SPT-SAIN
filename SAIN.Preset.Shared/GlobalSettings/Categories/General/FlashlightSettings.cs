@@ -38,7 +38,4 @@ public class FlashlightSettings : SAINSettingsBase<FlashlightSettings>, ISAINSet
     [DataMember]
     [Advanced]
     public bool DebugFlash = false;
-
-    [DataMember]
-    public bool SillyMode = false;
 }

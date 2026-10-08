@@ -48,16 +48,4 @@ public class SAINMoveSettings : SAINSettingsBase<SAINMoveSettings>, ISAINSetting
     [Description("Can this bot go Prone as a panic response to being suppressed?")]
     [Category("Movement Option Toggles")]
     public bool PRONE_SUPPRESS_TOGGLE = true;
-
-    [DataMember]
-    [Name("Can Vault")]
-    [Description("Can this bot Vault?")]
-    [Category("Movement Option Toggles")]
-    public bool VAULT_TOGGLE = true;
-
-    [DataMember]
-    [Name("Can Vault to get Unstuck")]
-    [Description("Can this bot Vault if they are stuck on map geometry?")]
-    [Category("Movement Option Toggles")]
-    public bool VAULT_UNSTUCK_TOGGLE = true;
 }

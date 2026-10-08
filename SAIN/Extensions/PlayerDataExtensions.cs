@@ -118,10 +118,7 @@ public static class PlayerDataExtensions
             {
                 playerNavData.TimeLastOnNavMesh = time;
             }
-            //if (DebugSettings.Instance.Gizmos.DrawNavMeshSamplingGizmos)
-            //{
             DrawDebugGizmos(playerNavData, playerPosition, delay);
-            //}
         }
         playerNavData.IsOnNavMesh = time - playerNavData.TimeLastOnNavMesh < ON_NAVMESH_BUFFER_INTERVAL;
         return playerNavData;

@@ -11,7 +11,6 @@ using SAIN.Preset.GlobalSettings.Categories;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.GlobalSettings;
 using SAIN.SAINComponent.Classes;
-using SAIN.SAINComponent.Classes.Debug;
 using SAIN.SAINComponent.Classes.Decision;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using SAIN.SAINComponent.Classes.Info;
@@ -138,7 +137,6 @@ public class BotComponent : BotComponentBase, ISPlayer
     public SAINFriendlyFireClass FriendlyFire { get; private set; }
     public SAINVisionClass Vision { get; private set; }
     public SAINMoverClass Mover { get; private set; }
-    public SAINBotUnstuckClass BotStuck { get; private set; }
     public HearingSensor Hearing { get; private set; }
     public SAINBotTalkClass Talk { get; private set; }
     public SAINDecisionClass Decision { get; private set; }
@@ -264,7 +262,6 @@ public class BotComponent : BotComponentBase, ISPlayer
             Shoot = new SAINShootData(this);
             WeightManagement = new BotWeightManagement(this);
             Memory = new SAINMemoryClass(this);
-            BotStuck = new SAINBotUnstuckClass(this);
             Hearing = new HearingSensor(this);
             Talk = new SAINBotTalkClass(this);
             Decision = new SAINDecisionClass(this);

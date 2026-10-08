@@ -23,11 +23,6 @@ public class PersonalityRushSettings : SAINSettingsBase<PersonalityRushSettings>
     public float JumpCornerChance = 60f;
 
     [DataMember]
-    [Name("Can Bunny Hop during Jump Push")]
-    [Description("Can this bot hit a clip on you?")]
-    public bool CanBunnyHop = false;
-
-    [DataMember]
     [Name("Bunny Hop Chance")]
     [Description("If a bot can bunny hop, this is the chance they will actually do it.")]
     [Percentage()]

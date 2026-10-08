@@ -1,5 +1,3 @@
-using SAIN.Preset.Shared.Enums;
-using SAIN.Preset.Shared.GlobalSettings;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.EnemyClasses;
@@ -42,45 +40,6 @@ public class EnemyVisionClass(EnemyData enemyData) : EnemyBase(enemyData, enemyD
 
     public EnemyAnglesClass Angles { get; } = new();
     public EnemyPartsClass EnemyParts { get; } = new EnemyPartsClass(enemyData.EnemyPlayerComponent);
-
-    public static float AIVisionRangeLimit(Enemy enemy)
-    {
-        return CheckMaxVisionRangeAI(enemy);
-    }
-
-    private static float CheckMaxVisionRangeAI(Enemy enemy)
-    {
-        if (!enemy.IsAI)
-        {
-            return float.MaxValue;
-        }
-        var aiLimit = GlobalSettingsClass.Instance.General.AILimit;
-        if (!aiLimit.LimitAIvsAIGlobal)
-        {
-            return float.MaxValue;
-        }
-        if (!aiLimit.LimitAIvsAIVision)
-        {
-            return float.MaxValue;
-        }
-        if (enemy.IsCurrentEnemy)
-        {
-            return float.MaxValue;
-        }
-        var myBot = enemy.Bot;
-        return GetMaxVisionRange(myBot.CurrentAILimit);
-    }
-
-    private static float GetMaxVisionRange(AILimitSetting aiLimit)
-    {
-        return aiLimit switch
-        {
-            AILimitSetting.Far => GlobalSettingsClass.Instance.General.AILimit.MaxVisionRanges[AILimitSetting.Far],
-            AILimitSetting.VeryFar => GlobalSettingsClass.Instance.General.AILimit.MaxVisionRanges[AILimitSetting.VeryFar],
-            AILimitSetting.Narnia => GlobalSettingsClass.Instance.General.AILimit.MaxVisionRanges[AILimitSetting.Narnia],
-            _ => float.MaxValue,
-        };
-    }
 
     public void TickEnemy(float currentTime)
     {

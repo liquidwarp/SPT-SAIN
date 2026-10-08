@@ -15,14 +15,6 @@ public class SAINGrenadeSettings : SAINSettingsBase<SAINGrenadeSettings>, ISAINS
     public bool CAN_THROW_STRAIGHT_CONTACT = false;
 
     [DataMember]
-    [NameAndDescription(
-        "Since Since Enemy Seen before Throw",
-        "How long it has been since a bot's enemy has been visible before a bot can consider throwing a grenade."
-    )]
-    [MinMax(0.0f, 30f, 100f)]
-    public float TimeSinceSeenBeforeThrow = 4f;
-
-    [DataMember]
     [NameAndDescription("Time Before Next Throw - Min", "How much time to wait before a bot is allowed to throw another grenade.")]
     [MinMax(3f, 30f, 100f)]
     public float ThrowGrenadeFrequency = 5f;

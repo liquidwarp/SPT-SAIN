@@ -59,13 +59,6 @@ public class MindSettings : SAINSettingsBase<MindSettings>, ISAINSettings
     };
 
     [DataMember]
-    [MinMax(0.1f, 5f, 100f)]
-    [Category("Personality")]
-    [Name("Global Aggression")]
-    [Description("Higher = More aggressive bots, less time before seeking enemies. 2x = half the wait time.")]
-    public float GlobalAggression = 1f;
-
-    [DataMember]
     [Name("Bots can use Stealth Search")]
     [Description(
         "If a bot thinks he was not heard, and isn't currently fighting an enemy, they can decide to be stealthy while they seek out an enemy, if they are inside a building."

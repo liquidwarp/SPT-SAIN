@@ -29,20 +29,6 @@ internal static class SainSettingsExtensions
         settings.Boss.SET_CHEAT_VISIBLE_WHEN_ADD_TO_ENEMY = s.SET_CHEAT_VISIBLE_WHEN_ADD_TO_ENEMY;
     }
 
-    public static void Apply(this SAINCoreSettings s, BotSettingsComponents settings)
-    {
-        settings.Core.VisibleAngle = s.VisibleAngle;
-        settings.Core.VisibleDistance = s.VisibleDistance;
-        settings.Look.BASE_RUNTIME_EFFECT_K = s.GainSightCoef;
-        settings.Core.AccuratySpeed = s.AccuratySpeed;
-        settings.Core.ScatteringPerMeter = s.ScatteringPerMeter;
-        settings.Core.ScatteringClosePerMeter = s.ScatteringClosePerMeter;
-        settings.Core.HearingSense = s.HearingDistanceMulti;
-        settings.Core.CanGrenade = s.CanGrenade;
-        settings.Core.CanRun = s.CanRun;
-        settings.Core.DamageCoeff = s.DamageCoeff;
-    }
-
     public static void Apply(this SAINGrenadeSettings s, BotSettingsComponents settings)
     {
         settings.Grenade.GrenadePrecision = s.GrenadePrecision;

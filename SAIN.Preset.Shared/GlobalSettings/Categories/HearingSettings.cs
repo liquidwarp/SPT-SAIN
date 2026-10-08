@@ -6,35 +6,6 @@ using SAIN.Preset.Shared.Enums;
 namespace SAIN.Preset.Shared.GlobalSettings.Categories;
 
 [DataContract]
-public struct HearingDelaySettings(
-    float PeaceDelay,
-    float ActiveEnemyDelay,
-    float OtherEnemyDelay,
-    float UnknownEnemyDelay,
-    float InRandomizationMin = 0.75f,
-    float InRandomizationMax = 1.25f
-)
-{
-    [DataMember]
-    public float AtPeace = PeaceDelay;
-
-    [DataMember]
-    public float ActiveEnemy = ActiveEnemyDelay;
-
-    [DataMember]
-    public float OtherEnemy_Known = OtherEnemyDelay;
-
-    [DataMember]
-    public float OtherEnemy_Unknown = UnknownEnemyDelay;
-
-    [DataMember]
-    public float RandomizationMin = InRandomizationMin;
-
-    [DataMember]
-    public float RandomizationMax = InRandomizationMax;
-}
-
-[DataContract]
 public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
 {
     static HearingSettings()
@@ -103,18 +74,6 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     public float DOOR_KICK_SOUND_RANGE = 65;
 
     [DataMember]
-    [Name("Jump Sound Range")]
-    [Description("The Maximum range a bot can hear someone jumping")]
-    [Category("Hearing Distance")]
-    [MinMax(0, 100, 1)]
-    public float JUMP_SOUND_RANGE = 65;
-
-    [DataMember]
-    [MinMax(0.1f, 1f, 100f)]
-    [Advanced]
-    public float JUMP_SOUND_INTERVAL = 0.5f;
-
-    [DataMember]
     [Name("Rain Sound Multiplier - Outdoors")]
     [Description(
         "If it is raining, reduce heard distances by up to X amount. Depending on intensity of rain. Scales linearly with rain value."
@@ -169,38 +128,6 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     [IgnoreDataMember]
     [Hidden]
     public static readonly Dictionary<SAINSoundType, float> HEAR_DISPERSION_VALUES_Defaults;
-
-    [DataMember]
-    [Name("Unheard Shot Bullet Fly-by Modifier")]
-    [Description(
-        "When a bot has a bullet fly by them, the dispersion on the source of the gunshot will be X times more random, "
-            + "so a value of 2 will mean that it will multiply the randomized position to be 2x as far as originally calculated."
-    )]
-    [Category("Position Randomization")]
-    [Advanced]
-    [MinMax(1f, 10f, 100f)]
-    public float HEAR_DISPERSION_BULLET_FELT_MOD = 2f;
-
-    [DataMember]
-    [Name("Minimum Hearing Randomization")]
-    [Description(
-        "Higher = More Randomization, less accuracy in position prediction. Minimum Dispersion of a bot's estimated position from a sound they heard. In Meters. "
-    )]
-    [Category("Position Randomization")]
-    [Advanced]
-    [MinMax(0.0f, 2f, 1000f)]
-    public float HEAR_DISPERSION_MIN = 0.5f;
-
-    [DataMember]
-    [Name("No Randomization Distance")]
-    [Description(
-        "If the distance to a sound is less and or equal to this number, a bot will perfectly predict the source position, so no randomization or dispersion at all. "
-            + "A value of 0 will disable this."
-    )]
-    [Category("Position Randomization")]
-    [Advanced]
-    [MinMax(0f, 50f, 1000f)]
-    public float HEAR_DISPERSION_MIN_DISTANCE_THRESH = 10f;
 
     [DataMember]
     [Name("Max Randomization Distance")]
@@ -360,14 +287,6 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     public float HEAR_MODIFIER_MAX_CLAMP = 5f;
 
     [DataMember]
-    [Name("Minimum Hearing Modifier Distance")]
-    [Description("Sounds that originate closer than this have a 100% chance of being heard.")]
-    [Category("Hearing Modifiers")]
-    [Advanced]
-    [MinMax(0f, 50f, 100f)]
-    public float HEAR_MODIFIER_MAX_AFFECT_DIST = 3f;
-
-    [DataMember]
     [Name("Scale Start Distance - No Headphones")]
     [Description("Sounds that originate closer than this have a 100% chance of being heard.")]
     [Category("Hearing Chance")]
@@ -470,13 +389,6 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     [DataMember]
     [MinMax(1f, 150f, 100f)]
     [Category("Hearing Distance")]
-    [Name("Footstep Skid and Turn")]
-    [Advanced]
-    public float BaseSoundRange_MovementTurnSkid = 30f;
-
-    [DataMember]
-    [MinMax(1f, 150f, 100f)]
-    [Category("Hearing Distance")]
     [Name("Grenade Pullout and Pin Pull")]
     [Advanced]
     public float BaseSoundRange_GrenadePinDraw = 35f;
@@ -540,13 +452,6 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     [DataMember]
     [MinMax(1f, 150f, 100f)]
     [Category("Hearing Distance")]
-    [Name("Fall Landing Sound")]
-    [Advanced]
-    public float MaxSoundRange_FallLanding = 70;
-
-    [DataMember]
-    [MinMax(1f, 150f, 100f)]
-    [Category("Hearing Distance")]
     [Name("Aim Down Sights Sound")]
     [Advanced]
     public float BaseSoundRange_AimingandGearRattle = 35f;
@@ -563,34 +468,6 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     [Category("Hearing Distance")]
     [Name("Max Squad Communication Range - No Headphones")]
     public float MaxRangeToReportEnemyActionNoHeadset = 50f;
-
-    [DataMember]
-    [Name("Base Hearing Delay Settings")]
-    [MinMax(0.0f, 1f, 100f)]
-    [Category("Hearing Delay / Reaction Delay")]
-    public HearingDelaySettings BaseHearingDelaySettings = new(0.5f, 0.1f, 0.25f, 0.66f);
-
-    [DataMember]
-    [Name("Sound Type based Hearing Delay / Reaction Time")]
-    [Description("Optional: If a soundtype is defined here, it will override the Base Hearing Delays defined above.")]
-    [MinMax(0.0f, 1f, 100f)]
-    [Category("Hearing Delay / Reaction Delay")]
-    [Advanced]
-    public Dictionary<SAINSoundType, HearingDelaySettings> HEARINGDELAY_SETTINGS = new()
-    {
-        { SAINSoundType.Shot, new HearingDelaySettings(0.25f, 0.1f, 0.2f, 0.6f) },
-        { SAINSoundType.SuppressedShot, new HearingDelaySettings(0.3f, 0.1f, 0.25f, 0.65f) },
-        { SAINSoundType.BulletImpact, new HearingDelaySettings(0.25f, 0.1f, 0.2f, 0.6f) },
-    };
-
-    public HearingDelaySettings GetDelaySettings(SAINSoundType soundType)
-    {
-        if (HEARINGDELAY_SETTINGS.ContainsKey(soundType))
-        {
-            return HEARINGDELAY_SETTINGS[soundType];
-        }
-        return BaseHearingDelaySettings;
-    }
 
     [DataMember]
     [Name("Global Gunshot Audible Range Multiplier")]

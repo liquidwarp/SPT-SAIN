@@ -35,20 +35,6 @@ public class AILimitSettings : SAINSettingsBase<AILimitSettings>, ISAINSettings
     };
 
     [DataMember]
-    [Name("Limit AI vs AI Vision")]
-    [Description("Reduces visible range for bots vs other bots if they are bot far from a human player.")]
-    public bool LimitAIvsAIVision = true;
-
-    [DataMember]
-    [MinMax(10f, 200f, 1f)]
-    public Dictionary<AILimitSetting, float> MaxVisionRanges = new()
-    {
-        { AILimitSetting.Far, 200f },
-        { AILimitSetting.VeryFar, 100f },
-        { AILimitSetting.Narnia, 50f },
-    };
-
-    [DataMember]
     [Name("Limit AI vs AI Hearing")]
     [Description("Reduces hearing distance for bots vs other bots if they are bot far from a human player.")]
     public bool LimitAIvsAIHearing = true;

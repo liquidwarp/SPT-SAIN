@@ -374,12 +374,6 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
             return true;
         }
 
-        //if (timeChangeDec > 3 &&
-        //    !Bot.BotStuck.BotHasChangedPosition)
-        //{
-        //    return false;
-        //}
-
         CoverPoint coverMovingTo = Bot.Cover.CoverPoint_MovingTo;
         return coverMovingTo != null
             && coverMovingTo.PathDistanceStatus switch
