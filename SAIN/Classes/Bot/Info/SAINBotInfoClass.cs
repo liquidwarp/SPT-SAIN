@@ -26,10 +26,9 @@ public class SAINBotInfoClass : BotComponentClassBase
 
     public override void Init()
     {
-        ConfigureBot(SAINPlugin.LoadedPreset);
+        base.Init();
         WeaponInfo.Init();
         Difficulty.Init();
-        base.Init();
     }
 
     public override void ManualUpdate()

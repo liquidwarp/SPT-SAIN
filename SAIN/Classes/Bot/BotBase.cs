@@ -36,6 +36,7 @@ public abstract class BotBase(BotComponent bot) : IBotClass
 
     public virtual void Init()
     {
+        UpdatePresetSettings(SAINPlugin.LoadedPreset);
         PresetHandler.OnPresetUpdated += UpdatePresetSettings;
     }
 

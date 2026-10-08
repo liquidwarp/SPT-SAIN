@@ -133,13 +133,13 @@ public class SquadTalkSettings : SAINSettingsBase<SquadTalkSettings>, ISAINSetti
     public ESainTagStatus _underFireNeedHelpMask = ESainTagStatus.Combat;
 
     [DataMember]
-    [Name("Callout Need Help Delay")]
+    [Name("Callout Under Fire Group Delay")]
     [Description("Group Delay = Squad Members will share cooldown on certain voicelines to prevent spam")]
     public bool _underFireNeedHelpGroupDelay = true;
 
     [DataMember]
     [Name("Callout Under Fire Frequency")]
-    [Description("10 = once every 10 seconds")]
+    [Description("1 = once every second")]
     [MinMax(0.1f, 20f, 100f)]
     public float _underFireNeedHelpFreq = 1f;
 
@@ -163,7 +163,7 @@ public class SquadTalkSettings : SAINSettingsBase<SquadTalkSettings>, ISAINSetti
 
     [DataMember]
     [Name("Callout Heard Noise Frequency")]
-    [Description("10 = once every 10 seconds")]
+    [Description("30 = once every 30 seconds")]
     [MinMax(0.1f, 60f, 100f)]
     public float _hearNoiseFreq = 30f;
 
@@ -181,7 +181,7 @@ public class SquadTalkSettings : SAINSettingsBase<SquadTalkSettings>, ISAINSetti
 
     [DataMember]
     [Name("Callout Enemy Location Frequency")]
-    [Description("10 = once every 10 seconds")]
+    [Description("1 = once every second")]
     [MinMax(0.1f, 20f, 100f)]
     public float _enemyLocationTalkFreq = 1f;
 
