@@ -63,7 +63,6 @@ public class BotManagerComponent : MonoBehaviour
     private BotSpawner _spawner;
     public GrenadeController GrenadeController { get; private set; }
     public BotJobsClass BotJobs { get; private set; }
-    public BotExtractManager BotExtractManager { get; private set; }
     public TimeClass TimeVision { get; private set; }
     public SAINWeatherClass WeatherVision { get; private set; }
     public BotSpawnController BotSpawnController { get; private set; }
@@ -80,7 +79,6 @@ public class BotManagerComponent : MonoBehaviour
         Instance = this;
         SAINGameWorld = gameWorldComp;
         BotSpawnController = new BotSpawnController(this);
-        BotExtractManager = new BotExtractManager(this);
         TimeVision = new TimeClass(this);
         WeatherVision = new SAINWeatherClass(this);
         BotSquads = new BotSquads(this);
@@ -93,7 +91,6 @@ public class BotManagerComponent : MonoBehaviour
     public void ManualUpdate(float currentTime, float deltaTime)
     {
         BotSpawnController.ManualUpdate(currentTime, deltaTime);
-        BotExtractManager.Update(currentTime, deltaTime);
         TimeVision.Update(currentTime, deltaTime);
         WeatherVision.Update(currentTime, deltaTime);
         BotSquads.Update(currentTime, deltaTime);

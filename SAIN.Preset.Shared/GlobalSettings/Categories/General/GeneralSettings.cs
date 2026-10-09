@@ -43,15 +43,7 @@ public class GeneralSettings : SAINSettingsBase<GeneralSettings>, ISAINSettings
     public DoorSettings Doors = new();
 
     [DataMember]
-    public ExtractSettings Extract = new();
-
-    [DataMember]
     public FlashlightSettings Flashlight = new();
-
-    [DataMember]
-    [Name("Looting Bots Integration")]
-    [Description("Modify settings that relate to Looting Bots. Requires Looting Bots to be installed.")]
-    public LootingBotsSettings LootingBots = new();
 
     [DataMember]
     public JokeSettings Jokes = new();
@@ -71,9 +63,7 @@ public class GeneralSettings : SAINSettingsBase<GeneralSettings>, ISAINSettings
         list.Add(AILimit);
         list.Add(Cover);
         list.Add(Doors);
-        list.Add(Extract);
         list.Add(Flashlight);
-        list.Add(LootingBots);
         list.Add(Jokes);
         list.Add(Layers);
         Debug.Init(list);

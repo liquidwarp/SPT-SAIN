@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using BepInEx.Bootstrap;
 using EFT;
-using EFT.Interactive;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.AI;
@@ -21,13 +19,9 @@ internal static class SAINInterop
     private static bool _IsSAINLoaded;
     private static Type _SAINExternalType;
 
-    private static MethodInfo _ExtractBotMethod;
-    private static MethodInfo _SetExfilForBotMethod;
     private static MethodInfo _IsPathTowardEnemyMethod;
     private static MethodInfo _TimeSinceSenseEnemyMethod;
     private static MethodInfo _CanBotQuestMethod;
-    private static MethodInfo _GetExtractedBotsMethod;
-    private static MethodInfo _GetExtractionInfosMethod;
     private static MethodInfo _IgnoreHearingMethod;
     private static MethodInfo _GetPersonalityMethod;
 
@@ -66,13 +60,9 @@ internal static class SAINInterop
             // Only try to get the methods if we have the type
             if (_SAINExternalType != null)
             {
-                _ExtractBotMethod = AccessTools.Method(_SAINExternalType, "ExtractBot");
-                _SetExfilForBotMethod = AccessTools.Method(_SAINExternalType, "TrySetExfilForBot");
                 _IsPathTowardEnemyMethod = AccessTools.Method(_SAINExternalType, "IsPathTowardEnemy");
                 _TimeSinceSenseEnemyMethod = AccessTools.Method(_SAINExternalType, "TimeSinceSenseEnemy");
                 _CanBotQuestMethod = AccessTools.Method(_SAINExternalType, "CanBotQuest");
-                _GetExtractedBotsMethod = AccessTools.Method(_SAINExternalType, "GetExtractedBots");
-                _GetExtractionInfosMethod = AccessTools.Method(_SAINExternalType, "GetExtractionInfos");
 
                 _IgnoreHearingMethod = AccessTools.Method(_SAINExternalType, "IgnoreHearing");
                 _GetPersonalityMethod = AccessTools.Method(_SAINExternalType, "GetPersonality");
@@ -138,94 +128,6 @@ internal static class SAINInterop
     }
 
     /// <summary>
-    /// Get a list of all "Player.ProfileID"s of bots that have extracted. The list must not be null. The list is cleared before adding all extracted ProfileIDs;
-    /// </summary>
-    /// <param name="list">An already existing list to add to</param>
-    /// <returns>True if the list was successfully updated</returns>
-    public static bool GetExtractedBots(List<string> list)
-    {
-        if (list == null)
-        {
-            return false;
-        }
-
-        if (!Init())
-        {
-            return false;
-        }
-
-        if (_GetExtractedBotsMethod == null)
-        {
-            return false;
-        }
-
-        _GetExtractedBotsMethod.Invoke(null, [list]);
-        return true;
-    }
-
-    /// <summary>
-    /// Get a list of all "Player.ProfileID"s of bots that have extracted. The list must not be null. The list is cleared before adding all extracted ProfileIDs;
-    /// </summary>
-    /// <param name="list">An already existing list to add to</param>
-    /// <returns>True if the list was successfully updated</returns>
-    public static bool GetExtractedBots(List<ExtractionInfo> list)
-    {
-        if (list == null)
-        {
-            return false;
-        }
-
-        if (!Init())
-        {
-            return false;
-        }
-
-        if (_GetExtractionInfosMethod == null)
-        {
-            return false;
-        }
-
-        _GetExtractionInfosMethod.Invoke(null, [list]);
-        return true;
-    }
-
-    /**
-     * Force a bot into the Extract layer if SAIN is loaded. Return true if the bot was set to extract.
-     */
-    public static bool TryExtractBot(BotOwner botOwner)
-    {
-        if (!Init())
-        {
-            return false;
-        }
-
-        if (_ExtractBotMethod == null)
-        {
-            return false;
-        }
-
-        return (bool)_ExtractBotMethod.Invoke(null, [botOwner]);
-    }
-
-    /**
-     * Try to select an exfil point for the bot if SAIN is loaded. Return true if an exfil was assigned to the bot.
-     */
-    public static bool TrySetExfilForBot(BotOwner botOwner)
-    {
-        if (!Init())
-        {
-            return false;
-        }
-
-        if (_SetExfilForBotMethod == null)
-        {
-            return false;
-        }
-
-        return (bool)_SetExfilForBotMethod.Invoke(null, [botOwner]);
-    }
-
-    /// <summary>
     /// Compare a NavMeshPath to the pre-calculated NavMeshPath that leads directly to a bot's Active Enemy.
     /// </summary>
     /// <param name="path">The Path To Test</param>
@@ -285,22 +187,4 @@ internal static class SAINInterop
 
         return (float)_TimeSinceSenseEnemyMethod.Invoke(null, [botOwner]);
     }
-}
-
-public class ExtractionInfo
-{
-    public ExtractionInfo(BotOwner bot, string reason, ExfiltrationPoint exfil)
-    {
-        BotNickname = bot.Profile.Nickname;
-        ProfileID = bot.GetPlayer.ProfileId;
-        Reason = reason;
-        TimeExtracted = Time.time;
-        ExtractionPoint = exfil.Settings.Name;
-    }
-
-    public readonly string BotNickname;
-    public readonly string ProfileID;
-    public readonly string Reason;
-    public readonly string ExtractionPoint;
-    public readonly float TimeExtracted;
 }

@@ -145,7 +145,7 @@ public static class PowerCalcSettingsExtensions
         {
             armorVest.GetItemComponentsInChildrenNonAlloc(_armorComponents, true);
             float highestArmorClass = FindHighestArmorClass(_armorComponents);
-            result += highestArmorClass * settings.ArmorClassCoef();
+            result += highestArmorClass * settings.ARMOR_CLASS_COEF;
             _armorComponents.Clear();
         }
         else
@@ -157,7 +157,7 @@ public static class PowerCalcSettingsExtensions
                 if (_armorComponents.Count > 0)
                 {
                     float highestArmorClass = FindHighestArmorClass(_armorComponents);
-                    result += highestArmorClass * settings.ArmorClassCoef();
+                    result += highestArmorClass * settings.ARMOR_CLASS_COEF;
                     _armorComponents.Clear();
                 }
             }
@@ -213,14 +213,5 @@ public static class PowerCalcSettingsExtensions
             }
         }
         return result;
-    }
-
-    private static float ArmorClassCoef(this PowerCalcSettings settings)
-    {
-        if (ModDetection.RealismLoaded)
-        {
-            return settings.ARMOR_CLASS_COEF_REALISM;
-        }
-        return settings.ARMOR_CLASS_COEF;
     }
 }

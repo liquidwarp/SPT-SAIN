@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using EFT;
 using SAIN.Components;
@@ -36,6 +38,31 @@ public static class SAINExternal
         return component.Info.Personality.ToString();
     }
 
+    // No-op stubs keep the reflection contract for existing SAINInterop copies in other mods.
+    [Obsolete("Bot extraction was removed from SAIN.")]
+    public static bool ExtractBot(BotOwner bot)
+    {
+        return false;
+    }
+
+    [Obsolete("Bot extraction was removed from SAIN.")]
+    public static bool TrySetExfilForBot(BotOwner bot)
+    {
+        return false;
+    }
+
+    [Obsolete("Bot extraction was removed from SAIN.")]
+    public static void GetExtractedBots(List<string> list)
+    {
+        list?.Clear();
+    }
+
+    [Obsolete("Bot extraction was removed from SAIN.")]
+    public static void GetExtractionInfos(IList list)
+    {
+        list?.Clear();
+    }
+
     private static BotComponent GetBotComponent(BotOwner bot)
     {
         if (BotManagerComponent.Instance?.GetSAIN(bot, out BotComponent botComponent) == true)
@@ -43,86 +70,6 @@ public static class SAINExternal
             return botComponent;
         }
         return bot.GetComponent<BotComponent>();
-    }
-
-    public static bool ExtractBot(BotOwner bot)
-    {
-        var component = GetBotComponent(bot);
-        if (component == null)
-        {
-            return false;
-        }
-
-        component.Info.ForceExtract = true;
-
-        return true;
-    }
-
-    public static void GetExtractedBots(List<string> list)
-    {
-        var botController = BotManagerComponent.Instance;
-        if (botController == null)
-        {
-#if DEBUG
-            Logger.LogWarning("SAIN Bot Controller is Null, cannot retrieve Extracted Bots List.");
-#endif
-            return;
-        }
-        var extractedBots = botController.BotExtractManager?.ExtractedBots;
-        if (extractedBots == null)
-        {
-#if DEBUG
-            Logger.LogWarning("List of extracted bots is null! Cannot copy list.");
-#endif
-            return;
-        }
-        list.Clear();
-        list.AddRange(extractedBots);
-    }
-
-    public static void GetExtractionInfos(List<ExtractionInfo> list)
-    {
-        var botController = BotManagerComponent.Instance;
-        if (botController == null)
-        {
-#if DEBUG
-            Logger.LogWarning("SAIN Bot Controller is Null, cannot retrieve Extracted Bots List.");
-#endif
-            return;
-        }
-        var extractedBots = botController.BotExtractManager?.BotExtractionInfos;
-        if (extractedBots == null)
-        {
-#if DEBUG
-            Logger.LogWarning("List of extracted bots is null! Cannot copy list.");
-#endif
-            return;
-        }
-        list.Clear();
-        list.AddRange(extractedBots);
-    }
-
-    public static bool TrySetExfilForBot(BotOwner bot)
-    {
-        var component = GetBotComponent(bot);
-        if (component == null)
-        {
-            return false;
-        }
-
-#if DEBUG
-        if (!Components.BotController.BotExtractManager.IsBotAllowedToExfil(component))
-        {
-            Logger.LogWarning($"{bot.name} is not allowed to use extracting logic.");
-        }
-#endif
-
-        if (!BotManagerComponent.Instance.BotExtractManager.TryFindExfilForBot(component))
-        {
-            return false;
-        }
-
-        return true;
     }
 
     private static bool DebugExternal

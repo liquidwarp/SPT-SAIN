@@ -28,13 +28,9 @@ public static class AssemblyInfoClass
 
     public const string SPTVersion = SAINVersionInfo.SptVersion;
 
-    public const string RealismModKey = "RealismMod";
-
     public const string SPTGUID = "com.SPT.core";
-    public const string QuestingBotsGUID = "com.DanW.QuestingBots";
     public const string FikaGUID = "com.fika.core";
     public const string FikaHeadlessGUID = "com.fika.headless";
-    public const string LootingBotsGUID = "me.skwizzy.lootingbots";
 
     public const string BigBrainGUID = "xyz.drakia.bigbrain";
     public const string BigBrainVersion = "1.5.0";

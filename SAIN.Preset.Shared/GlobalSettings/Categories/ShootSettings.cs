@@ -79,16 +79,6 @@ public class ShootSettings : SAINSettingsBase<ShootSettings>, ISAINSettings
     public float BOT_RECOIL_BASELINE = 100;
 
     [DataMember]
-    [Name("Bot Weapon Recoil Baseline - Realism Mod")]
-    [Description(
-        "A Bot's weapon's recoil will get divided by this to calculate how much to rotate their view on each shot. This value is used if Realism mod is on to reflect different recoil numbers."
-    )]
-    [Category("Bot Recoil")]
-    [MinMax(25f, 300f, 1f)]
-    [Advanced]
-    public float BOT_RECOIL_BASELINE_REALISM = 125f;
-
-    [DataMember]
     [Name("Ammo Shootability")]
     [Description(
         "Lower is BETTER. "

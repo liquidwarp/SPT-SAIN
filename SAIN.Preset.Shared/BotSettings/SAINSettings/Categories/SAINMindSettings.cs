@@ -57,27 +57,4 @@ public class SAINMindSettings : SAINSettingsBase<SAINMindSettings>, ISAINSetting
     [Name("Squad Leader Talk Frequency. Higher = More Delay between Talking.")]
     [MinMax(0f, 60f)]
     public float SquadLeadTalkFreq = 3f;
-
-    [DataMember]
-    [Category("Extract")]
-    [Name("Enable Extracts")]
-    public bool EnableExtracts = true;
-
-    [DataMember]
-    [Category("Extract")]
-    [Name("Max Raid Percentage before Extract")]
-    [Description(
-        "The longest possible time before this bot can decide to move to extract. Based on total raid timer and time remaining. 60 min total raid time with 6 minutes remaining would be 10 percent"
-    )]
-    [MinMax(0f, 100f)]
-    public float MaxExtractPercentage = 30f;
-
-    [DataMember]
-    [Category("Extract")]
-    [Name("Min Raid Percentage before Extract")]
-    [Description(
-        "The longest possible time before this bot can decide to move to extract. Based on total raid timer and time remaining. 60 min total raid time with 6 minutes remaining would be 10 percent"
-    )]
-    [MinMax(0f, 100f)]
-    public float MinExtractPercentage = 5f;
 }

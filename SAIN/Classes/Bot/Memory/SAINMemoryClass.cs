@@ -11,7 +11,6 @@ public class SAINMemoryClass : BotComponentClassBase
     public Enemy LastUnderFireEnemy { get; private set; }
     public Vector3 UnderFireFromPosition { get; set; }
 
-    public SAINExtract Extract { get; } = new SAINExtract();
     public HealthTracker Health { get; private set; }
     public LocationTracker Location { get; private set; }
 

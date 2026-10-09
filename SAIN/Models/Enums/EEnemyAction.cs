@@ -7,6 +7,5 @@ public enum EEnemyAction
     HasGrenade = 2,
     Healing = 3,
     UsingSurgery = 4,
-    TryingToExtract = 5,
     Looting = 6,
 }

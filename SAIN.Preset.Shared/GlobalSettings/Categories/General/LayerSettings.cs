@@ -16,11 +16,5 @@ public class LayerSettings : SAINSettingsBase<LayerSettings>, ISAINSettings
     [Description("Requires Restart. Dont touch unless you know what this is")]
     [DeveloperOption]
     [MinMax(0, 100)]
-    public int SAINExtractLayerPriority = 24;
-
-    [DataMember]
-    [Description("Requires Restart. Dont touch unless you know what this is")]
-    [DeveloperOption]
-    [MinMax(0, 100)]
     public int SAINCombatSoloLayerPriority = 20;
 }

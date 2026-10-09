@@ -292,11 +292,6 @@ public static class DebugOverlay
                 decisionInfo = $"SqdDcsn: [{sain.Decision.CurrentSquadDecision}] : Layer [{sain.ActiveLayer}]";
                 break;
 
-            case ESAINLayer.Extract:
-                decisionInfo =
-                    $"Extract: [{sain.Memory.Extract.ExtractReason}][{sain.Memory.Extract.ExtractStatus}] : Layer [{sain.ActiveLayer}]";
-                break;
-
             default:
                 break;
         }

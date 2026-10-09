@@ -104,17 +104,11 @@ public class EFTCoreSettings
             core.FLARE_POWER = _overrides.FLARE_POWER;
             core.FLARE_TIME = _overrides.FLARE_TIME;
             core.SHOOT_TO_CHANGE_RND_PART_DELTA = _overrides.SHOOT_TO_CHANGE_RND_PART_DELTA;
-
-            ModDetection.UpdateArmorClassCoef();
+            core.ARMOR_CLASS_COEF = 6f;
         }
         catch (Exception e)
         {
             Logger.LogError(e);
         }
-    }
-
-    public static void UpdateArmorClassCoef(float coef)
-    {
-        BotInternalSettingsController.Core.ARMOR_CLASS_COEF = coef;
     }
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using EFT;
 using EFT.Ballistics;
-using EFT.Game.Spawning;
 using EFT.InventoryLogic;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
@@ -93,10 +92,8 @@ public class GameWorldComponent : MonoBehaviour
     public GameWorld GameWorld { get; private set; }
     public PlayerSpawnTracker PlayerTracker { get; private set; }
     public BotManagerComponent SAINBotController { get; private set; }
-    public Extract.ExtractFinderComponent ExtractFinder { get; private set; }
     public DoorHandler Doors { get; private set; }
     public LocationClass Location { get; private set; }
-    public SpawnPointMarker[] SpawnPointMarkers { get; private set; }
     public JobManager JobManager { get; private set; }
 
     public void WorldTick(float deltaTime)
@@ -110,10 +107,8 @@ public class GameWorldComponent : MonoBehaviour
     {
         if (_activated)
         {
-            ExtractFinder.ManualUpdate(CurrentTime, DeltaTime);
             Doors.ManualUpdate(CurrentTime, DeltaTime);
             Location.ManualUpdate(CurrentTime, DeltaTime);
-            findSpawnPointMarkers();
             HashSet<PlayerComponent> players = PlayerTracker?.AlivePlayerArray;
             if (players != null && players.Count > 0)
             {
@@ -201,44 +196,6 @@ public class GameWorldComponent : MonoBehaviour
         events.Clear();
     }
 
-    private void findSpawnPointMarkers()
-    {
-        if ((SpawnPointMarkers != null) || (Camera.main == null))
-        {
-            return;
-        }
-
-        SpawnPointMarkers = UnityEngine.Object.FindObjectsOfType<SpawnPointMarker>();
-
-#if DEBUG
-        if (SAINPlugin.DebugMode)
-        {
-            Logger.LogInfo($"Found {SpawnPointMarkers.Length} spawn point markers");
-        }
-#endif
-    }
-
-    public IEnumerable<Vector3> GetAllSpawnPointPositionsOnNavMesh()
-    {
-        if (SpawnPointMarkers == null)
-        {
-            return [];
-        }
-
-        List<Vector3> spawnPointPositions = [];
-        foreach (SpawnPointMarker spawnPointMarker in SpawnPointMarkers)
-        {
-            // Try to find a point on the NavMesh nearby the spawn point
-            Vector3? spawnPointPosition = NavMeshHelpers.GetNearbyNavMeshPoint(spawnPointMarker.Position, 2);
-            if (spawnPointPosition.HasValue && !spawnPointPositions.Contains(spawnPointPosition.Value))
-            {
-                spawnPointPositions.Add(spawnPointPosition.Value);
-            }
-        }
-
-        return spawnPointPositions;
-    }
-
     public void Activate(BotsController botsController)
     {
         SAINBotController.DefaultController = botsController;
@@ -266,7 +223,6 @@ public class GameWorldComponent : MonoBehaviour
         PlayerTracker = new PlayerSpawnTracker(this);
         Doors = new DoorHandler(this);
         Location = new LocationClass(this);
-        ExtractFinder = this.GetOrAddComponent<Extract.ExtractFinderComponent>();
         JobManager = new JobManager(this);
         GameWorld.OnDispose += DestroyComponent;
 

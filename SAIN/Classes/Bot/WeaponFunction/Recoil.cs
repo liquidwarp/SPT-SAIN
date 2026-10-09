@@ -169,10 +169,6 @@ public class Recoil(BotComponent sain) : BotBase(sain)
     private float calcRecoilNum(float recoilVal)
     {
         float result = recoilVal / _shootSettings.BOT_RECOIL_BASELINE;
-        if (ModDetection.RealismLoaded)
-        {
-            result = recoilVal / _shootSettings.BOT_RECOIL_BASELINE_REALISM;
-        }
         result *= shootModClamped();
         result *= UnityEngine.Random.Range(0.8f, 1.2f);
         return result;

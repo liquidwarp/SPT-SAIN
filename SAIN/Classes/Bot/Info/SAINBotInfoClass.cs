@@ -7,7 +7,6 @@ using SAIN.Preset.Shared.BotSettings.SAINSettings;
 using SAIN.Preset.Shared.Models.Preset.Personalities;
 using SAIN.Preset.Shared.Personalities.BasePersonality;
 using SAIN.Preset.Shared.Personalities.BasePersonality.Categories;
-using Random = UnityEngine.Random;
 
 namespace SAIN.SAINComponent.Classes.Info;
 
@@ -68,8 +67,6 @@ public class SAINBotInfoClass : BotComponentClassBase
     public PersonalitySettingsClass PersonalitySettingsClass { get; private set; }
     public float TimeBeforeSearch { get; private set; } = 0f;
     public float HoldGroundDelay { get; private set; }
-    public float PercentageBeforeExtract { get; set; } = -1f;
-    public bool ForceExtract { get; set; } = false;
     public float ForgetEnemyTime { get; private set; }
     public float AggressionMultiplier
     {
@@ -83,7 +80,6 @@ public class SAINBotInfoClass : BotComponentClassBase
         Difficulty.UpdateSettings(preset);
         CalcTimeBeforeSearch();
         CalcHoldGroundDelay();
-        UpdateExtractTime();
         FileSettings.SetConfigValues(BotOwner);
     }
 
@@ -138,41 +134,6 @@ public class SAINBotInfoClass : BotComponentClassBase
 
         BotOwner.Settings.FileSettings.Mind.TIME_TO_FORGOR_ABOUT_ENEMY_SEC = forgetTime;
         ForgetEnemyTime = forgetTime;
-    }
-
-    private void UpdateExtractTime()
-    {
-        float percentage = Random.Range(FileSettings.Mind.MinExtractPercentage, FileSettings.Mind.MaxExtractPercentage);
-
-        var squad = Bot?.Squad;
-        var members = squad?.Members;
-        if (squad != null && squad.BotInGroup && members != null && members.Count > 0)
-        {
-            if (squad.IAmLeader)
-            {
-                PercentageBeforeExtract = percentage;
-                foreach (var member in members)
-                {
-                    var infocClass = member.Value?.Info;
-                    if (infocClass != null)
-                    {
-                        infocClass.PercentageBeforeExtract = percentage;
-                    }
-                }
-            }
-            else if (PercentageBeforeExtract == -1f)
-            {
-                var Leader = squad?.LeaderComponent?.Info;
-                if (Leader != null)
-                {
-                    PercentageBeforeExtract = Leader.PercentageBeforeExtract;
-                }
-            }
-        }
-        else
-        {
-            PercentageBeforeExtract = percentage;
-        }
     }
 
     public EPersonality GetPersonality(out PersonalitySettingsClass settings)

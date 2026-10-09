@@ -106,16 +106,6 @@ public class PowerCalcSettings : SAINSettingsBase<PowerCalcSettings>, ISAINSetti
     public float ARMOR_CLASS_COEF = 30f;
 
     [DataMember]
-    [Name("Body Armor Class Power - Realism Mod")]
-    [Description(
-        "If Realism Mod is loaded, use this AC Power value. "
-            + "For each AC level, add X to a bot's power level. So if they have level 4 armor, add this value 4 times."
-    )]
-    [Category("Armor Power Value")]
-    [MinMax(-100, 100, 10)]
-    public float ARMOR_CLASS_COEF_REALISM = 20f;
-
-    [DataMember]
     [Name("Helmet Class Power")]
     [Description("If a bot has an armored helmet above class 1, but lower than 5, add X to thier power level.")]
     [Category("Armor Power Value")]

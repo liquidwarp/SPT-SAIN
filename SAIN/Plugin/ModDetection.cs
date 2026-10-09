@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using BepInEx.Bootstrap;
-using SAIN.Helpers;
 using UnityEngine;
 using static SAIN.AssemblyInfoClass;
 
@@ -23,9 +22,6 @@ public static class ModDetection
         }
     }
 
-    public static bool LootingBotsLoaded { get; private set; }
-    public static bool RealismLoaded { get; private set; }
-    public static bool QuestingBotsLoaded { get; private set; }
     public static bool ProjectFikaLoaded { get; private set; }
     public static bool ProjectFikaHeadlessLoaded { get; private set; }
 
@@ -83,35 +79,6 @@ public static class ModDetection
         {
             ProjectFikaHeadlessLoaded = true;
             Logger.LogInfo($"SAIN: Project Fika Headless Detected.");
-        }
-
-        if (Chainloader.PluginInfos.ContainsKey(QuestingBotsGUID))
-        {
-            QuestingBotsLoaded = true;
-            Logger.LogInfo($"SAIN: Questing Bots Detected.");
-        }
-        if (Chainloader.PluginInfos.ContainsKey(LootingBotsGUID))
-        {
-            LootingBotsLoaded = true;
-            Logger.LogInfo($"SAIN: Looting Bots Detected.");
-        }
-        if (Chainloader.PluginInfos.ContainsKey(RealismModKey))
-        {
-            RealismLoaded = true;
-            Logger.LogInfo($"SAIN: Realism Detected.");
-        }
-    }
-
-    public static void UpdateArmorClassCoef()
-    {
-        if (RealismLoaded)
-        {
-            EFTCoreSettings.UpdateArmorClassCoef(3.5f);
-            Logger.LogInfo($"Realism Detected, updating armor class number to reflect new armor classes...");
-        }
-        else
-        {
-            EFTCoreSettings.UpdateArmorClassCoef(6f);
         }
     }
 

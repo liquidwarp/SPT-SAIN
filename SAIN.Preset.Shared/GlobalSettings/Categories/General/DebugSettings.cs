@@ -103,10 +103,6 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [Name("Debug Aim Calculations")]
     public bool DebugAimCalculations = false;
 
-    [DataMember]
-    [Name("Debug Extracts")]
-    public bool DebugExtract = false;
-
     [Name("Collect and Export Bot Layer and Brain Info")]
     [Hidden]
     [IgnoreDataMember]
