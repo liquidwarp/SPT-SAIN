@@ -10,8 +10,9 @@ How bots behave differently in raid compared to the previous release.
 
 - Bots start an engagement with loose aim and get steadily more precise for as long as they stay on you, down to their "max aiming upgrade by time" limit.
 - Long bursts, or you moving or strafing, no longer reset their aim to its starting precision mid-fight.
-- If you peek again from the same spot, the bot keeps the precision it has already built up.
-- The first shots are still forgiving, but long fights and repeated peeks from one spot are noticeably deadlier.
+- Breaking line of sight still resets it: every new peek, from any spot, starts loose again.
+- Fixed bots sometimes opening a new fight with the precision they had built up in an earlier one, for example after being flashed or after a brain layer from EFT or another mod took over for a while.
+- The first shots are still forgiving, but long fights where the bot keeps you in sight are noticeably deadlier.
 - Each bot type now gets its own "max aim time" and "max aiming upgrade by time" from the game's data, as was intended. Before, every bot type got the same values (2 and 0.25).
 
 ### Bot recoil works as intended
