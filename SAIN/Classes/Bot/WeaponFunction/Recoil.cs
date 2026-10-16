@@ -27,6 +27,7 @@ public class Recoil(BotComponent sain) : BotBase(sain)
     }
 
     private bool _recoilFinished;
+    private float _lastDecayTime;
     private bool _armsInjured
     {
         get { return Bot.Medical.HitReaction.ArmsInjured; }
@@ -53,10 +54,17 @@ public class Recoil(BotComponent sain) : BotBase(sain)
     {
         if (!_recoilFinished)
         {
-            float decayTime = Time.fixedDeltaTime * _recoilDecayCoef;
-            _currentRecoilHorizAngle = Mathf.LerpAngle(0, _currentRecoilHorizAngle, 1f - decayTime);
-            _currentRecoilVertAngle = Mathf.LerpAngle(0, _currentRecoilVertAngle, 1f - decayTime);
-            if (_currentRecoilHorizAngle <= 0.001f && _currentRecoilVertAngle < 0.001f)
+            // Decays as if once per physics step, scaled to the real time since the last decay so the rate doesn't
+            // depend on how often this bot ticks.
+            float now = Time.time;
+            float elapsed = now - _lastDecayTime;
+            _lastDecayTime = now;
+            float fixedStep = Time.fixedDeltaTime;
+            float stepFactor = Mathf.Clamp01(1f - fixedStep * _recoilDecayCoef);
+            float decay = Mathf.Pow(stepFactor, elapsed / fixedStep);
+            _currentRecoilHorizAngle *= decay;
+            _currentRecoilVertAngle *= decay;
+            if (Mathf.Abs(_currentRecoilHorizAngle) <= 0.001f && Mathf.Abs(_currentRecoilVertAngle) <= 0.001f)
             {
                 _recoilFinished = true;
                 _currentRecoilHorizAngle = 0f;
@@ -93,6 +101,7 @@ public class Recoil(BotComponent sain) : BotBase(sain)
         }
 
         _recoilFinished = false;
+        _lastDecayTime = Time.time;
         float addRecoil = SAINPlugin.LoadedPreset.GlobalSettings.Shoot.BOT_RECOIL_ADD;
         float recoilMod = calcRecoilMod();
         float recoilTotal = weapon.RecoilTotal;
