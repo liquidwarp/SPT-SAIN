@@ -232,7 +232,8 @@ public class PlayerMovementController
     private static float CalcRandomSwayModifier(Player player, BotOwner botOwner, BotComponent botComponent)
     {
         float result = 1f;
-        if (botComponent?.Mover?.Running == true)
+        bool hasBotComponent = botComponent != null;
+        if (hasBotComponent && botComponent.Mover?.Running == true)
         {
             return 0.001f;
         }
@@ -242,7 +243,7 @@ public class PlayerMovementController
             return 0.001f;
         }
 
-        bool moving = botComponent?.Mover?.Moving == true || botOwner.Mover?.IsMoving == true;
+        bool moving = (hasBotComponent && botComponent.Mover?.Moving == true) || botOwner.Mover?.IsMoving == true;
         bool aiming = botOwner.AimingManager.CurrentAiming is BotAimingData aimClass && aimClass._status != AimStatus.NoTarget;
         bool aimingDownSights = player.HandsController is Player.FirearmController firearmController && firearmController.IsAiming;
 

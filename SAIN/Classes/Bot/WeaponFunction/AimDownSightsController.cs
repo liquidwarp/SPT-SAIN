@@ -36,7 +36,8 @@ public class AimDownSightsController : BotComponentClassBase
 
         // If a bot is sneaky, don't change ADS if their enemy is close to avoid alerting them.
         if (
-            Bot?.Info?.PersonalitySettings?.Search?.Sneaky == true
+            Bot != null
+            && Bot.Info?.PersonalitySettings?.Search?.Sneaky == true
             && Enemy != null
             && !Enemy.IsVisible
             && Enemy.KnownPlaces.EnemyDistanceFromLastKnown < 40f

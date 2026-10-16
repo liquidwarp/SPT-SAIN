@@ -38,7 +38,7 @@ public class AimClass : BotComponentClassBase, IBotClass
         }
         set
         {
-            if (BotOwner?.AimingManager?.CurrentAiming is BotAimingData aimClass)
+            if (BotOwner != null && BotOwner.AimingManager?.CurrentAiming is BotAimingData aimClass)
             {
                 aimClass._status = value;
             }

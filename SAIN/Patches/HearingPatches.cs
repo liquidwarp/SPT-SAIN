@@ -25,7 +25,11 @@ public class GrenadeCollisionPatch : ModulePatch
     public static void Patch(Grenade __instance, SoundBank ____collisionSoundBank)
     {
         ____collisionSoundBank.Rolloff = _defaultRolloff * ROLLOFF_MULTI;
-        BotManagerComponent.Instance?.GrenadeController.GrenadeCollided(__instance, 35);
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager != null)
+        {
+            botManager.GrenadeController.GrenadeCollided(__instance, 35);
+        }
     }
 
     private static float _defaultRolloff = 40;
@@ -131,13 +135,17 @@ public class TogglableSetPatch : ModulePatch
             Player player = inventoryController.Player;
 
             const float baseRange = 10f;
-            BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                player.ProfileId,
-                SAINSoundType.GearSound,
-                player.Position + _speechLocalPosition(player),
-                baseRange,
-                1f
-            );
+            BotManagerComponent botManager = BotManagerComponent.Instance;
+            if (botManager != null)
+            {
+                botManager.BotHearing.PlayAISound(
+                    player.ProfileId,
+                    SAINSoundType.GearSound,
+                    player.Position + _speechLocalPosition(player),
+                    baseRange,
+                    1f
+                );
+            }
         }
     }
 }

@@ -32,13 +32,17 @@ public class TreeSoundPatch : ModulePatch
                 baseRange = ____soundBank.Rolloff * player.SoundRadius * 0.8f;
             }
 
-            BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                player.iPlayer.ProfileId,
-                SAINSoundType.Bush,
-                soundPosition,
-                baseRange,
-                1f
-            );
+            BotManagerComponent botManager = BotManagerComponent.Instance;
+            if (botManager != null)
+            {
+                botManager.BotHearing.PlayAISound(
+                    player.iPlayer.ProfileId,
+                    SAINSoundType.Bush,
+                    soundPosition,
+                    baseRange,
+                    1f
+                );
+            }
         }
     }
 }
@@ -57,13 +61,17 @@ public class DoorSoundPatch : ModulePatch
         {
             case EInteractionType.Open:
                 float baseRange = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.DOOR_OPEN_SOUND_RANGE;
-                BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                    __instance.InteractingPlayer.ProfileId,
-                    SAINSoundType.Door,
-                    __instance.InteractingPlayer.Position,
-                    baseRange,
-                    1f
-                );
+                BotManagerComponent botManager = BotManagerComponent.Instance;
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayAISound(
+                        __instance.InteractingPlayer.ProfileId,
+                        SAINSoundType.Door,
+                        __instance.InteractingPlayer.Position,
+                        baseRange,
+                        1f
+                    );
+                }
                 break;
         }
     }
@@ -80,7 +88,11 @@ public class DoorBreachSoundPatch : ModulePatch
     public static void PatchPrefix(Player ____player)
     {
         float baseRange = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.DOOR_KICK_SOUND_RANGE;
-        BotManagerComponent.Instance?.BotHearing.PlayAISound(____player.ProfileId, SAINSoundType.Door, ____player.Position, baseRange, 1f);
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager != null)
+        {
+            botManager.BotHearing.PlayAISound(____player.ProfileId, SAINSoundType.Door, ____player.Position, baseRange, 1f);
+        }
     }
 }
 
@@ -95,13 +107,17 @@ public class DryShotPatch : ModulePatch
     public static void PatchPrefix(Player ____player)
     {
         float baseRange = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_DryFire;
-        BotManagerComponent.Instance?.BotHearing.PlayAISound(
-            ____player.ProfileId,
-            SAINSoundType.DryFire,
-            ____player.WeaponRoot.position,
-            baseRange,
-            1f
-        );
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager != null)
+        {
+            botManager.BotHearing.PlayAISound(
+                ____player.ProfileId,
+                SAINSoundType.DryFire,
+                ____player.WeaponRoot.position,
+                baseRange,
+                1f
+            );
+        }
     }
 }
 
@@ -120,13 +136,17 @@ public class PlaySwitchHeadlightSoundPatch : ModulePatch
     {
         if (__result)
         {
-            BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                ____player.ProfileId,
-                SAINSoundType.GearSound,
-                ____player.Position + _speechLocalPosition,
-                10f,
-                1f
-            );
+            BotManagerComponent botManager = BotManagerComponent.Instance;
+            if (botManager != null)
+            {
+                botManager.BotHearing.PlayAISound(
+                    ____player.ProfileId,
+                    SAINSoundType.GearSound,
+                    ____player.Position + _speechLocalPosition,
+                    10f,
+                    1f
+                );
+            }
         }
     }
 }
@@ -145,13 +165,17 @@ public class LootingSoundPatch : ModulePatch
         {
             case EInteractionType.Open:
                 float baseRange = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Looting;
-                BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                    __instance.InteractingPlayer.ProfileId,
-                    SAINSoundType.Looting,
-                    __instance.InteractingPlayer.Position,
-                    baseRange,
-                    1f
-                );
+                BotManagerComponent botManager = BotManagerComponent.Instance;
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayAISound(
+                        __instance.InteractingPlayer.ProfileId,
+                        SAINSoundType.Looting,
+                        __instance.InteractingPlayer.Position,
+                        baseRange,
+                        1f
+                    );
+                }
                 break;
         }
     }
@@ -168,12 +192,16 @@ public class AimSoundPatch : ModulePatch
     public static void PatchPrefix(Player.FirearmController __instance, Player ____player)
     {
         float baseRange = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_AimingandGearRattle;
-        BotManagerComponent.Instance?.BotHearing.PlayAISound(
-            ____player.ProfileId,
-            SAINSoundType.GearSound,
-            ____player.Position,
-            baseRange,
-            __instance.CalculateAimingSoundVolume()
-        );
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager != null)
+        {
+            botManager.BotHearing.PlayAISound(
+                ____player.ProfileId,
+                SAINSoundType.GearSound,
+                ____player.Position,
+                baseRange,
+                __instance.CalculateAimingSoundVolume()
+            );
+        }
     }
 }

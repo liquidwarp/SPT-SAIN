@@ -93,7 +93,8 @@ public class EnemyPlaceRaycastJob : BotManagerBase
                 continue;
             }
 
-            if (BotController.BotGame?.Status == EFT.GameStatus.Stopping)
+            IBotGame botGame = BotController.BotGame;
+            if (botGame != null && botGame.Status == EFT.GameStatus.Stopping)
             {
                 yield return null;
                 continue;
@@ -102,7 +103,7 @@ public class EnemyPlaceRaycastJob : BotManagerBase
             PlacesToCheck.Clear();
             foreach (BotComponent bot in bots)
             {
-                if (bot?.BotActive == true)
+                if (bot != null && bot.BotActive)
                 {
                     foreach (Enemy enemy in bot.EnemyController.EnemiesArray)
                     {

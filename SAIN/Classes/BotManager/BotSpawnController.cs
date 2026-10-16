@@ -91,10 +91,13 @@ public class BotSpawnController : BotManagerBase
     {
         get
         {
-            var botGame = BotController?.BotGame;
-            if (botGame != null)
+            if (BotController != null)
             {
-                return botGame.Status;
+                var botGame = BotController.BotGame;
+                if (botGame != null)
+                {
+                    return botGame.Status;
+                }
             }
             return GameStatus.Starting;
         }
@@ -182,7 +185,7 @@ public class BotSpawnController : BotManagerBase
 
     public void UnSubscribe()
     {
-        if (Subscribed && BotController?.BotSpawner != null)
+        if (Subscribed && BotController != null && BotController.BotSpawner != null)
         {
             BotController.BotSpawner.OnBotRemoved -= RemoveBot;
             Subscribed = false;
@@ -193,7 +196,11 @@ public class BotSpawnController : BotManagerBase
 
     public BotComponent GetSAIN(BotOwner botOwner)
     {
-        return GetSAIN(botOwner?.ProfileId);
+        if (botOwner == null)
+        {
+            return null;
+        }
+        return GetSAIN(botOwner.ProfileId);
     }
 
     public BotComponent GetSAIN(string profileId)

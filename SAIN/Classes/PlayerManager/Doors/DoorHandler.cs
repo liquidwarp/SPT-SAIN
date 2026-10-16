@@ -25,10 +25,13 @@ public class DoorHandler : GameWorldBase
     {
         foreach (var door in _doorsWithTriggers)
         {
-            var collider = door.Value?.gameObject?.GetComponent<SphereCollider>();
-            if (collider != null)
+            if (door.Value != null)
             {
-                GameObject.Destroy(collider);
+                var collider = door.Value.GetComponent<SphereCollider>();
+                if (collider != null)
+                {
+                    GameObject.Destroy(collider);
+                }
             }
             GameObject.Destroy(door.Value);
         }

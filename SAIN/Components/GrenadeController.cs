@@ -94,7 +94,7 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
         // We dont want bots to think the grenade explosion was a place they heard an enemy, so set this manually.
         foreach (var bot in Bots.Values)
         {
-            if (bot?.BotActive == true)
+            if (bot != null && bot.BotActive)
             {
                 float distance = (bot.Position - explosionPosition).magnitude;
                 if (distance < range)

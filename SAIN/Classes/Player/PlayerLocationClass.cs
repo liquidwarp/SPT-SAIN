@@ -12,7 +12,7 @@ public class PlayerLocationClass : AIDataBase
 
     public void UpdateEnvironment(IndoorTrigger trigger)
     {
-        InBunker = trigger?.IsBunker == true;
+        InBunker = trigger != null && trigger.IsBunker;
         BunkerDepth = InBunker ? trigger.BunkerDepth : 0f;
         if (InBunker)
         {

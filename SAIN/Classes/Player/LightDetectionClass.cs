@@ -12,9 +12,13 @@ public class LightDetectionClass(PlayerComponent component) : PlayerComponentBas
     public bool CheckIsBeamVisible(FlashLightClass EnemyFlashlight)
     {
         // If this isn't visible light, and the bot doesn't have night vision, ignore it
-        if (!EnemyFlashlight.WhiteLight && !EnemyFlashlight.Laser && Player.AIData?.BotOwner?.NightVision?.UsingNow == false)
+        if (!EnemyFlashlight.WhiteLight && !EnemyFlashlight.Laser)
         {
-            return false;
+            BotOwner botOwner = Player.AIData?.BotOwner;
+            if (botOwner != null && botOwner.NightVision?.UsingNow == false)
+            {
+                return false;
+            }
         }
         if (EnemyFlashlight.LightDetection.LightPoints.Count <= 0)
         {
@@ -40,7 +44,11 @@ public class LightDetectionClass(PlayerComponent component) : PlayerComponentBas
         }
         else
         {
-            PlayerComponent.BotOwner?.BotsGroup.AddPointToSearch(estimatedPosition, 20f, PlayerComponent.BotOwner, true, false);
+            BotOwner botOwner = PlayerComponent.BotOwner;
+            if (botOwner != null)
+            {
+                botOwner.BotsGroup.AddPointToSearch(estimatedPosition, 20f, botOwner, true, false);
+            }
         }
     }
 

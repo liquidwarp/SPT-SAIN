@@ -1,3 +1,4 @@
+using EFT;
 using SAIN.Components;
 using SAIN.Preset.Shared.Enums;
 using SAIN.SAINComponent.Classes.EnemyClasses;
@@ -29,7 +30,12 @@ public class DogFightDecisionClass : BotBase
 
     public bool CheckShallDogFight(EnemyList KnownEnemies, out Enemy result)
     {
-        BotWeaponManager weaponManager = BotOwner?.WeaponManager;
+        BotOwner botOwner = BotOwner;
+        BotWeaponManager weaponManager = null;
+        if (botOwner != null)
+        {
+            weaponManager = botOwner.WeaponManager;
+        }
         if (weaponManager == null || !weaponManager.HaveBullets || weaponManager.Reload.Reloading)
         {
             _lastDogFightTarget = null;

@@ -9,7 +9,14 @@ public abstract class BotManagerBase(BotManagerComponent botController)
     public BotManagerComponent BotController { get; private set; } = botController;
     public Dictionary<string, BotComponent> Bots
     {
-        get { return BotController?.BotSpawnController?.BotDictionary; }
+        get
+        {
+            if (BotController == null)
+            {
+                return null;
+            }
+            return BotController.BotSpawnController?.BotDictionary;
+        }
     }
 
     public GameWorld GameWorld

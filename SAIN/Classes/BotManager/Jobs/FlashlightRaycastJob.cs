@@ -220,7 +220,11 @@ public class FlashlightRaycastJob : SainJobTemplate, IDisposable
 
     protected override bool CanProceed()
     {
-        var bots = SAINBotController?.BotSpawnController?.BotDictionary;
+        if (SAINBotController == null)
+        {
+            return false;
+        }
+        var bots = SAINBotController.BotSpawnController?.BotDictionary;
         return bots != null && bots.Count > 0;
     }
 

@@ -100,8 +100,13 @@ public class PlayerComponent : MonoBehaviour, IDisposable
             {
                 Weapon LastWeapon = _currentWeapon;
 #if DEBUG
+                string nickname = null;
+                if (Player != null)
+                {
+                    nickname = Player.Profile.Nickname;
+                }
                 Logger.LogDebug(
-                    $"[{Player?.Profile.Nickname}] Equipped Weapon [{value?.ShortName?.Localized()}] Last Weapon [{LastWeapon?.ShortName?.Localized()}]"
+                    $"[{nickname}] Equipped Weapon [{value?.ShortName?.Localized()}] Last Weapon [{LastWeapon?.ShortName?.Localized()}]"
                 );
 #endif
                 _currentWeapon = value;
@@ -121,8 +126,13 @@ public class PlayerComponent : MonoBehaviour, IDisposable
             {
                 Item LastItem = _currentItem;
 #if DEBUG
+                string nickname = null;
+                if (Player != null)
+                {
+                    nickname = Player.Profile.Nickname;
+                }
                 Logger.LogDebug(
-                    $"[{Player?.Profile.Nickname}] Equipped Item [{value?.ShortName?.Localized()}] Last Item [{LastItem?.ShortName?.Localized()}]"
+                    $"[{nickname}] Equipped Item [{value?.ShortName?.Localized()}] Last Item [{LastItem?.ShortName?.Localized()}]"
                 );
 #endif
                 _currentItem = value;
@@ -333,7 +343,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
     {
         yield return null;
         Equipment.Init();
-        if (Player.HandsController?.Item != null)
+        if (Player.HandsController != null && Player.HandsController.Item != null)
         {
             SetItemEquippedInHands(Player.HandsController.Item);
         }
@@ -348,8 +358,13 @@ public class PlayerComponent : MonoBehaviour, IDisposable
     public void Dispose()
     {
 #if DEBUG
+        string nickname = null;
+        if (Player != null)
+        {
+            nickname = Player.Profile?.Nickname;
+        }
         Logger.LogDebug(
-            $"Destroying Playing Component for [Name: {Name} : Nickname: {Player?.Profile?.Nickname}, ProfileID: {ProfileId}, at time: {Time.time}]"
+            $"Destroying Playing Component for [Name: {Name} : Nickname: {nickname}, ProfileID: {ProfileId}, at time: {Time.time}]"
         );
 #endif
         OnComponentDestroyed?.Invoke(this);

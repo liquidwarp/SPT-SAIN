@@ -41,7 +41,14 @@ public class Squad
     public float LeaderPowerLevel { get; private set; }
     public bool LeaderIsDeadorNull
     {
-        get { return LeaderComponent?.Player == null || LeaderComponent?.Player?.HealthController.IsAlive == false; }
+        get
+        {
+            if (LeaderComponent == null || LeaderComponent.Player == null)
+            {
+                return true;
+            }
+            return !LeaderComponent.Player.HealthController.IsAlive;
+        }
     }
 
     public float TimeThatLeaderDied { get; private set; }
@@ -107,7 +114,8 @@ public class Squad
             if (EFTMath.RandomBool(finalChance))
             {
                 if (
-                    member?.Player != null
+                    member != null
+                    && member.Player != null
                     && reportedEnemy.Player != null
                     && reportedEnemy.EnemyPlayer != null
                     && reportedEnemy.Player.ProfileId != member.ProfileId
@@ -137,7 +145,11 @@ public class Squad
     {
         foreach (var member in Members)
         {
-            Enemy enemy = member.Value?.GoalEnemy;
+            if (member.Value == null)
+            {
+                continue;
+            }
+            Enemy enemy = member.Value.GoalEnemy;
             if (enemy?.EnemyPlayer != null && enemy.EnemyPlayer.ProfileId == profileId && enemy.Status.EnemyIsSuppressed)
             {
                 suppressingMember = member.Value;
@@ -390,10 +402,20 @@ public class Squad
 #if DEBUG
         if (SAINPlugin.DebugMode)
         {
+            string memberName = null;
+            if (player != null)
+            {
+                memberName = player.Profile.Nickname;
+            }
+            string aggressorName = null;
+            if (lastAggressor != null)
+            {
+                aggressorName = lastAggressor.Profile.Nickname;
+            }
             Logger.LogInfo(
-                $"Member [{player?.Profile.Nickname}] "
+                $"Member [{memberName}] "
                     + $"was killed for Squad: [{Id}] "
-                    + $"by [{lastAggressor?.Profile.Nickname}] "
+                    + $"by [{aggressorName}] "
                     + $"at Time: [{Time.time}] "
                     + $"by damage type: [{lastDamageInfoStruct.DamageType}] "
                     + $"to Body part: [{lastBodyPart}]"
@@ -403,7 +425,12 @@ public class Squad
 
         OnMemberKilled?.Invoke(lastAggressor, lastDamageInfoStruct, Time.time);
 
-        if (MemberInfos.TryGetValue(player?.ProfileId, out var member) && member != null)
+        if (player == null)
+        {
+            return;
+        }
+        string profileId = player.ProfileId;
+        if (MemberInfos.TryGetValue(profileId, out var member) && member != null)
         {
             // If this killed Member is the squad leader then
             if (member.ProfileId == LeaderId)
@@ -411,7 +438,7 @@ public class Squad
 #if DEBUG
                 if (SAINPlugin.DebugMode)
                 {
-                    Logger.LogInfo($"Leader [{player?.Profile.Nickname}] was killed for Squad: [{Id}]");
+                    Logger.LogInfo($"Leader [{player.Profile.Nickname}] was killed for Squad: [{Id}]");
                 }
 #endif
 
@@ -421,7 +448,7 @@ public class Squad
             }
         }
 
-        RemoveMember(player?.ProfileId);
+        RemoveMember(profileId);
     }
 
     private void findSquadLeader()
@@ -460,7 +487,7 @@ public class Squad
 
     private void assignSquadLeader(BotComponent sain)
     {
-        if (sain?.Player == null)
+        if (sain == null || sain.Player == null)
         {
 #if DEBUG
             Logger.LogError($"Tried to Assign Null SAIN Component or Player for Squad [{Id}], skipping");
@@ -470,15 +497,20 @@ public class Squad
 
         LeaderComponent = sain;
         LeaderPowerLevel = sain.Info.Profile.PowerLevel;
-        LeaderId = sain.Player?.ProfileId;
+        LeaderId = sain.Player.ProfileId;
 
         NewLeaderFound?.Invoke(sain, Time.time);
 
 #if DEBUG
         if (SAINPlugin.DebugMode)
         {
+            string leaderName = null;
+            if (sain.BotOwner != null)
+            {
+                leaderName = sain.BotOwner.Profile?.Nickname;
+            }
             Logger.LogInfo(
-                $" Found New Leader. Name [{sain.BotOwner?.Profile?.Nickname}]"
+                $" Found New Leader. Name [{leaderName}]"
                     + $" for Squad: [{Id}]"
                     + $" at Time: [{Time.time}]"
                     + $" Group Size: [{Members.Count}]"
@@ -490,7 +522,7 @@ public class Squad
     public void AddMember(BotComponent bot)
     {
         // Make sure nothing is null as a safety check.
-        if (bot?.Player != null && bot.BotOwner != null)
+        if (bot != null && bot.Player != null && bot.BotOwner != null)
         {
             // Make sure this profile ID doesn't already exist for whatever reason
             if (!Members.ContainsKey(bot.ProfileId))
@@ -536,7 +568,11 @@ public class Squad
 
     public void RemoveMember(BotComponent sain)
     {
-        RemoveMember(sain?.ProfileId);
+        if (sain == null)
+        {
+            return;
+        }
+        RemoveMember(sain.ProfileId);
     }
 
     public void RemoveMember(string id)
@@ -547,10 +583,9 @@ public class Squad
         }
         if (MemberInfos.TryGetValue(id, out var memberInfo))
         {
-            Player player = memberInfo.Bot?.Player;
-            if (player != null)
+            if (memberInfo.Bot != null && memberInfo.Bot.Player != null)
             {
-                player.OnPlayerDead -= memberWasKilled;
+                memberInfo.Bot.Player.OnPlayerDead -= memberWasKilled;
             }
             memberInfo.Bot.Decision.DecisionManager.OnDecisionMade -= memberMadeDecision;
             memberInfo.Dispose();

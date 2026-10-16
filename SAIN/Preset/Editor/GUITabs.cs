@@ -222,7 +222,7 @@ public static class GUITabs
             {
                 if (Button(triggers[i].ToString()))
                 {
-                    if (BotManagerComponent.Instance?.Bots != null)
+                    if (BotManagerComponent.Instance != null && BotManagerComponent.Instance.Bots != null)
                     {
                         foreach (var bot in BotManagerComponent.Instance.Bots.Values)
                         {

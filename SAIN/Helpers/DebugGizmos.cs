@@ -275,7 +275,11 @@ public class DebugGizmos
         const float MAX_LINE_WIDTH = 1;
         const float LINE_TAPER_START_COEF = 1.25f;
         const float LINE_TAPER_END_COEF = 0.15f;
-        LineRenderer lineRenderer = gameObject?.GetOrAddComponent<LineRenderer>();
+        LineRenderer lineRenderer = null;
+        if (gameObject != null)
+        {
+            lineRenderer = gameObject.GetOrAddComponent<LineRenderer>();
+        }
         if (lineRenderer != null)
         {
             lineRenderer.startWidth = Mathf.Clamp(

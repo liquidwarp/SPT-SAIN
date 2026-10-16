@@ -19,7 +19,12 @@ public class GameWorldComponent : MonoBehaviour
             PlayerComponent = null;
             return false;
         }
-        PlayerSpawnTracker PlayerTracker = Instance?.PlayerTracker;
+        if (Instance == null)
+        {
+            PlayerComponent = null;
+            return false;
+        }
+        PlayerSpawnTracker PlayerTracker = Instance.PlayerTracker;
         if (PlayerTracker == null)
         {
             PlayerComponent = null;
@@ -49,7 +54,8 @@ public class GameWorldComponent : MonoBehaviour
             OtherPlayerData data = Data.Value;
             PlayerComponent PlayerComponent = data.OtherPlayerComponent;
             if (
-                PlayerComponent?.IsAI == true
+                PlayerComponent != null
+                && PlayerComponent.IsAI
                 && PlayerComponent.IsActive
                 && Vector3.Dot(data.DistanceData.DirectionNormal, PlayerLookDir) > 0.75f
             )
@@ -62,14 +68,19 @@ public class GameWorldComponent : MonoBehaviour
 
         if (PlayersToCheck.Count > 0)
         {
-            while (!Bullet.IsShotFinished && Player?.IsActive == true && PlayersToCheck.Count > 0)
+            while (!Bullet.IsShotFinished && Player != null && Player.IsActive && PlayersToCheck.Count > 0)
             {
                 Vector3 BulletPosition = Bullet.CurrentPosition;
 
                 for (int i = PlayersToCheck.Count - 1; i >= 0; i--)
                 {
                     OtherPlayerData Data = PlayersToCheck[i];
-                    if (Data?.OtherPlayerComponent?.IsActive == false)
+                    if (Data == null)
+                    {
+                        continue;
+                    }
+                    PlayerComponent otherPlayerComponent = Data.OtherPlayerComponent;
+                    if (otherPlayerComponent != null && !otherPlayerComponent.IsActive)
                     {
                         PlayersToCheck.RemoveAt(i);
                         continue;
@@ -149,8 +160,12 @@ public class GameWorldComponent : MonoBehaviour
 
             foreach (var playerComponent in PlayerComponents)
             {
-                BotComponent Bot = playerComponent?.BotComponent;
-                if (Bot != null && Bot.BotOwner?.BotState == EBotState.Active)
+                if (playerComponent == null)
+                {
+                    continue;
+                }
+                BotComponent Bot = playerComponent.BotComponent;
+                if (Bot != null && Bot.BotOwner != null && Bot.BotOwner.BotState == EBotState.Active)
                 {
                     Bot.Hearing.HearingInput.ProcessAISoundCache();
                 }
@@ -169,7 +184,7 @@ public class GameWorldComponent : MonoBehaviour
                 if (OtherPlayer != null && OtherPlayer.IsActive && OtherPlayer.IsSAINBot)
                 {
                     BotComponent Bot = OtherPlayer.BotComponent;
-                    if (Bot != null && Bot.BotOwner?.BotState == EBotState.Active)
+                    if (Bot != null && Bot.BotOwner != null && Bot.BotOwner.BotState == EBotState.Active)
                     {
                         bool InFootstepRadius = OtherPlayerData.IsInHearingRadius_Footsteps;
                         bool InGunfireRadius = OtherPlayerData.IsInHearingRadius_GunFire;
@@ -187,7 +202,7 @@ public class GameWorldComponent : MonoBehaviour
                                 continue;
                             }
 
-                            OtherPlayer.BotComponent?.Hearing.HearingInput.CheckAddSoundToCache(soundEvent, Distance);
+                            Bot.Hearing.HearingInput.CheckAddSoundToCache(soundEvent, Distance);
                         }
                     }
                 }

@@ -126,7 +126,12 @@ public static class SAINEnableClass
 
     private static bool IsAlwaysEnabled(WildSpawnType wildSpawnType, BotOwner botOwner)
     {
-        return wildSpawnType.IsPmcBot() || BotManagerComponent.Instance?.Bots?.ContainsKey(botOwner.ProfileId) == true;
+        if (wildSpawnType.IsPmcBot())
+        {
+            return true;
+        }
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        return botManager != null && botManager.Bots?.ContainsKey(botOwner.ProfileId) == true;
     }
 
     private static bool ExcludeScav(WildSpawnType wildSpawnType, BotOwner botOwner)

@@ -191,7 +191,14 @@ public class BotWeaponInfoClass : BotBase
 
     public Weapon CurrentWeapon
     {
-        get { return BotOwner?.WeaponManager?.CurrentWeapon; }
+        get
+        {
+            if (BotOwner == null)
+            {
+                return null;
+            }
+            return BotOwner.WeaponManager?.CurrentWeapon;
+        }
     }
 
     private Weapon _lastCheckedWeapon;

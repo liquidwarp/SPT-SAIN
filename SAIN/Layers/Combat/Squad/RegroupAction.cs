@@ -1,5 +1,6 @@
 ﻿using DrakiaXYZ.BigBrain.Brains;
 using EFT;
+using SAIN.Components;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
@@ -10,12 +11,13 @@ internal class RegroupAction(BotOwner bot) : BotAction(bot), IBotAction
     public override void Update(CustomLayer.ActionData data)
     {
         Enemy enemy = Bot.GoalEnemy;
-        var SquadLeadPos = Bot.Squad.LeaderComponent?.Position;
-        if (SquadLeadPos != null)
+        BotComponent squadLeader = Bot.Squad.LeaderComponent;
+        if (squadLeader != null)
         {
+            Vector3 SquadLeadPos = squadLeader.Position;
             bool hasEnemy = enemy != null;
             bool enemyLOS = enemy?.InLineOfSight == true;
-            float leadDist = (SquadLeadPos.Value - BotOwner.Position).magnitude;
+            float leadDist = (SquadLeadPos - BotOwner.Position).magnitude;
             float enemyDist = hasEnemy ? enemy.KnownPlaces.BotDistanceFromLastKnown : 999f;
 
             bool sprint = hasEnemy && leadDist > 30f && !enemyLOS && enemyDist > 50f;
@@ -25,11 +27,11 @@ internal class RegroupAction(BotOwner bot) : BotAction(bot), IBotAction
                 _nextChangeSprintTime = Time.time + 1f;
                 if (sprint)
                 {
-                    Bot.Mover.RunToPoint(SquadLeadPos.Value);
+                    Bot.Mover.RunToPoint(SquadLeadPos);
                 }
                 else
                 {
-                    Bot.Mover.WalkToPoint(SquadLeadPos.Value);
+                    Bot.Mover.WalkToPoint(SquadLeadPos);
                 }
             }
         }

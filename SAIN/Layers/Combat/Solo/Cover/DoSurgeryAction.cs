@@ -30,7 +30,10 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner), IBotAct
             }
             else if (_actionStartedTime + 30f < Time.time)
             {
-                bot.Player?.ActiveHealthController?.RestoreFullHealth();
+                if (bot.Player != null)
+                {
+                    bot.Player.ActiveHealthController?.RestoreFullHealth();
+                }
                 bot.Decision.ResetDecisions();
             }
         }
@@ -60,7 +63,10 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner), IBotAct
         {
             if (Bot.GoalEnemy == null || Bot.GoalEnemy.TimeSinceSeen > 90f)
             {
-                Bot.Player?.ActiveHealthController?.RestoreFullHealth();
+                if (Bot.Player != null)
+                {
+                    Bot.Player.ActiveHealthController?.RestoreFullHealth();
+                }
                 Bot.Decision.ResetDecisions();
             }
             return;

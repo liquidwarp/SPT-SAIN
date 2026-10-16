@@ -159,7 +159,8 @@ public class Recoil(BotComponent sain) : BotBase(sain)
             recoilMod *= 0.9f;
         }
 
-        if (BotOwner.WeaponManager?.ShootController?.IsAiming == true)
+        IFirearmHandsController shootController = BotOwner.WeaponManager?.ShootController;
+        if (shootController != null && shootController.IsAiming)
         {
             recoilMod *= 0.9f;
         }

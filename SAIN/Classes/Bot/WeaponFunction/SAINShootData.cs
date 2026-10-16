@@ -50,7 +50,11 @@ public class SAINShootData : BotComponentClassBase
             EndShoot();
             return;
         }
-        if (LastShotEnemy?.EnemyPlayer?.HealthController?.IsAlive != true)
+        if (
+            LastShotEnemy == null
+            || LastShotEnemy.EnemyPlayer == null
+            || LastShotEnemy.EnemyPlayer.HealthController?.IsAlive != true
+        )
         {
             EndShoot();
             LastShotEnemy = null;
@@ -142,7 +146,7 @@ public class SAINShootData : BotComponentClassBase
             return false;
         }
 
-        if (Enemy.Player?.HealthController?.IsAlive == false)
+        if (Enemy.Player != null && Enemy.Player.HealthController?.IsAlive == false)
         {
             return false;
         }
@@ -216,7 +220,11 @@ public class SAINShootData : BotComponentClassBase
     {
         if (_nextChangeWeaponTime < Time.time)
         {
-            var selector = BotOwner?.WeaponManager?.Selector;
+            BotWeaponSelector selector = null;
+            if (BotOwner != null)
+            {
+                selector = BotOwner.WeaponManager?.Selector;
+            }
             if (selector != null)
             {
                 _nextChangeWeaponTime = Time.time + 1f;

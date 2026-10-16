@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using EFT;
 using EFT.Ballistics;
+using SAIN.BotController.Classes;
 using SAIN.Components;
 using SAIN.Extensions;
 using SAIN.Helpers;
@@ -418,7 +419,11 @@ public class GroupTalk : BotBase
         if (Subscribed)
         {
             Subscribed = false;
-            var squad = Bot?.Squad?.SquadInfo;
+            Squad squad = null;
+            if (Bot != null)
+            {
+                squad = Bot.Squad?.SquadInfo;
+            }
             if (squad != null)
             {
                 squad.OnMemberKilled -= friendlyDown;
@@ -447,7 +452,11 @@ public class GroupTalk : BotBase
 
     private void sub()
     {
-        var squad = Bot?.Squad?.SquadInfo;
+        Squad squad = null;
+        if (Bot != null)
+        {
+            squad = Bot.Squad?.SquadInfo;
+        }
         if (!Subscribed && squad != null)
         {
             Subscribed = true;
@@ -532,8 +541,7 @@ public class GroupTalk : BotBase
         }
         if (!_settings._reportEnemyKilledToxicSquadLeader)
         {
-            var settings = player?.Profile?.Info?.Settings;
-            if (settings == null || !BotOwner.BotsGroup.IsPlayerEnemy(player))
+            if (player == null || player.Profile?.Info?.Settings == null ||!BotOwner.BotsGroup.IsPlayerEnemy(player))
             {
                 return;
             }
@@ -550,7 +558,8 @@ public class GroupTalk : BotBase
 
             var leader = Bot.Squad.SquadInfo?.LeaderComponent;
             if (
-                leader?.Player != null
+                leader != null
+                && leader.Player != null
                 && !Bot.Squad.IAmLeader
                 && EFTMath.RandomBool(_settings._reportEnemyKilledSquadLeadChance)
                 && PersonIsClose(leader.Player)
@@ -1046,7 +1055,15 @@ public class GroupTalk : BotBase
 
     public SAINBotTalkClass LeaderComponent
     {
-        get { return Bot.Squad.LeaderComponent?.Talk; }
+        get
+        {
+            BotComponent leader = Bot.Squad.LeaderComponent;
+            if (leader == null)
+            {
+                return null;
+            }
+            return leader.Talk;
+        }
     }
 
     private float Randomized

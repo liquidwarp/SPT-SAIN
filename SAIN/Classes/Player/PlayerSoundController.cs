@@ -186,13 +186,17 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
                     _playedAtLeastOneStep = true;
                     if (Player.CheckSurface(RunSurfaceRange))
                     {
-                        BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                            Player.ProfileId,
-                            SAINSoundType.FootStep,
-                            Player.Position,
-                            SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Footstep,
-                            CalculateStepVolume()
-                        );
+                        BotManagerComponent botManager = BotManagerComponent.Instance;
+                        if (botManager != null)
+                        {
+                            botManager.BotHearing.PlayAISound(
+                                Player.ProfileId,
+                                SAINSoundType.FootStep,
+                                Player.Position,
+                                SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Footstep,
+                                CalculateStepVolume()
+                            );
+                        }
                     }
                 }
             }

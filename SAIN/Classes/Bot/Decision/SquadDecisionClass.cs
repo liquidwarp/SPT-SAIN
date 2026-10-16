@@ -20,7 +20,12 @@ public class SquadDecisionClass : BotBase
     public bool GetDecision(out ESquadDecision Decision, Enemy enemy)
     {
         Decision = ESquadDecision.None;
-        if (!Squad.BotInGroup || Bot.Squad.SquadInfo?.LeaderComponent == null || Squad.LeaderComponent?.IsDead == true)
+        if (!Squad.BotInGroup || Bot.Squad.SquadInfo?.LeaderComponent == null)
+        {
+            return false;
+        }
+        BotComponent leader = Squad.LeaderComponent;
+        if (leader != null && leader.IsDead)
         {
             return false;
         }
@@ -104,7 +109,7 @@ public class SquadDecisionClass : BotBase
         {
             bool inRange = false;
             float modifier = enemy.Status.VulnerableAction == EEnemyAction.UsingSurgery ? 1.25f : 1f;
-            if (enemy.Path.PathLength < PushSuppressedEnemyMaxPathDistanceSprint * modifier && BotOwner?.CanSprintPlayer == true)
+            if (enemy.Path.PathLength < PushSuppressedEnemyMaxPathDistanceSprint * modifier && BotOwner != null && BotOwner.CanSprintPlayer)
             {
                 inRange = true;
             }
@@ -186,7 +191,12 @@ public class SquadDecisionClass : BotBase
 
     private bool doesMemberShareEnemy(BotComponent member)
     {
-        if (member == null || member.ProfileId == Bot.ProfileId || member.BotOwner?.IsDead == true)
+        if (member == null || member.ProfileId == Bot.ProfileId)
+        {
+            return false;
+        }
+        BotOwner memberOwner = member.BotOwner;
+        if (memberOwner != null && memberOwner.IsDead)
         {
             return false;
         }

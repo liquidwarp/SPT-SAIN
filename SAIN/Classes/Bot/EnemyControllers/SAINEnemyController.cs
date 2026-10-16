@@ -117,7 +117,12 @@ public class SAINEnemyController : BotComponentClassBase
 
     public void UpdateEnemies(BotComponent bot, float currentTime)
     {
-        List<IPlayer> Allies = bot.BotOwner?.BotsGroup?.Allies;
+        List<IPlayer> Allies = null;
+        BotOwner botOwner = bot.BotOwner;
+        if (botOwner != null)
+        {
+            Allies = botOwner.BotsGroup?.Allies;
+        }
         if (Allies == null)
         {
 #if DEBUG

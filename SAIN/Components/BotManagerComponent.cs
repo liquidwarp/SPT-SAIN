@@ -5,6 +5,7 @@ using EFT;
 using EFT.EnvironmentEffect;
 using SAIN.BotController.Classes;
 using SAIN.Components.BotController;
+using SAIN.Components.PlayerComponentSpace;
 using SAIN.Components.BotControllerSpace.Classes;
 using UnityEngine;
 
@@ -71,7 +72,11 @@ public class BotManagerComponent : MonoBehaviour
 
     public void PlayerEnviromentChanged(string profileID, IndoorTrigger trigger)
     {
-        SAINGameWorld.PlayerTracker.GetPlayerComponent(profileID)?.AIData.PlayerLocation.UpdateEnvironment(trigger);
+        PlayerComponent playerComponent = SAINGameWorld.PlayerTracker.GetPlayerComponent(profileID);
+        if (playerComponent != null)
+        {
+            playerComponent.AIData.PlayerLocation.UpdateEnvironment(trigger);
+        }
     }
 
     public void Activate(GameWorldComponent gameWorldComp)
@@ -123,7 +128,10 @@ public class BotManagerComponent : MonoBehaviour
             {
                 foreach (var bot in Bots.Values)
                 {
-                    bot?.Dispose();
+                    if (bot != null)
+                    {
+                        bot.Dispose();
+                    }
                 }
             }
 

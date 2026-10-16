@@ -143,7 +143,14 @@ public class BotComponent : BotComponentBase
 
     public bool IsDead
     {
-        get { return Player?.HealthController?.IsAlive != true; }
+        get
+        {
+            if (Player == null)
+            {
+                return true;
+            }
+            return Player.HealthController?.IsAlive != true;
+        }
     }
 
     public bool GameEnding
@@ -412,7 +419,11 @@ public class BotComponent : BotComponentBase
             return true;
         }
 
-        string assignedBrainName = playerComp.BotOwner?.Brain?.BaseBrain?.ShortName();
+        string assignedBrainName = null;
+        if (playerComp.BotOwner != null)
+        {
+            assignedBrainName = playerComp.BotOwner.Brain?.BaseBrain?.ShortName();
+        }
 
         if (Info.Profile.IsPMC)
         {

@@ -16,7 +16,7 @@ public class PlayerHurtPatch : ModulePatch
     [PatchPrefix]
     public static void PatchPrefix(Player __instance, float damage)
     {
-        if (__instance?.HealthController?.IsAlive != true || !__instance.IsAI)
+        if (__instance == null || __instance.HealthController?.IsAlive != true || !__instance.IsAI)
         {
             return;
         }
@@ -50,13 +50,17 @@ public class PlayerTalkPatch : ModulePatch
     [PatchPrefix]
     public static bool PatchPrefix(Player __instance, EPhraseTrigger phrase, ETagStatus mask, bool aggressive)
     {
+        BotManagerComponent botManager = BotManagerComponent.Instance;
         switch (phrase)
         {
             case EPhraseTrigger.OnDeath:
             case EPhraseTrigger.OnBeingHurt:
             case EPhraseTrigger.OnAgony:
             case EPhraseTrigger.OnBreath:
-                BotManagerComponent.Instance?.BotHearing.PlayerTalked(phrase, mask, __instance);
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayerTalked(phrase, mask, __instance);
+                }
                 return true;
 
             default:
@@ -67,13 +71,19 @@ public class PlayerTalkPatch : ModulePatch
         {
             if (SAINPlugin.LoadedPreset.GlobalSettings.Talk.DisableBotTalkPatching || !SAINEnableClass.GetSAIN(__instance.ProfileId, out _))
             {
-                BotManagerComponent.Instance?.BotHearing.PlayerTalked(phrase, mask, __instance);
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayerTalked(phrase, mask, __instance);
+                }
                 return true;
             }
             return false;
         }
 
-        BotManagerComponent.Instance?.BotHearing.PlayerTalked(phrase, mask, __instance);
+        if (botManager != null)
+        {
+            botManager.BotHearing.PlayerTalked(phrase, mask, __instance);
+        }
         return true;
     }
 }
@@ -92,7 +102,7 @@ public class BotTalkPatch : ModulePatch
         {
             return true;
         }
-        if (__instance._owner?.HealthController?.IsAlive == false)
+        if (__instance._owner != null && __instance._owner.HealthController?.IsAlive == false)
         {
             return true;
         }

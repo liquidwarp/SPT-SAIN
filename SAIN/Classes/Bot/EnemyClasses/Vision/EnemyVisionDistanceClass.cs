@@ -1,5 +1,6 @@
 ﻿using EFT;
 using SAIN.Components;
+using SAIN.Components.PlayerComponentSpace;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.EnemyClasses;
@@ -118,7 +119,12 @@ public class EnemyVisionDistanceClass : EnemyBase
         // if player shot a weapon recently
         // if player is using suppressed weapon, and has shot recently, don't increase vis distance as much.
         bool flareEnabled = EnemyPlayer.AIData.GetFlare;
-        bool usingSuppressor = Enemy.EnemyPlayerComponent?.Equipment.CurrentWeaponInfo?.HasSuppressor == true;
+        bool usingSuppressor = false;
+        PlayerComponent enemyPlayerComponent = Enemy.EnemyPlayerComponent;
+        if (enemyPlayerComponent != null)
+        {
+            usingSuppressor = enemyPlayerComponent.Equipment.CurrentWeaponInfo?.HasSuppressor == true;
+        }
 
         float flareMod;
         if (flareEnabled && !usingSuppressor)

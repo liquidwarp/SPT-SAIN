@@ -309,7 +309,10 @@ public class SAINCoverClass : BotComponentClassBase
     {
         try
         {
-            CoverFinder?.Dispose();
+            if (CoverFinder != null)
+            {
+                CoverFinder.Dispose();
+            }
         }
         catch { }
         if (_debugCoverObject != null)
@@ -373,12 +376,18 @@ public class SAINCoverClass : BotComponentClassBase
     {
         if (value)
         {
-            CoverFinder?.LookForCover();
+            if (CoverFinder != null)
+            {
+                CoverFinder.LookForCover();
+            }
             CurrentCoverFinderState = CoverFinderState.on;
         }
         if (!value)
         {
-            CoverFinder?.StopLooking();
+            if (CoverFinder != null)
+            {
+                CoverFinder.StopLooking();
+            }
             CurrentCoverFinderState = CoverFinderState.off;
         }
     }

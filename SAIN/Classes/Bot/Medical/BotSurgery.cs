@@ -1,4 +1,5 @@
-﻿using SAIN.Components;
+﻿using EFT;
+using SAIN.Components;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
@@ -35,7 +36,13 @@ public class BotSurgery : BotBase
 
     public bool CheckCanStartUsingKit()
     {
-        return BotOwner?.Medecine?.FirstAid?.IsBleeding == false && BotOwner?.Medecine?.SurgicalKit?.ShallStartUse() == true;
+        BotOwner botOwner = BotOwner;
+        if (botOwner == null)
+        {
+            return false;
+        }
+        var medecine = botOwner.Medecine;
+        return medecine?.FirstAid?.IsBleeding == false && medecine.SurgicalKit?.ShallStartUse() == true;
     }
 
     private bool CheckEnemies()

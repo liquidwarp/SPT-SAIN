@@ -483,7 +483,10 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
 
     public void Stop()
     {
-        BotOwner?.Mover?.Stop();
+        if (BotOwner != null)
+        {
+            BotOwner.Mover?.Stop();
+        }
         _activePath?.Cancel();
     }
 
@@ -506,7 +509,11 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
 
     public bool TryVault()
     {
-        bool vaulted = Player?.MovementContext?.TryVaulting() == true;
+        bool vaulted = false;
+        if (Player != null)
+        {
+            vaulted = Player.MovementContext?.TryVaulting() == true;
+        }
         if (vaulted)
         {
             TimeLastVaulted = Time.time;

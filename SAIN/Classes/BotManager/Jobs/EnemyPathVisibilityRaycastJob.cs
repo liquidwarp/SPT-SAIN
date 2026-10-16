@@ -154,7 +154,11 @@ public class EnemyPathVisibilityRaycastJob : SainJobTemplate, IDisposable
 
     protected override bool CanProceed()
     {
-        var bots = SAINBotController?.BotSpawnController?.SAINBots;
+        if (SAINBotController == null)
+        {
+            return false;
+        }
+        var bots = SAINBotController.BotSpawnController?.SAINBots;
         return bots != null && bots.Count > 0;
     }
 

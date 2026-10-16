@@ -97,7 +97,7 @@ public class SAINSteeringClass : BotComponentClassBase
             LookToFloorPoint(pathFollower.ActivePath.GetCurrentCorner().Position);
             return true;
         }
-        if (BotOwner?.Mover?.HasPathAndNoComplete == true)
+        if (BotOwner != null && BotOwner.Mover?.HasPathAndNoComplete == true)
         {
             LookToFloorPoint(BotOwner.Mover.CurrentCornerPoint);
             return true;
