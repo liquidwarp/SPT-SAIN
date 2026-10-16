@@ -34,6 +34,7 @@ public sealed record GitHubRelease
 
 public sealed record CachedReleases
 {
+    public string? Url { get; init; }
     public DateTimeOffset FetchedAt { get; init; }
     public List<GitHubRelease> Releases { get; init; } = [];
 }

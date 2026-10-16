@@ -11,7 +11,9 @@ internal static class MyModInfo
     public const string MOD_GUID = "$(ModGuid)"%3B
     public const string MOD_NAME = "$(Product)"%3B
     public const string MOD_AUTHOR = "$(Authors)"%3B
-    public const string MOD_VERSION = "$(Version)"%3B
+    public const string MOD_VERSION = "$(VersionPrefix)"%3B
+    public const string MOD_FULL_VERSION = "$(Version)"%3B
+    public const string FORK_MARKER = "$(ForkMarker)"%3B
     public const string CLIENT_SPT_VERSION = "$(ClientSPTVersion)"%3B
     public const string SERVER_SPT_VERSION = "$(ServerSPTVersion)"%3B
     public const string PRESET_VERSION = "$(PresetVersion)"%3B

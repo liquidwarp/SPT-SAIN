@@ -135,7 +135,7 @@ public static class SAINEditor
         GUI.DrawTexture(DragRect, DragBackgroundTexture, ScaleMode.StretchToFill, true, 0);
         GUI.Box(
             DragRect,
-            $"SAIN {MyModInfo.MOD_VERSION} GUI Editor | Preset: {SAINPlugin.LoadedPreset.Info.Name}",
+            $"SAIN {MyModInfo.MOD_FULL_VERSION} GUI Editor | Preset: {SAINPlugin.LoadedPreset.Info.Name}",
             GetStyle(Style.dragBar)
         );
         GUI.DragWindow(DragRect);

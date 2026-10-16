@@ -1,5 +1,7 @@
 global using EFTMath = MyExtensions;
+using System.Reflection;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using SAIN.Components.BotController;
 using SAIN.Editor;
@@ -7,6 +9,7 @@ using SAIN.Helpers;
 using SAIN.Plugin;
 using SAIN.Preset;
 using SAIN.Preset.Server;
+using SAIN.Preset.Shared;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.GlobalSettings.Categories.General;
 using SPT.Reflection.Patching;
@@ -65,18 +68,47 @@ public class SAINPlugin : BaseUnityPlugin
     {
         _patchManager = new(this, true);
 
+        if (!HasForkedBotHealingFixes(out string botHealingFixesVersion))
+        {
+            Logger.LogError(
+                $"[SAIN] Startup aborted: SAIN requires the forked BotHealingFixes ({BotHealingFixesVersion}-{ForkVersionInfo.Marker}-{BotHealingFixesForkRevision} or newer), found {botHealingFixesVersion}. Install it from https://github.com/liquidwarp/SPT-BotHealingFixes and restart."
+            );
+
+            AbortStartup();
+            return;
+        }
         if (!PresetHandler.Init() || !EFTCoreSettings.Load())
         {
             Logger.LogError(
                 "[SAIN] Startup aborted: could not load the presets and core overrides from the SAIN server mod, re-install SAIN correctly and restart."
             );
 
+            AbortStartup();
             return;
         }
         BotSpawnController.LoadExclusionList();
         BindConfigs();
         _patchManager.EnablePatches();
         BigBrainHandler.Init();
+    }
+
+    private void AbortStartup()
+    {
+        enabled = false;
+    }
+
+    private static bool HasForkedBotHealingFixes(out string version)
+    {
+        version = Chainloader.PluginInfos.TryGetValue(BotHealingFixesGUID, out var pluginInfo)
+            ? pluginInfo.Instance?.GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            : null;
+        if (version == null)
+        {
+            version = "none";
+            return false;
+        }
+
+        return ForkVersionInfo.TryGetRevision(version, out int forkRevision) && forkRevision >= BotHealingFixesForkRevision;
     }
 
     private void BindConfigs()

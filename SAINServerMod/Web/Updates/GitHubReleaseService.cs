@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using SAINServerMod.Services;
@@ -16,9 +17,11 @@ public sealed class GitHubReleaseService(
     ISptLogger<GitHubReleaseService> logger
 )
 {
-    private const string ReleasesUrl = "https://api.github.com/repos/ArchangelWTF/SAIN/releases?per_page=10";
+    private const string ReleasesUrl = "https://api.github.com/repos/liquidwarp/SPT-SAIN/releases?per_page=10";
 
-    private static readonly Version _currentVersion = new(MyModInfo.MOD_VERSION);
+    private static readonly ForkVersion _currentVersion = ForkVersion.TryParse(MyModInfo.MOD_FULL_VERSION, out var version)
+        ? version
+        : new ForkVersion(new Version(MyModInfo.MOD_VERSION), 0);
     private static readonly TimeSpan _cacheLifetime = TimeSpan.FromHours(1);
     private static readonly TimeSpan _requestTimeout = TimeSpan.FromSeconds(8);
     private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
@@ -32,7 +35,7 @@ public sealed class GitHubReleaseService(
     public ReleaseFeedState State { get; private set; } = ReleaseFeedState.Idle;
     public IReadOnlyList<GitHubRelease> Releases { get; private set; } = [];
 
-    public Version CurrentVersion
+    public ForkVersion CurrentVersion
     {
         get { return _currentVersion; }
     }
@@ -180,7 +183,9 @@ public sealed class GitHubReleaseService(
             }
 
             await using var stream = File.OpenRead(CachePath);
-            return await JsonSerializer.DeserializeAsync<CachedReleases>(stream, _serializerOptions, cancellationToken);
+            var cached = await JsonSerializer.DeserializeAsync<CachedReleases>(stream, _serializerOptions, cancellationToken);
+
+            return cached?.Url == ReleasesUrl ? cached : null;
         }
         catch (Exception ex)
         {
@@ -195,7 +200,7 @@ public sealed class GitHubReleaseService(
         {
             Directory.CreateDirectory(Path.GetDirectoryName(CachePath)!);
 
-            var payload = new CachedReleases { FetchedAt = _fetchedAt, Releases = [.. Releases] };
+            var payload = new CachedReleases { Url = ReleasesUrl, FetchedAt = _fetchedAt, Releases = [.. Releases] };
 
             await File.WriteAllTextAsync(CachePath, JsonSerializer.Serialize(payload, _serializerOptions), cancellationToken);
         }
@@ -211,9 +216,9 @@ public sealed class GitHubReleaseService(
         FeedChanged?.Invoke();
     }
 
-    public static bool TryParseVersion(string tag, out Version version)
+    public static bool TryParseVersion(string tag, [NotNullWhen(true)] out ForkVersion? version)
     {
-        return Version.TryParse(tag.TrimStart('v', 'V'), out version);
+        return ForkVersion.TryParse(tag, out version);
     }
 
     public static bool MatchesRunningPlatform(CompatibilityTag tag)

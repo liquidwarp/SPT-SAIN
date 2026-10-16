@@ -65,7 +65,7 @@ public static class PresetSelection
         }
         GUIContent content = new(
             $"Warning: The selected preset version is: [{sainPresetV}], "
-                + $"but current SAIN preset version is: [{MyModInfo.PRESET_VERSION}] (SAIN version [{MyModInfo.MOD_VERSION}]), default bot config values may be set incorrectly due to updates to SAIN. THIS DOESN'T MEAN YOUR GAME IS BROKEN, just be aware bots might not act as intended."
+                + $"but current SAIN preset version is: [{MyModInfo.PRESET_VERSION}] (SAIN version [{MyModInfo.MOD_FULL_VERSION}]), default bot config values may be set incorrectly due to updates to SAIN. THIS DOESN'T MEAN YOUR GAME IS BROKEN, just be aware bots might not act as intended."
         );
 
         Rect rect = GUILayoutUtility.GetRect(content, GetStyle(Style.alert), Height(PRESET_ALERT_HEIGHT));
@@ -200,6 +200,8 @@ public static class PresetSelection
                 newInfo.Name = NewName;
                 newInfo.Description = NewDescription;
                 newInfo.Creator = NewCreator;
+                newInfo.SAINVersion = info.SAINVersion;
+                newInfo.SAINPresetVersion = info.SAINPresetVersion;
 
                 DeletePreset(info);
 
@@ -214,7 +216,6 @@ public static class PresetSelection
                 newPreset.Name = NewName;
                 newPreset.Description = NewDescription;
                 newPreset.Creator = NewCreator;
-                newPreset.SAINVersion = MyModInfo.PRESET_VERSION;
                 newPreset.DateCreated = DateTime.Today.ToString();
 
                 PresetHandler.SavePresetDefinition(newPreset);

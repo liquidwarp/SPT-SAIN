@@ -4,7 +4,7 @@ Fork of SAIN, whose continued repo is now archived.
 
 ## Requirements
 
-- [BotHealingFixes, forked version](https://github.com/liquidwarp/SPT-BotHealingFixes). SAIN doesn't load without it.
+- [BotHealingFixes, forked version](https://github.com/liquidwarp/SPT-BotHealingFixes). SAIN doesn't load without it, and logs an error at startup if the original is installed.
 
 ## Reworks and new behavior
 
@@ -23,7 +23,7 @@ Fork of SAIN, whose continued repo is now archived.
 
 ### Healing
 
-- Bot healing relies on the forked BotHealingFixes.
+- Bot healing relies on the forked BotHealingFixes. SAIN decides when bots use first aid, surgery or stims, BotHealingFixes which item they use -- see the fork's README for details.
 
 ### Removed
 
@@ -39,7 +39,7 @@ Fork of SAIN, whose continued repo is now archived.
 - Fix aim limits ignoring each bot type's own game data. Scavs and marksmen are now less precise in long fights, and the Goons and Sanitar more precise.
 - Fix bot recoil resetting early on some shots.
 - Fix bots restarting their move to cover when reloading or out of ammo, and reloads that get stuck never being retried.
-- Fix bots not finishing surgery, first aid and stims, and picking meds that don't fit their wounds.
+- Fix bots not finishing surgery, first aid and stims.
 - Fix preset settings only applying after saving from the in-game editor. Taunting, faking death and begging now depend on personality, squad callouts follow the Squad Talk settings with far less chatter, and the grenade toggles are respected.
 - Fix the "Bot Reaction Changes Toggle" not controlling the "not looking" reaction delay.
 - Fix bots crouching, standing and leaning faster at higher frame rates.

@@ -36,4 +36,5 @@ public static class AssemblyInfoClass
 
     public const string BotHealingFixesGUID = "com.ozen.bothealingfixes";
     public const string BotHealingFixesVersion = "1.0.0";
+    public const int BotHealingFixesForkRevision = 1;
 }

@@ -4,11 +4,15 @@
         <Authors>Solarint</Authors>
         <ModName>SAIN</ModName>
         <ModGuid>me.sol.sain</ModGuid>
-        <Version>4.5.1</Version>
-        <ClientSPTVersion>4.1.3</ClientSPTVersion>
-        <ServerSPTVersion>~4.1.3</ServerSPTVersion>
-        <SPTPackageVersion>4.1.3</SPTPackageVersion>
-        <PresetVersion>5.0.0</PresetVersion>
+        <VersionPrefix>4.5.1</VersionPrefix>
+        <ForkMarker>lqw</ForkMarker>
+        <ForkRevision>1</ForkRevision>
+        <VersionSuffix>$(ForkMarker)-$(ForkRevision)</VersionSuffix>
+        <Version>$(VersionPrefix)-$(VersionSuffix)</Version>
+        <ClientSPTVersion>4.1.6</ClientSPTVersion>
+        <ServerSPTVersion>~4.1.6</ServerSPTVersion>
+        <SPTPackageVersion>4.1.6</SPTPackageVersion>
+        <PresetVersion>4.5.1+lqw-1</PresetVersion>
         <Product>$(ModName)</Product>
         <ReleaseDir>$(MSBuildThisFileDirectory)releases\$(Authors)-$(ModName)-$(Version)</ReleaseDir>
     </PropertyGroup>
