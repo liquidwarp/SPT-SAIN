@@ -1,6 +1,8 @@
 param(
     [string]$SPTPath = 'E:\Games\SPT 4.1',
 
+    [string]$HeadlessPath = 'E:\Games\SPT 4.1 Headless',
+
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Release',
 
@@ -19,11 +21,17 @@ if (-not (Test-Path "$SPTPath\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll"
     throw "SPT not found at '$SPTPath'"
 }
 
+$installClientMod = $InstallMod -or $InstallClientMod
+if ($installClientMod -and $HeadlessPath -and -not (Test-Path "$HeadlessPath\BepInEx\plugins")) {
+    throw "Headless not found at '$HeadlessPath'"
+}
+
 $buildArgs = @(
     "$PSScriptRoot\SAIN.slnx"
     "-c", $Configuration
     "-p:SPTPath=$SPTPath"
-    "-p:InstallClientMod=$($InstallMod -or $InstallClientMod)"
+    "-p:HeadlessPath=$HeadlessPath"
+    "-p:InstallClientMod=$installClientMod"
     "-p:InstallServerMod=$($InstallMod -or $InstallServerMod)"
     "-p:PackageRelease=$($PackageRelease.IsPresent)"
     "-tlp:verbosity=detailed"

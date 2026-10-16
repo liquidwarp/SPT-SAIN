@@ -35,10 +35,17 @@ internal static class MyModInfo
 
     <Target Name="InstallMod" AfterTargets="PostBuildEvent" DependsOnTargets="CollectModFiles" Condition="'$(InstallMod)' == 'True'">
         <Error Condition="'$(SPTPath)' == ''" Text="Missing SPT path" />
+        <Error Condition="'$(InstallOnHeadless)' == 'True' and '$(HeadlessPath)' != '' and !Exists('$(HeadlessPath)\BepInEx\plugins')" Text="Headless not found at '$(HeadlessPath)'" />
         <Copy SourceFiles="@(ModFile)" DestinationFolder="$(SPTPath)\$(ModDir)">
             <Output TaskParameter="CopiedFiles" ItemName="InstalledFiles" />
         </Copy>
         <Copy SourceFiles="@(ModContent)" DestinationFiles="@(ModContent->'$(SPTPath)\$(ModDir)\%(Identity)')">
+            <Output TaskParameter="CopiedFiles" ItemName="InstalledFiles" />
+        </Copy>
+        <Copy SourceFiles="@(ModFile)" DestinationFolder="$(HeadlessPath)\$(ModDir)" Condition="'$(InstallOnHeadless)' == 'True' and '$(HeadlessPath)' != ''">
+            <Output TaskParameter="CopiedFiles" ItemName="InstalledFiles" />
+        </Copy>
+        <Copy SourceFiles="@(ModContent)" DestinationFiles="@(ModContent->'$(HeadlessPath)\$(ModDir)\%(Identity)')" Condition="'$(InstallOnHeadless)' == 'True' and '$(HeadlessPath)' != ''">
             <Output TaskParameter="CopiedFiles" ItemName="InstalledFiles" />
         </Copy>
         <Message Importance="High" Text="$(MSBuildProjectName) installed to @(InstalledFiles->'%(FullPath)')" />

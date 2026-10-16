@@ -11,6 +11,7 @@
         <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
         <ModDir>BepInEx\plugins\$(ModName)</ModDir>
         <InstallMod Condition="'$(InstallClientMod)' == 'True'">True</InstallMod>
+        <InstallOnHeadless>True</InstallOnHeadless>
     </PropertyGroup>
 
     <ItemGroup>
