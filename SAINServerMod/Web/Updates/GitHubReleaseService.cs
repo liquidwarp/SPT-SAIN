@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
-using SAIN.Preset.Shared;
 using SAINServerMod.Services;
 using SPTarkov.Common.Models.Logging;
 using SPTarkov.DI.Annotations;
@@ -19,7 +18,7 @@ public sealed class GitHubReleaseService(
 {
     private const string ReleasesUrl = "https://api.github.com/repos/ArchangelWTF/SAIN/releases?per_page=10";
 
-    private static readonly Version _currentVersion = new(SAINVersionInfo.SAINVersion);
+    private static readonly Version _currentVersion = new(MyModInfo.MOD_VERSION);
     private static readonly TimeSpan _cacheLifetime = TimeSpan.FromHours(1);
     private static readonly TimeSpan _requestTimeout = TimeSpan.FromSeconds(8);
     private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };

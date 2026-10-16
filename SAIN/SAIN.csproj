@@ -1,105 +1,110 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Nullable>disable</Nullable>
-    <RootNamespace>SAIN</RootNamespace>
-    <AssemblyName>SAIN</AssemblyName>
-    <ReleaseOutputDir>..\Build\BepInEx\plugins\SAIN\</ReleaseOutputDir>
-  </PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Nullable>disable</Nullable>
+        <RootNamespace>SAIN</RootNamespace>
+        <AssemblyName>SAIN</AssemblyName>
+        <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+        <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+        <ModDir>BepInEx\plugins\$(ModName)</ModDir>
+        <InstallMod Condition="'$(InstallClientMod)' == 'True'">True</InstallMod>
+    </PropertyGroup>
 
-  <!-- targets -->
-  <PropertyGroup>
-    <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="References\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="UnityEngine.Modules" Version="2022.3.43" IncludeAssets="compile" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SAIN.Preset.Shared\SAIN.Preset.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\References\hollowed.dll</HintPath>
-    </Reference>
-    <Reference Include="bsg.console.core">
-      <HintPath>..\References\bsg.console.core.dll</HintPath>
-    </Reference>
-    <Reference Include="Comfort">
-      <HintPath>..\References\Comfort.dll</HintPath>
-    </Reference>
-    <Reference Include="Comfort.Unity">
-      <HintPath>..\References\Comfort.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonExtensions" HintPath="..\References\CommonExtensions.dll" Private="false" />
-    <Reference Include="DissonanceVoip" HintPath="..\References\DissonanceVoip.dll" Private="false" />
-    <Reference Include="DrakiaXYZ-BigBrain">
-      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
-    </Reference>
-    <Reference Include="ItemComponent.Types" HintPath="..\References\ItemComponent.Types.dll" Private="false" />
-    <Reference Include="Newtonsoft.Json" HintPath="..\References\Newtonsoft.Json.dll" Private="false" />
-    <Reference Include="Sirenix.Serialization">
-      <HintPath>..\References\Sirenix.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="websocket-sharp" HintPath="..\References\websocket-sharp.dll" Private="false" />
-    <Reference Include="spt-common">
-      <HintPath>..\References\spt-common.dll</HintPath>
-    </Reference>
-    <Reference Include="spt-core">
-      <HintPath>..\References\spt-core.dll</HintPath>
-    </Reference>
-    <Reference Include="spt-custom">
-      <HintPath>..\References\spt-custom.dll</HintPath>
-    </Reference>
-    <Reference Include="spt-debugging">
-      <HintPath>..\References\spt-debugging.dll</HintPath>
-    </Reference>
-    <Reference Include="spt-reflection">
-      <HintPath>..\References\spt-reflection.dll</HintPath>
-    </Reference>
-    <Reference Include="spt-singleplayer">
-      <HintPath>..\References\spt-singleplayer.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>..\References\Unity.Postprocessing.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\References\UnityEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <!-- Build script-->
-  <Target Name="CleanUnwantedFiles" AfterTargets="Build">
     <ItemGroup>
-      <UnwantedFiles
-        Include="$(OutputPath)*.pdb; $(OutputPath)*.deps.json; $(OutputPath)*.dll"
-        Exclude="$(OutputPath)SAIN.dll;$(OutputPath)SAIN.Preset.Shared.dll"
-      />
+        <ProjectReference Include="..\SAIN.Preset.Shared\SAIN.Preset.Shared.csproj" />
     </ItemGroup>
-    <Delete Files="@(UnwantedFiles)" />
-  </Target>
-  <Target Name="CopyBuildOutput" AfterTargets="CleanUnwantedFiles">
-    <MakeDir Directories="$(ReleaseOutputDir)" />
+
     <ItemGroup>
-      <RemainingFiles Include="$(OutputPath)**\*" />
+        <Reference Include="0Harmony">
+            <HintPath>$(SPTPath)\BepInEx\core\0Harmony.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx">
+            <HintPath>$(SPTPath)\BepInEx\core\BepInEx.dll</HintPath>
+        </Reference>
+        <Reference Include="bsg.console.core">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\bsg.console.core.dll</HintPath>
+        </Reference>
+        <Reference Include="Comfort">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\Comfort.dll</HintPath>
+        </Reference>
+        <Reference Include="Comfort.Unity">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\Comfort.Unity.dll</HintPath>
+        </Reference>
+        <Reference Include="CommonExtensions">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\CommonExtensions.dll</HintPath>
+        </Reference>
+        <Reference Include="DissonanceVoip">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\DissonanceVoip.dll</HintPath>
+        </Reference>
+        <Reference Include="DrakiaXYZ-BigBrain">
+            <HintPath>$(SPTPath)\BepInEx\plugins\DrakiaXYZ-BigBrain.dll</HintPath>
+        </Reference>
+        <Reference Include="ItemComponent.Types">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\ItemComponent.Types.dll</HintPath>
+        </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\Newtonsoft.Json.dll</HintPath>
+        </Reference>
+        <Reference Include="Sirenix.Serialization">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\Sirenix.Serialization.dll</HintPath>
+        </Reference>
+        <Reference Include="spt-common">
+            <HintPath>$(SPTPath)\BepInEx\plugins\spt\spt-common.dll</HintPath>
+        </Reference>
+        <Reference Include="spt-core">
+            <HintPath>$(SPTPath)\BepInEx\plugins\spt\spt-core.dll</HintPath>
+        </Reference>
+        <Reference Include="spt-custom">
+            <HintPath>$(SPTPath)\BepInEx\plugins\spt\spt-custom.dll</HintPath>
+        </Reference>
+        <Reference Include="spt-debugging">
+            <HintPath>$(SPTPath)\BepInEx\plugins\spt\spt-debugging.dll</HintPath>
+        </Reference>
+        <Reference Include="spt-reflection">
+            <HintPath>$(SPTPath)\BepInEx\plugins\spt\spt-reflection.dll</HintPath>
+        </Reference>
+        <Reference Include="spt-singleplayer">
+            <HintPath>$(SPTPath)\BepInEx\plugins\spt\spt-singleplayer.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.Postprocessing.Runtime">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AIModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AudioModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputLegacyModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+        </Reference>
+        <Reference Include="websocket-sharp">
+            <HintPath>$(SPTPath)\EscapeFromTarkov_Data\Managed\websocket-sharp.dll</HintPath>
+        </Reference>
     </ItemGroup>
-    <Copy
-      SourceFiles="@(RemainingFiles)"
-      DestinationFiles="@(RemainingFiles->'$(ReleaseOutputDir)%(RecursiveDir)%(Filename)%(Extension)')"
-    />
-  </Target>
+
+    <Target Name="RequireSPTPath" BeforeTargets="ResolveAssemblyReferences">
+        <Error Condition="'$(SPTPath)' == ''" Text="Missing SPT path" />
+    </Target>
 </Project>

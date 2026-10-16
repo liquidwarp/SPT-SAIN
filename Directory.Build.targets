@@ -1,0 +1,56 @@
+<Project>
+
+    <Target Name="GenerateMyModInfo" BeforeTargets="CoreCompile">
+        <PropertyGroup>
+            <MyModInfoFile>$(IntermediateOutputPath)MyModInfo.g.cs</MyModInfoFile>
+            <MyModInfoText><![CDATA[
+namespace $(RootNamespace)%3B
+
+internal static class MyModInfo
+{
+    public const string MOD_GUID = "$(ModGuid)"%3B
+    public const string MOD_NAME = "$(Product)"%3B
+    public const string MOD_AUTHOR = "$(Authors)"%3B
+    public const string MOD_VERSION = "$(Version)"%3B
+    public const string CLIENT_SPT_VERSION = "$(ClientSPTVersion)"%3B
+    public const string SERVER_SPT_VERSION = "$(ServerSPTVersion)"%3B
+    public const string PRESET_VERSION = "$(PresetVersion)"%3B
+}
+]]></MyModInfoText>
+        </PropertyGroup>
+        <WriteLinesToFile File="$(MyModInfoFile)" Lines="$(MyModInfoText)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+        <ItemGroup>
+            <Compile Include="$(MyModInfoFile)" />
+            <FileWrites Include="$(MyModInfoFile)" />
+        </ItemGroup>
+    </Target>
+
+    <!-- The mod DLL, the DLLs of referenced projects, and any ModContent declared by the project -->
+    <Target Name="CollectModFiles">
+        <ItemGroup>
+            <ModFile Include="$(TargetPath)" />
+            <ModFile Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference' and '%(ReferenceCopyLocalPaths.Extension)' == '.dll'" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="InstallMod" AfterTargets="PostBuildEvent" DependsOnTargets="CollectModFiles" Condition="'$(InstallMod)' == 'True'">
+        <Error Condition="'$(SPTPath)' == ''" Text="Missing SPT path" />
+        <Copy SourceFiles="@(ModFile)" DestinationFolder="$(SPTPath)\$(ModDir)">
+            <Output TaskParameter="CopiedFiles" ItemName="InstalledFiles" />
+        </Copy>
+        <Copy SourceFiles="@(ModContent)" DestinationFiles="@(ModContent->'$(SPTPath)\$(ModDir)\%(Identity)')">
+            <Output TaskParameter="CopiedFiles" ItemName="InstalledFiles" />
+        </Copy>
+        <Message Importance="High" Text="$(MSBuildProjectName) installed to @(InstalledFiles->'%(FullPath)')" />
+    </Target>
+
+    <Target Name="PackageRelease" AfterTargets="Build" DependsOnTargets="CollectModFiles" Condition="'$(PackageRelease)' == 'True' and '$(ModDir)' != ''">
+        <Copy SourceFiles="@(ModFile)" DestinationFolder="$(ReleaseDir)\$(ModDir)">
+            <Output TaskParameter="CopiedFiles" ItemName="PackagedFiles" />
+        </Copy>
+        <Copy SourceFiles="@(ModContent)" DestinationFiles="@(ModContent->'$(ReleaseDir)\$(ModDir)\%(Identity)')">
+            <Output TaskParameter="CopiedFiles" ItemName="PackagedFiles" />
+        </Copy>
+        <Message Importance="High" Text="$(MSBuildProjectName) packaged to @(PackagedFiles->'%(FullPath)')" />
+    </Target>
+</Project>

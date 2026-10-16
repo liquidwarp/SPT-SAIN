@@ -1,10 +1,9 @@
 using System.Reflection;
-using SAIN.Preset.Shared;
 
 [assembly: AssemblyTitle(SAIN.AssemblyInfoClass.Description)]
 [assembly: AssemblyDescription(SAIN.AssemblyInfoClass.Description)]
 [assembly: AssemblyCopyright(SAIN.AssemblyInfoClass.Copyright)]
-[assembly: AssemblyFileVersion(SAINVersionInfo.SAINVersion)]
+[assembly: AssemblyFileVersion(SAIN.MyModInfo.MOD_VERSION)]
 
 namespace SAIN;
 
@@ -23,10 +22,10 @@ public static class AssemblyInfoClass
 
     public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
 
-    public const string SAINGUID = "me.sol.sain";
-    public const string SAINName = "SAIN";
+    public const string SAINGUID = MyModInfo.MOD_GUID;
+    public const string SAINName = MyModInfo.MOD_NAME;
 
-    public const string SPTVersion = SAINVersionInfo.SptVersion;
+    public const string SPTVersion = MyModInfo.CLIENT_SPT_VERSION;
 
     public const string SPTGUID = "com.SPT.core";
     public const string FikaGUID = "com.fika.core";

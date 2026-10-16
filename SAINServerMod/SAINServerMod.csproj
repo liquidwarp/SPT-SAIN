@@ -1,54 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <OutputType>Library</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <ReleaseOutputDir>..\Build\SPT_Runtime\user\mods\Solarint-SAIN-ServerMod\</ReleaseOutputDir>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SAIN.Preset.Shared\SAIN.Preset.Shared.csproj" />
-    <ProjectReference Include="..\SAIN.ServerInterop\SAIN.ServerInterop.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="SPTushonka.Common" Version="$(SptVersion)" />
-    <PackageReference Include="SPTushonka.DI" Version="$(SptVersion)" />
-    <PackageReference Include="SPTushonka.Reflection" Version="$(SptVersion)" />
-    <PackageReference Include="SPTushonka.Server.Core" Version="$(SptVersion)" />
-    <PackageReference Include="SPTushonka.Server.Web" Version="$(SptVersion)" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Data\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <!-- Build script-->
-  <Target Name="CleanUnwantedFiles" AfterTargets="Build">
-    <ItemGroup>
-      <UnwantedFiles Include="$(OutputPath)*.pdb;$(OutputPath)*.deps.json;$(OutputPath)*.endpoints.json;$(OutputPath)*.runtimeconfig.*;$(OutputPath)*.staticwebassets.*" />
-    </ItemGroup>
-    <Delete Files="@(UnwantedFiles)" />
-  </Target>
-  <Target Name="CopyBuildOutput" AfterTargets="CleanUnwantedFiles">
-    <MakeDir Directories="$(ReleaseOutputDir)" />
-    <ItemGroup>
-      <RemainingFiles Include="$(OutputPath)**\*" />
-      <WebAssets Include="$(ProjectDir)wwwroot\**\*.*" />
-    </ItemGroup>
-    <Copy
-      SourceFiles="@(RemainingFiles)"
-      DestinationFiles="@(RemainingFiles->'$(ReleaseOutputDir)%(RecursiveDir)%(Filename)%(Extension)')"
-    />
-    <Copy SourceFiles="@(WebAssets)" DestinationFiles="@(WebAssets->'$(ReleaseOutputDir)wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" />
-  </Target>
-  <Target Name="CopyToServerMods" AfterTargets="CopyBuildOutput" Condition="'$(Configuration)' == 'Debug'">
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
     <PropertyGroup>
-      <ServerModsDir>..\..\SPT\server-csharp\SPTushonka.Server\bin\Debug\$(TargetFramework)\user\mods\Solarint-SAIN-ServerMod\</ServerModsDir>
+        <TargetFramework>net10.0</TargetFramework>
+        <OutputType>Library</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <ModDir>SPT_Runtime\user\mods\$(Authors)-$(ModName)-ServerMod</ModDir>
+        <InstallMod Condition="'$(InstallServerMod)' == 'True'">True</InstallMod>
     </PropertyGroup>
-    <MakeDir Directories="$(ServerModsDir)" />
+
     <ItemGroup>
-      <ModFiles Include="$(ReleaseOutputDir)**\*.*" />
+        <ProjectReference Include="..\SAIN.Preset.Shared\SAIN.Preset.Shared.csproj" />
+        <ProjectReference Include="..\SAIN.ServerInterop\SAIN.ServerInterop.csproj" />
     </ItemGroup>
-    <Copy SourceFiles="@(ModFiles)" DestinationFiles="@(ModFiles->'$(ServerModsDir)%(RecursiveDir)%(Filename)%(Extension)')" />
-  </Target>
+
+    <ItemGroup>
+        <PackageReference Include="SPTushonka.Common" Version="$(SPTPackageVersion)" />
+        <PackageReference Include="SPTushonka.DI" Version="$(SPTPackageVersion)" />
+        <PackageReference Include="SPTushonka.Reflection" Version="$(SPTPackageVersion)" />
+        <PackageReference Include="SPTushonka.Server.Core" Version="$(SPTPackageVersion)" />
+        <PackageReference Include="SPTushonka.Server.Web" Version="$(SPTPackageVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ModContent Include="Data\**" />
+        <ModContent Include="wwwroot\**" />
+    </ItemGroup>
 </Project>

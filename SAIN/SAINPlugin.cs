@@ -7,7 +7,6 @@ using SAIN.Helpers;
 using SAIN.Plugin;
 using SAIN.Preset;
 using SAIN.Preset.Server;
-using SAIN.Preset.Shared;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.GlobalSettings.Categories.General;
 using SPT.Reflection.Patching;
@@ -16,7 +15,7 @@ using static SAIN.AssemblyInfoClass;
 
 namespace SAIN;
 
-[BepInPlugin(SAINGUID, SAINName, SAINVersionInfo.SAINVersion)]
+[BepInPlugin(SAINGUID, SAINName, MyModInfo.MOD_VERSION)]
 [BepInDependency(BigBrainGUID, BigBrainVersion)]
 //[BepInDependency(SPTGUID, SPTVersion)]
 [BepInProcess(EscapeFromTarkov)]

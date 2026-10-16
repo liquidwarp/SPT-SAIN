@@ -4,7 +4,6 @@ using EFT.UI;
 using SAIN.Plugin;
 using SAIN.Preset;
 using SAIN.Preset.Server;
-using SAIN.Preset.Shared;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.Preset;
 using UnityEngine;
@@ -66,11 +65,11 @@ public static class PresetSelection
         }
         GUIContent content = new(
             $"Warning: The selected preset version is: [{sainPresetV}], "
-                + $"but current SAIN preset version is: [{SAINVersionInfo.SAINPresetVersion}] (SAIN version [{SAINVersionInfo.SAINVersion}]), default bot config values may be set incorrectly due to updates to SAIN. THIS DOESN'T MEAN YOUR GAME IS BROKEN, just be aware bots might not act as intended."
+                + $"but current SAIN preset version is: [{MyModInfo.PRESET_VERSION}] (SAIN version [{MyModInfo.MOD_VERSION}]), default bot config values may be set incorrectly due to updates to SAIN. THIS DOESN'T MEAN YOUR GAME IS BROKEN, just be aware bots might not act as intended."
         );
 
         Rect rect = GUILayoutUtility.GetRect(content, GetStyle(Style.alert), Height(PRESET_ALERT_HEIGHT));
-        if (selectedPreset.IsCustom && sainPresetV != SAINVersionInfo.SAINPresetVersion)
+        if (selectedPreset.IsCustom && sainPresetV != MyModInfo.PRESET_VERSION)
         {
             GUI.Box(rect, content, GetStyle(Style.alert));
         }
@@ -215,7 +214,7 @@ public static class PresetSelection
                 newPreset.Name = NewName;
                 newPreset.Description = NewDescription;
                 newPreset.Creator = NewCreator;
-                newPreset.SAINVersion = SAINVersionInfo.SAINPresetVersion;
+                newPreset.SAINVersion = MyModInfo.PRESET_VERSION;
                 newPreset.DateCreated = DateTime.Today.ToString();
 
                 PresetHandler.SavePresetDefinition(newPreset);
