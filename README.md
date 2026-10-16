@@ -12,8 +12,12 @@ How bots behave differently in raid compared to the previous release.
 - Long bursts, or you moving or strafing, no longer reset their aim to its starting precision mid-fight.
 - Breaking line of sight still resets it: every new peek, from any spot, starts loose again.
 - Fixed bots sometimes opening a new fight with the precision they had built up in an earlier one, for example after being flashed or after a brain layer from EFT or another mod took over for a while.
-- The first shots are still forgiving, but long fights where the bot keeps you in sight are noticeably deadlier.
-- Each bot type now gets its own "max aim time" and "max aiming upgrade by time" from the game's data, as was intended. Before, every bot type got the same values (2 and 0.25).
+- The first shots are still forgiving, but long fights against PMCs, Raiders, bosses and their followers are noticeably deadlier.
+- Each bot type now gets its own "max aim time" and "max aiming upgrade by time" from the game's data, as was intended. Before, nearly every bot type got the same values (2 and 0.25). On the default presets:
+  - Scavs and marksmen barely tighten their aim: their limit is now 0.85 instead of 0.25 (0.4 on impossible difficulty), so long fights against them are much less precise than before.
+  - The Goons, Sanitar and their followers can tighten further than before, down to 0.15.
+  - Most bots finish aiming in at most 1.5 seconds instead of 2, and Rogues in 1.1.
+  - The Easy preset still keeps every bot at 2 seconds and 0.4 or looser, and the Harder PMCs preset still sets its own values for PMCs.
 
 ### Bot recoil works as intended
 
@@ -37,17 +41,19 @@ How bots behave differently in raid compared to the previous release.
 
 ### Preset settings apply as soon as a bot spawns
 
-Some bot settings used to be read only after the preset was saved from the in-game editor, so freshly spawned bots ran on built-in values. They now follow your preset from the start:
+Some bot settings used to be read only after the preset was saved from the in-game editor, and the Squad Talk settings were never read at all, so freshly spawned bots ran on built-in values. They now follow your preset from the start:
 
 - **Taunts and enemy voice lines depend on personality.** Before, every bot taunted, and none faked death or begged.
   - GigaChad, Wreckless, SnappingTurtle and Chad taunt, and more often than before.
   - Rat, Timmy, Coward and Normal no longer taunt.
-  - GigaChad, Wreckless and SnappingTurtle can fake death when solo and badly hurt.
+  - Each bot type's "Bot Taunts" setting is respected.
+  - GigaChad, Wreckless and SnappingTurtle can fake death when solo and badly hurt, or when a grenade explodes near them mid-fight.
   - Timmy and Coward can beg for their lives.
   - SnappingTurtle, Chad, Rat and Timmy no longer answer enemy voice lines.
+- **Friendly voice lines:** bots answer a friendly player's voice lines from up to 65 meters away instead of 60.
 - **Grenades:**
   - The global "Bots Use Grenades" toggle and each bot type's grenade setting are respected.
-  - Bots skip throws where the grenade would land well past you, such as when you're much higher or lower than them.
+  - Bots skip throws that need far more strength than the distance calls for, which mostly happens when you're well above them.
 - **Squad callouts use the Squad Talk settings:**
   - "Reloading" calls: at most every 4 seconds instead of every second.
   - "Heard a noise" calls: 50% chance instead of 40%, but at most every 30 seconds instead of every second, so far less chatter.
@@ -66,16 +72,10 @@ Some bot settings used to be read only after the preset was saved from the in-ga
 - The extraction calls other mods use (`ExtractBot`, `TrySetExfilForBot`, `GetExtractedBots`, `GetExtractionInfos`) still exist but do nothing and report no extracted bots.
 - Bots always use the standard recoil and armor values, whether or not Realism is installed.
 
-### Note on presets
-
-The new default hearing and squad talk values only apply if your preset uses the defaults. Values you've changed and saved in your own preset are kept.
-
-The per-bot-type aim values apply to the built-in presets. Custom presets keep the values they were saved with.
-
 ### Other changes
 
 - Removed settings that were never used, along with their code, such as the unstuck/teleport options, door kicking and the AI-vs-AI vision limit. None of it was running before.
 - Safer handling of destroyed game objects, such as despawned players.
-- Bots no longer go deaf to a player's footsteps after that player is briefly deactivated mid-run or mid-sprint.
+- Bots no longer miss a player's footsteps for the rest of a run or sprint after that player is briefly deactivated.
 - A bot that can't find anywhere to escape a grenade waits a moment before searching again, instead of searching every frame.
 - The preset editor's tabs have their padding back.
