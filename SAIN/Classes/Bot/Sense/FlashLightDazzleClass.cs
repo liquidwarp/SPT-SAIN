@@ -1,5 +1,6 @@
 ﻿using EFT;
 using SAIN.Components;
+using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
@@ -23,7 +24,15 @@ public class FlashLightDazzleClass : BotBase
                 return;
             }
 
-            FlashLightClass flashlight = enemy?.EnemyPlayerComponent?.Flashlight;
+            FlashLightClass flashlight = null;
+            if (enemy != null)
+            {
+                PlayerComponent enemyPlayerComponent = enemy.EnemyPlayerComponent;
+                if (enemyPlayerComponent != null)
+                {
+                    flashlight = enemyPlayerComponent.Flashlight;
+                }
+            }
             if (flashlight != null)
             {
                 bool usingNVGs = BotOwner.NightVision.UsingNow;

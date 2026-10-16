@@ -65,7 +65,8 @@ public static class SAINExternal
 
     private static BotComponent GetBotComponent(BotOwner bot)
     {
-        if (BotManagerComponent.Instance?.GetSAIN(bot, out BotComponent botComponent) == true)
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager != null && botManager.GetSAIN(bot, out BotComponent botComponent))
         {
             return botComponent;
         }
@@ -179,7 +180,11 @@ public static class SAINExternal
         const float TimeSinceUnderFireThreshold = 10f;
 
         reason = ECombatReason.None;
-        Enemy enemy = component?.GoalEnemy;
+        if (component == null)
+        {
+            return false;
+        }
+        Enemy enemy = component.GoalEnemy;
         if (enemy == null)
         {
             return false;

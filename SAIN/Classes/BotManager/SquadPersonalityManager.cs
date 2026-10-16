@@ -25,7 +25,7 @@ public class SquadPersonalityManager
 
         foreach (var member in Members.Values)
         {
-            if (member?.Player != null && member.Player.HealthController.IsAlive)
+            if (member != null && member.Player != null && member.Player.HealthController.IsAlive)
             {
                 var personality = member.Info.Personality;
                 MemberPersonalities.Add(personality);

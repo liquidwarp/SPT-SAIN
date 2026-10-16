@@ -100,13 +100,17 @@ namespace SAIN.Patches.Generic
             public static void PatchPrefix(Player __instance, ThrowWeap throwWeap)
             {
                 float range = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_GrenadePinDraw;
-                BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                    __instance.ProfileId,
-                    SAINSoundType.GrenadeDraw,
-                    __instance.Position,
-                    range,
-                    1f
-                );
+                BotManagerComponent botManager = BotManagerComponent.Instance;
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayAISound(
+                        __instance.ProfileId,
+                        SAINSoundType.GrenadeDraw,
+                        __instance.Position,
+                        range,
+                        1f
+                    );
+                }
                 Helpers.SetItemEquiped(__instance, throwWeap);
             }
         }
@@ -123,13 +127,17 @@ namespace SAIN.Patches.Generic
             public static void PatchPrefix(Player __instance, FoodDrink foodDrink)
             {
                 float range = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_EatDrink;
-                BotManagerComponent.Instance?.BotHearing.PlayAISound(
-                    __instance.ProfileId,
-                    SAINSoundType.Food,
-                    __instance.Position,
-                    range,
-                    1f
-                );
+                BotManagerComponent botManager = BotManagerComponent.Instance;
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayAISound(
+                        __instance.ProfileId,
+                        SAINSoundType.Food,
+                        __instance.Position,
+                        range,
+                        1f
+                    );
+                }
                 Helpers.SetItemEquiped(__instance, foodDrink);
             }
         }
@@ -157,7 +165,11 @@ namespace SAIN.Patches.Generic
                     soundType = SAINSoundType.Heal;
                     range = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Healing;
                 }
-                BotManagerComponent.Instance?.BotHearing.PlayAISound(__instance.ProfileId, soundType, __instance.Position, range, 1f);
+                BotManagerComponent botManager = BotManagerComponent.Instance;
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayAISound(__instance.ProfileId, soundType, __instance.Position, range, 1f);
+                }
                 Helpers.SetItemEquiped(__instance, meds);
             }
         }
@@ -185,7 +197,11 @@ namespace SAIN.Patches.Generic
                     soundType = SAINSoundType.Heal;
                     range = SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Healing;
                 }
-                BotManagerComponent.Instance?.BotHearing.PlayAISound(__instance.ProfileId, soundType, __instance.Position, range, 1f);
+                BotManagerComponent botManager = BotManagerComponent.Instance;
+                if (botManager != null)
+                {
+                    botManager.BotHearing.PlayAISound(__instance.ProfileId, soundType, __instance.Position, range, 1f);
+                }
                 Helpers.SetItemEquiped(__instance, meds);
             }
         }
@@ -285,7 +301,12 @@ namespace SAIN.Patches.Generic
         [PatchPostfix]
         public static void Patch(StubAIData __instance, IndoorTrigger trigger)
         {
-            BotManagerComponent.Instance?.PlayerEnviromentChanged(__instance?.Player?.ProfileId, trigger);
+            BotManagerComponent botManager = BotManagerComponent.Instance;
+            if (botManager == null || __instance == null || __instance.Player == null)
+            {
+                return;
+            }
+            botManager.PlayerEnviromentChanged(__instance.Player.ProfileId, trigger);
         }
     }
 
@@ -358,7 +379,10 @@ namespace SAIN.Patches.Generic
         public static void PatchPrefix(BotWeaponSelector __instance)
         {
             // Try to turn a gun's light off before swapping weapon.
-            __instance._owner?.BotLight?.TurnOff(false, true);
+            if (__instance._owner != null)
+            {
+                __instance._owner.BotLight?.TurnOff(false, true);
+            }
         }
     }
 
@@ -455,7 +479,7 @@ namespace SAIN.Patches.Generic
                 return true;
             }
 
-            if (player?.IsAI == true)
+            if (player != null && player.IsAI)
             {
                 return false;
             }
@@ -499,7 +523,7 @@ namespace SAIN.Patches.Generic
                 return true;
             }
 
-            if (request.Requester?.IsAI == true)
+            if (request.Requester != null && request.Requester.IsAI)
             {
                 __result = false;
                 return false;

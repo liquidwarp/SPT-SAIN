@@ -38,6 +38,10 @@ public readonly struct SoundEvent(
 
     public readonly Player GetPlayer()
     {
-        return PlayerComponent?.Player;
+        if (PlayerComponent == null)
+        {
+            return null;
+        }
+        return PlayerComponent.Player;
     }
 }

@@ -224,7 +224,7 @@ public class AimTimePatch : ModulePatch
             ? new StringBuilder()
             : null;
         stringBuilder?.AppendLine(
-            $"Aim Time Calculation for [{botOwner?.name} : {botOwner?.Profile?.Info?.Settings?.Role} : {botOwner?.Profile?.Info?.Settings?.BotDifficulty}]"
+            $"Aim Time Calculation for [{botOwner.name} : {botOwner.Profile?.Info?.Settings?.Role} : {botOwner.Profile?.Info?.Settings?.BotDifficulty}]"
         );
 
         SAINAimingSettings sainAimSettings = botComponent.Info.FileSettings.Aiming;
@@ -249,14 +249,20 @@ public class AimTimePatch : ModulePatch
         stringBuilder?.AppendLine($"timeToAimResult [{timeToAimResult}] (baseAimTime + calculatedAimTime + aimDelay)");
 
         timeToAimResult = CalcMoveModifier(moving, timeToAimResult, fileSettings, stringBuilder);
-        timeToAimResult = CalcADSModifier(botOwner.WeaponManager?.ShootController?.IsAiming == true, timeToAimResult, stringBuilder);
+        IFirearmHandsController shootController = botOwner.WeaponManager?.ShootController;
+        bool aimingDownSights = shootController != null && shootController.IsAiming;
+        timeToAimResult = CalcADSModifier(aimingDownSights, timeToAimResult, stringBuilder);
         timeToAimResult = CalcFasterCQB(distance, timeToAimResult, sainAimSettings, stringBuilder);
         timeToAimResult = CalcAttachmentMod(botComponent, timeToAimResult, stringBuilder);
         timeToAimResult = ClampAimTime(timeToAimResult, fileSettings, stringBuilder);
 
-        if (stringBuilder != null && botOwner?.Memory?.GoalEnemy?.Person?.IsYourPlayer == true)
+        if (stringBuilder != null)
         {
-            Logger.LogDebug(stringBuilder.ToString());
+            IPlayer goalEnemyPerson = botOwner.Memory?.GoalEnemy?.Person;
+            if (goalEnemyPerson != null && goalEnemyPerson.IsYourPlayer)
+            {
+                Logger.LogDebug(stringBuilder.ToString());
+            }
         }
         return timeToAimResult;
     }
@@ -279,7 +285,11 @@ public class AimTimePatch : ModulePatch
         StringBuilder stringBuilder
     )
     {
-        CoverPoint coverInUse = botComponent?.Cover.CoverInUse;
+        CoverPoint coverInUse = null;
+        if (botComponent != null)
+        {
+            coverInUse = botComponent.Cover.CoverInUse;
+        }
         bool inCover = botOwner.Memory.IsInCover || coverInUse?.BotInThisCover == true;
         if (inCover)
         {
@@ -372,7 +382,11 @@ public class AimTimePatch : ModulePatch
 
     private static float CalcAttachmentMod(BotComponent bot, float aimTimeResult, StringBuilder stringBuilder)
     {
-        Enemy enemy = bot?.GoalEnemy;
+        Enemy enemy = null;
+        if (bot != null)
+        {
+            enemy = bot.GoalEnemy;
+        }
         if (enemy != null)
         {
             float modifier = enemy.Aim.AimAndScatterMultiplier;

@@ -96,7 +96,12 @@ public class BotHearingClass : BotManagerBase
     )
     {
         yield return new WaitForSeconds(delay);
-        if (playerComponent?.Player?.HealthController?.IsAlive == true && playerComponent.IsActive)
+        if (
+            playerComponent != null
+            && playerComponent.Player != null
+            && playerComponent.Player.HealthController?.IsAlive == true
+            && playerComponent.IsActive
+        )
         {
             playBotEvent(playerComponent.Player, position, range * volume, soundType);
         }

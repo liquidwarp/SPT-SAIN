@@ -59,7 +59,11 @@ public class LocationClass : GameWorldBase
     private ELocation parseLocation()
     {
         ELocation Location = ELocation.None;
-        string locationString = GameWorld.GameWorld?.LocationId;
+        string locationString = null;
+        if (GameWorld.GameWorld != null)
+        {
+            locationString = GameWorld.GameWorld.LocationId;
+        }
         if (locationString.IsNullOrEmpty())
         {
             return Location;

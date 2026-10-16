@@ -109,7 +109,8 @@ public class SelfActionDecisionClass : BotBase
             return false;
         }
 
-        if (weaponManager.ShootController?.CanStartReload() != true)
+        IFirearmHandsController shootController = weaponManager.ShootController;
+        if (shootController == null || !shootController.CanStartReload())
         {
             return false;
         }
@@ -321,7 +322,7 @@ public class SelfActionDecisionClass : BotBase
 
     private bool checkContinueSurgery(out ESelfActionType Decision)
     {
-        if (BotOwner?.Medecine == null)
+        if (BotOwner == null || BotOwner.Medecine == null)
         {
             Decision = ESelfActionType.None;
             return false;
@@ -340,7 +341,7 @@ public class SelfActionDecisionClass : BotBase
 
     private bool checkContinueFirstAid(float timeSinceChange, out ESelfActionType Decision, Enemy enemy)
     {
-        if (BotOwner?.Medecine == null)
+        if (BotOwner == null || BotOwner.Medecine == null)
         {
             Decision = ESelfActionType.None;
             return false;
@@ -357,7 +358,7 @@ public class SelfActionDecisionClass : BotBase
 
     private bool checkContinueStims(float timeSinceChange, out ESelfActionType Decision)
     {
-        if (BotOwner?.Medecine == null)
+        if (BotOwner == null || BotOwner.Medecine == null)
         {
             Decision = ESelfActionType.None;
             return false;

@@ -55,7 +55,9 @@ public class ManualShootClass : BotComponentClassBase
         if (
             Reason != EShootReason.None
             && (
-                ManualShootEnemy?.EnemyPlayer?.HealthController?.IsAlive != true
+                ManualShootEnemy == null
+                || ManualShootEnemy.EnemyPlayer == null
+                || ManualShootEnemy.EnemyPlayer.HealthController?.IsAlive != true
                 || !BotOwner.WeaponManager.HaveBullets
                 || _timeStartManualShoot + 2f < Time.time
             )

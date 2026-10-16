@@ -39,7 +39,12 @@ public class SAINBotTalkClass : BotComponentClassBase
         for (int i = 0; i < others.Count; i++)
         {
             OtherPlayerData other = others[i];
-            if (other?.OtherPlayerComponent?.IsAI == false && other.DistanceData.Distance <= EARSHOT_DISTANCE)
+            if (other == null)
+            {
+                continue;
+            }
+            PlayerComponent otherComponent = other.OtherPlayerComponent;
+            if (otherComponent != null && !otherComponent.IsAI && other.DistanceData.Distance <= EARSHOT_DISTANCE)
             {
                 return true;
             }
@@ -151,11 +156,11 @@ public class SAINBotTalkClass : BotComponentClassBase
 
     public bool CanSay(EPhraseTrigger trigger, bool withGroupDelay, bool skipCheck)
     {
-        var speaker = Player?.Speaker;
-        if (speaker == null)
+        if (Player == null || Player.Speaker == null)
         {
             return false;
         }
+        var speaker = Player.Speaker;
 
         if (trigger == EPhraseTrigger.OnDeath || trigger == EPhraseTrigger.OnAgony)
         {
@@ -268,7 +273,11 @@ public class SAINBotTalkClass : BotComponentClassBase
         ETagStatus etagStatus = (aggressive || Player.Awareness > Time.time) ? ETagStatus.Combat : ETagStatus.Unaware;
         if (PlayerComponent.PlayVoiceLine(trigger, Bot.Memory.Health.HealthStatus | mask | etagStatus, aggressive))
         {
-            BotManagerComponent.Instance?.BotHearing.PlayerTalked(trigger, etagStatus, Player);
+            BotManagerComponent botManager = BotManagerComponent.Instance;
+            if (botManager != null)
+            {
+                botManager.BotHearing.PlayerTalked(trigger, etagStatus, Player);
+            }
             BotOwner.BotsGroup.GroupTalk.PhraseSad(BotOwner, trigger);
             if (_phraseDictionary.TryGetValue(trigger, out var phrase))
             {

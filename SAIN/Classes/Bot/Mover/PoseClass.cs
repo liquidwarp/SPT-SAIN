@@ -39,7 +39,10 @@ public class PoseClass : BotBase
         {
             return;
         }
-        BotOwner?.SetPose(value);
+        if (BotOwner != null)
+        {
+            BotOwner.SetPose(value);
+        }
         const float poseChangeSpeedCoef = 1f;
         float difference = value - this.Player.PoseLevel;
         if (Math.Abs(difference) >= 1E-45f)

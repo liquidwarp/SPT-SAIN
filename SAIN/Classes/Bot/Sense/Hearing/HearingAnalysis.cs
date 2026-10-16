@@ -150,7 +150,7 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
                 return _settings.FOOTSTEP_OCCLUSION_MOD_SPRINT;
 
             case SAINSoundType.FootStep:
-                if (Enemy.EnemyPlayer?.IsSprintEnabled == true)
+                if (Enemy.EnemyPlayer != null && Enemy.EnemyPlayer.IsSprintEnabled)
                 {
                     return _settings.FOOTSTEP_OCCLUSION_MOD_SPRINT;
                 }
@@ -177,7 +177,11 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
     private float CalcConditionMod(SAINSoundType SoundType)
     {
         float modifier = 1f;
-        float? currentHearSense = BotOwner?.Settings?.Current?.CurrentHearingSense;
+        float? currentHearSense = null;
+        if (BotOwner != null)
+        {
+            currentHearSense = BotOwner.Settings?.Current?.CurrentHearingSense;
+        }
 
         if (currentHearSense != null)
         {
@@ -247,7 +251,8 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
         float maxRange;
         if (enemyBot == null)
         {
-            if (enemyPlayer.BotOwner?.Memory.GoalEnemy?.ProfileId == Bot.ProfileId)
+            BotOwner enemyBotOwner = enemyPlayer.BotOwner;
+            if (enemyBotOwner != null && enemyBotOwner.Memory.GoalEnemy?.ProfileId == Bot.ProfileId)
             {
                 return false;
             }

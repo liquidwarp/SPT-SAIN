@@ -436,7 +436,12 @@ public class CheckFlashlightPatch : ModulePatch
     [PatchPostfix]
     public static void PatchPostfix(Player ____player)
     {
-        PlayerComponent playerComponent = GameWorldComponent.Instance?.PlayerTracker.GetPlayerComponent(____player?.ProfileId);
+        GameWorldComponent gameWorldComponent = GameWorldComponent.Instance;
+        if (gameWorldComponent == null || ____player == null)
+        {
+            return;
+        }
+        PlayerComponent playerComponent = gameWorldComponent.PlayerTracker.GetPlayerComponent(____player.ProfileId);
         if (playerComponent != null)
         {
             BotManagerComponent.Instance.BotHearing.PlayAISound(

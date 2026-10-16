@@ -49,6 +49,10 @@ public class SAINSoundTypeHandler
             }
         }
 
-        BotManagerComponent.Instance?.BotHearing.PlayAISound(player.ProfileId, soundType, player.Position + Vector3.up, soundDist, 1f);
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager != null)
+        {
+            botManager.BotHearing.PlayAISound(player.ProfileId, soundType, player.Position + Vector3.up, soundDist, 1f);
+        }
     }
 }

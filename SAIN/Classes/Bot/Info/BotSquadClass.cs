@@ -83,7 +83,8 @@ public class BotSquadContainer : BotComponentClassBase
             if (
                 playerComponent != null
                 && !playerComponent.IsAI
-                && Bot?.EnemyController?.IsPlayerAnEnemy(playerComponent.ProfileId) == false
+                && Bot != null
+                && Bot.EnemyController?.IsPlayerAnEnemy(playerComponent.ProfileId) == false
                 && playerComponent.GetDistanceToPlayer(Bot.ProfileId) < distToCheck
             )
             {

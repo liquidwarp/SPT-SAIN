@@ -36,7 +36,8 @@ public class SAINWeatherClass : BotManagerBase
         if (_rainCheckTime < currentTime)
         {
             _rainCheckTime = currentTime + WEATHER_RAINSOUND_UPDATE_FREQ;
-            var curve = WeatherController.Instance?.WeatherCurve;
+            WeatherController weatherController = WeatherController.Instance;
+            var curve = weatherController != null ? weatherController.WeatherCurve : null;
             if (curve == null)
             {
                 RainSoundModifierOutdoor = 1f;
@@ -51,7 +52,12 @@ public class SAINWeatherClass : BotManagerBase
 
     private float CalcWeatherVisibility()
     {
-        IWeatherCurve weatherCurve = WeatherController.Instance?.WeatherCurve;
+        WeatherController weatherController = WeatherController.Instance;
+        if (weatherController == null)
+        {
+            return 1f;
+        }
+        IWeatherCurve weatherCurve = weatherController.WeatherCurve;
         if (weatherCurve == null)
         {
             return 1f;

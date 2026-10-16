@@ -201,7 +201,7 @@ internal class RotateClampPatch : ModulePatch
     [PatchPrefix]
     public static void PatchPrefix(Player __instance, ref bool ignoreClamp)
     {
-        if (__instance?.IsAI == true && __instance.IsSprintEnabled && SAINEnableClass.IsBotInCombat(__instance))
+        if (__instance != null && __instance.IsAI && __instance.IsSprintEnabled && SAINEnableClass.IsBotInCombat(__instance))
         {
             ignoreClamp = true;
         }
@@ -218,9 +218,17 @@ internal class BotGroupAddEnemyPatch : ModulePatch
     [PatchPrefix]
     public static bool PatchPrefix(IPlayer person)
     {
-        if (person == null || person.IsAI && person.AIData?.BotOwner?.GetPlayer == null)
+        if (person == null)
         {
             return false;
+        }
+        if (person.IsAI)
+        {
+            BotOwner botOwner = person.AIData?.BotOwner;
+            if (botOwner == null || botOwner.GetPlayer == null)
+            {
+                return false;
+            }
         }
 
         return true;
@@ -237,9 +245,17 @@ internal class BotMemoryAddEnemyPatch : ModulePatch
     [PatchPrefix]
     public static bool PatchPrefix(IPlayer enemy)
     {
-        if (enemy == null || enemy.IsAI && enemy.AIData?.BotOwner?.GetPlayer == null)
+        if (enemy == null)
         {
             return false;
+        }
+        if (enemy.IsAI)
+        {
+            BotOwner botOwner = enemy.AIData?.BotOwner;
+            if (botOwner == null || botOwner.GetPlayer == null)
+            {
+                return false;
+            }
         }
 
         return true;

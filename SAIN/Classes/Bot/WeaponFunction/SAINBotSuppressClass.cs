@@ -57,7 +57,11 @@ public class SAINBotSuppressClass : BotComponentClassBase
     {
         if (SuppressingTarget)
         {
-            if (EnemyBeingSuppressed?.EnemyPlayer?.HealthController?.IsAlive != true)
+            if (
+                EnemyBeingSuppressed == null
+                || EnemyBeingSuppressed.EnemyPlayer == null
+                || EnemyBeingSuppressed.EnemyPlayer.HealthController?.IsAlive != true
+            )
             {
                 ResetSuppressing();
             }
@@ -216,14 +220,25 @@ public class SAINBotSuppressClass : BotComponentClassBase
 
     public static float CalcAmmoRatio(BotOwner botowner, out int currentAmmoCount)
     {
-        var weaponManager = botowner?.WeaponManager;
+        if (botowner == null)
+        {
+            currentAmmoCount = 0;
+            return 0f;
+        }
+        var weaponManager = botowner.WeaponManager;
         if (weaponManager == null || weaponManager.Reload == null)
         {
             currentAmmoCount = 0;
             return 0f;
         }
         // eft code lacks a null ref check
-        var item = weaponManager.ShootController?.Item;
+        IFirearmHandsController shootController = weaponManager.ShootController;
+        if (shootController == null)
+        {
+            currentAmmoCount = 0;
+            return 0f;
+        }
+        var item = shootController.Item;
         if (item == null)
         {
             currentAmmoCount = 0;
@@ -472,7 +487,10 @@ public class SAINBotSuppressClass : BotComponentClassBase
         }
 
         _temporaryStatModifiers = createMods(config);
-        BotOwner?.Settings?.Current?.Apply(_temporaryStatModifiers.Modifiers);
+        if (BotOwner != null)
+        {
+            BotOwner.Settings?.Current?.Apply(_temporaryStatModifiers.Modifiers);
+        }
         OnSuppressionStateChanged?.Invoke(newState);
     }
 

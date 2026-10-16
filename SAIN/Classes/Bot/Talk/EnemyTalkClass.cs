@@ -65,7 +65,7 @@ public class EnemyTalk : BotBase
                 _nextCheckTime = time + 1f;
                 return;
             }
-            if (Bot?.GoalEnemy != null)
+            if (Bot != null && Bot.GoalEnemy != null)
             {
                 if (ShallFakeDeath())
                 {
@@ -100,7 +100,7 @@ public class EnemyTalk : BotBase
             Singleton<GlobalEventDispatcher>.Instance.OnGrenadeExplosive -= tryFakeDeathGrenade;
         }
         BotManagerComponent.Instance.BotHearing.PlayerTalk -= playerTalked;
-        if (Bot?.EnemyController != null)
+        if (Bot != null && Bot.EnemyController != null)
         {
             Bot.EnemyController.Events.OnEnemyKilled -= enemyKilled;
         }
@@ -109,12 +109,26 @@ public class EnemyTalk : BotBase
 
     private PersonalityTalkSettings PersonalitySettings
     {
-        get { return Bot?.Info?.PersonalitySettings.Talk; }
+        get
+        {
+            if (Bot == null)
+            {
+                return null;
+            }
+            return Bot.Info?.PersonalitySettings.Talk;
+        }
     }
 
     private SAINSettingsClass FileSettings
     {
-        get { return Bot?.Info?.FileSettings; }
+        get
+        {
+            if (Bot == null)
+            {
+                return null;
+            }
+            return Bot.Info?.FileSettings;
+        }
     }
 
     private float FakeDeathChance = 2f;
@@ -591,7 +605,8 @@ public class EnemyTalk : BotBase
             }
         }
         else if (
-            Bot?.Squad.SquadInfo != null
+            Bot != null
+            && Bot.Squad.SquadInfo != null
             && Bot.Talk.GroupTalk.FriendIsClose
             && (
                 Bot.Squad.SquadInfo.SquadPersonality != ESquadPersonality.GigaChads

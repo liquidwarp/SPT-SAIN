@@ -84,15 +84,19 @@ public class EnemyListController : BotSubClass<SAINEnemyController>, IBotClass
     public override void Dispose()
     {
         GameWorldComponent.Instance.PlayerTracker.OnPlayerRemoved -= RemoveEnemy;
-        BotMemory memory = BotOwner?.Memory;
-        if (memory != null)
+        BotOwner botOwner = BotOwner;
+        if (botOwner != null)
         {
-            memory.OnAddEnemy -= enemyAdded;
-        }
-        if (BotOwner?.BotsGroup is BotsGroup botsGroup)
-        {
-            botsGroup.OnEnemyAdd -= enemyAdded;
-            botsGroup.OnEnemyRemove -= RemoveEnemy;
+            BotMemory memory = botOwner.Memory;
+            if (memory != null)
+            {
+                memory.OnAddEnemy -= enemyAdded;
+            }
+            if (botOwner.BotsGroup is BotsGroup botsGroup)
+            {
+                botsGroup.OnEnemyAdd -= enemyAdded;
+                botsGroup.OnEnemyRemove -= RemoveEnemy;
+            }
         }
 
         foreach (var enemy in EnemiesArray)

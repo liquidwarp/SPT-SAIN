@@ -116,7 +116,8 @@ public class SainBotCoverData()
                 array[i] = null;
                 continue;
             }
-            if (_excludedColliderNames.Contains(collider.transform?.parent?.name))
+            Transform colliderParent = collider.transform.parent;
+            if (colliderParent != null && _excludedColliderNames.Contains(colliderParent.name))
             {
                 array[i] = null;
                 continue;

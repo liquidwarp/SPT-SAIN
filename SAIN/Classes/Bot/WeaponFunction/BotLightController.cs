@@ -17,7 +17,7 @@ public class BotLightController : BotComponentClassBase
     public override void ManualUpdate()
     {
         base.ManualUpdate();
-        if (BotOwner?.BotLight == null)
+        if (BotOwner == null || BotOwner.BotLight == null)
         {
             return;
         }
@@ -35,7 +35,7 @@ public class BotLightController : BotComponentClassBase
 
     public bool IsLightEnabled
     {
-        get { return BotOwner?.BotLight?.IsEnable == true; }
+        get { return BotOwner != null && BotOwner.BotLight?.IsEnable == true; }
     }
 
     private float _nextLightChangeTime;

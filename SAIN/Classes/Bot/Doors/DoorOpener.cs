@@ -94,7 +94,12 @@ public class DoorOpener : BotComponentClassBase
 
     private void Clear()
     {
-        Bot.Player.MovementContext.IgnoreInteractionCollision(ActiveDoor.Door?.Collider, false);
+        Collider doorCollider = null;
+        if (ActiveDoor.Door != null)
+        {
+            doorCollider = ActiveDoor.Door.Collider;
+        }
+        Bot.Player.MovementContext.IgnoreInteractionCollision(doorCollider, false);
         Interacting = false;
         _interactionDoorIndex = 0;
         ActiveDoor = new();

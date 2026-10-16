@@ -72,7 +72,7 @@ internal class SAINAvoidThreatLayer(BotOwner bot, int priority) : SAINLayer(bot,
         {
             return true;
         }
-        return Bot?.BotActive == true && _lastActionDecision != CurrentDecision;
+        return Bot != null && Bot.BotActive && _lastActionDecision != CurrentDecision;
     }
 
     private ECombatDecision _lastActionDecision;

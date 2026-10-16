@@ -15,7 +15,10 @@ public class MemberInfo
         Bot = sain;
         Player = sain.Player;
         ProfileId = sain.ProfileId;
-        Nickname = sain.Player?.Profile?.Nickname;
+        if (sain.Player != null)
+        {
+            Nickname = sain.Player.Profile?.Nickname;
+        }
 
         HealthStatus = sain.Memory.Health.HealthStatus;
 
@@ -43,7 +46,11 @@ public class MemberInfo
 
     public void UpdatePowerLevel()
     {
-        var aiData = Bot?.Player?.AIData;
+        if (Bot == null || Bot.Player == null)
+        {
+            return;
+        }
+        var aiData = Bot.Player.AIData;
         if (aiData != null)
         {
             PowerLevel = aiData.PowerOfEquipment;
@@ -62,7 +69,7 @@ public class MemberInfo
 
     public bool HasEnemy
     {
-        get { return Bot?.HasEnemy == true; }
+        get { return Bot != null && Bot.HasEnemy; }
     }
 
     public ETagStatus HealthStatus;

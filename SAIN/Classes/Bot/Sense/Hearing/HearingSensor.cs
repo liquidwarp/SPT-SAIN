@@ -96,7 +96,10 @@ public class HearingSensor : BotComponentClassBase
         Enemy enemy = sound.Enemy;
         if (UnderFire)
         {
-            BotOwner?.HearingSensor?.OnEnemySounHearded?.Invoke(EstimatedPosition, sound.PlayerDistance, sound.SoundType.Convert());
+            if (BotOwner != null)
+            {
+                BotOwner.HearingSensor?.OnEnemySounHearded?.Invoke(EstimatedPosition, sound.PlayerDistance, sound.SoundType.Convert());
+            }
             Bot.Memory.SetUnderFire(enemy, EstimatedPosition);
             enemy.SetEnemyAsSniper(enemy.RealDistance > Bot.Info.PersonalitySettings.General.ENEMYSNIPER_DISTANCE);
         }

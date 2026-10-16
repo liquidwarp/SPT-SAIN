@@ -91,8 +91,13 @@ public static class DebugOverlay
                     stringBuilder.AppendLine(
                         $"CoverPoints: [{bot.Cover.CoverPoints.Count}] : StartSearchDelay [{info.TimeBeforeSearch}] : Hold Ground Time [{info.HoldGroundDelay}]"
                     );
+                    string environmentId = string.Empty;
+                    if (bot.Player != null)
+                    {
+                        environmentId = bot.Player.AIData.EnvironmentId.ToString();
+                    }
                     stringBuilder.AppendLine(
-                        $"Indoors? {bot.Memory.Location.IsIndoors} EnvironmentID: {bot.Player?.AIData.EnvironmentId} In Bunker? {bot.PlayerComponent.AIData.PlayerLocation.InBunker}"
+                        $"Indoors? {bot.Memory.Location.IsIndoors} EnvironmentID: {environmentId} In Bunker? {bot.PlayerComponent.AIData.PlayerLocation.InBunker}"
                     );
                     var members = bot.Squad.SquadInfo?.Members;
                     if (members != null && members.Count > 1)
@@ -310,11 +315,15 @@ public static class DebugOverlay
             return;
         }
 
+        string enemyName = null;
+        float? enemyPower = null;
+        if (enemy.EnemyPlayer != null)
+        {
+            enemyName = enemy.EnemyPlayer.Profile.Nickname;
+            enemyPower = enemy.EnemyPlayer.AIData?.PowerOfEquipment;
+        }
         stringBuilder.AppendLine(
-            $"EnemyData: "
-                + $"Name [{enemy.EnemyPlayer?.Profile.Nickname}] "
-                + $"RealDistance [{enemy.RealDistance}] "
-                + $"Power [{enemy.EnemyPlayer?.AIData?.PowerOfEquipment}]"
+            $"EnemyData: " + $"Name [{enemyName}] " + $"RealDistance [{enemy.RealDistance}] " + $"Power [{enemyPower}]"
         );
 
         stringBuilder.AppendLine($"Visible [{enemy.IsVisible}] Seen [{enemy.Seen}]");

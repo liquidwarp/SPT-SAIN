@@ -172,7 +172,10 @@ public class GrenadeReactionClass : BotSubClass<BotGrenadeManager>, IBotClass
 
     private EGrenadeReaction GetReaction()
     {
-        if (DangerGrenade.Grenade?.GrenadeSettings.CollisionSound == GrenadeSettings.CollisionSounds.smoke)
+        if (
+            DangerGrenade.Grenade != null
+            && DangerGrenade.Grenade.GrenadeSettings.CollisionSound == GrenadeSettings.CollisionSounds.smoke
+        )
         {
             return EGrenadeReaction.None;
         }

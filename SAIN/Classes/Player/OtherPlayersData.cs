@@ -12,7 +12,12 @@ public class OtherPlayersData : PlayerComponentBase
     public OtherPlayersData(PlayerComponent playerComponent)
         : base(playerComponent)
     {
-        var playerTracker = GameWorldComponent.Instance?.PlayerTracker;
+        PlayerSpawnTracker playerTracker = null;
+        GameWorldComponent gameWorldComponent = GameWorldComponent.Instance;
+        if (gameWorldComponent != null)
+        {
+            playerTracker = gameWorldComponent.PlayerTracker;
+        }
         if (playerTracker == null)
         {
 #if DEBUG
@@ -32,7 +37,12 @@ public class OtherPlayersData : PlayerComponentBase
 
     public override void Dispose()
     {
-        var playerTracker = GameWorldComponent.Instance?.PlayerTracker;
+        PlayerSpawnTracker playerTracker = null;
+        GameWorldComponent gameWorldComponent = GameWorldComponent.Instance;
+        if (gameWorldComponent != null)
+        {
+            playerTracker = gameWorldComponent.PlayerTracker;
+        }
         if (playerTracker != null)
         {
             playerTracker.OnPlayerAdded -= PlayerAdded;

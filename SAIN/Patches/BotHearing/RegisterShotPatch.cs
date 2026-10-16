@@ -21,6 +21,10 @@ public class RegisterShotPatch : ModulePatch
     [PatchPrefix]
     public static void PatchPrefix(Player ____player, Item weapon, Shot shot)
     {
-        GameWorldComponent.Instance?.RegisterShot(____player, shot, weapon);
+        GameWorldComponent gameWorldComponent = GameWorldComponent.Instance;
+        if (gameWorldComponent != null)
+        {
+            gameWorldComponent.RegisterShot(____player, shot, weapon);
+        }
     }
 }

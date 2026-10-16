@@ -103,7 +103,10 @@ public class Firemode
             return;
         }
         weapon.FireMode.SetFireMode(fireMode);
-        player.HandsController?.FirearmsAnimator?.SetFireMode(fireMode);
+        if (player.HandsController != null)
+        {
+            player.HandsController.FirearmsAnimator?.SetFireMode(fireMode);
+        }
     }
 
     public static bool CanSetMode(EFireMode fireMode, BotWeaponInfoClass weaponInfo)

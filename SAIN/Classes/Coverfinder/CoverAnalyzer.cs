@@ -273,7 +273,12 @@ public class CoverAnalyzer(BotComponent bot) : BotBase(bot)
             return false;
         }
 
-        var player = Singleton<GameWorld>.Instance?.GetPlayerByCollider(foundCollider);
+        GameWorld gameWorld = Singleton<GameWorld>.Instance;
+        if (gameWorld == null)
+        {
+            return false;
+        }
+        var player = gameWorld.GetPlayerByCollider(foundCollider);
         if (player == null)
         {
             return false;
