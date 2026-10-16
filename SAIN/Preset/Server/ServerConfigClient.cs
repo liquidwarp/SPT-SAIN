@@ -46,7 +46,7 @@ public static class ServerConfigClient
 
     private sealed class ClientConfig
     {
-        public string ForcedPresetName;
-        public bool EditingAllowed = true;
+        public string ForcedPresetName { get; set; }
+        public bool EditingAllowed { get; set; } = true;
     }
 }

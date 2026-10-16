@@ -48,7 +48,8 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
                 {
                     break;
                 }
-                player.StopCoroutine(_runCoroutine);
+                PlayerComponent.StopCoroutine(_runCoroutine);
+                _runCoroutine = null;
                 if (!_playedAtLeastOneStep && Player.SinceLastStep > 0.66f)
                 {
                     if (Player.CheckSurface(RunSurfaceRange))
@@ -67,7 +68,8 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
             case EPlayerState.Sprint:
                 if (_sprintCoroutine != null)
                 {
-                    player.StopCoroutine(_sprintCoroutine);
+                    PlayerComponent.StopCoroutine(_sprintCoroutine);
+                    _sprintCoroutine = null;
                     if (!_playedAtLeastOneStep && Player.CheckSurface(SprintSurfaceRange))
                     {
                         BotManagerComponent.Instance.BotHearing.PlayAISound(
@@ -106,7 +108,7 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
                 );
                 break;
             case EPlayerState.Sprint:
-                _sprintCoroutine = player.StartCoroutine(StartSprintCoroutine(nextState));
+                _sprintCoroutine = PlayerComponent.StartCoroutine(StartSprintCoroutine(nextState));
                 break;
             case EPlayerState.Jump:
                 float vol = Player.CalculateMovementVolumeDefaultMultiplier(EAudioMovementState.Jump);
@@ -126,7 +128,7 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
             case EPlayerState.MoveZombieState:
             case EPlayerState.StartMoveZombieState:
             case EPlayerState.EndMoveZombieState:
-                _runCoroutine = player.StartCoroutine(StartRunCoroutine(nextState));
+                _runCoroutine = PlayerComponent.StartCoroutine(StartRunCoroutine(nextState));
                 break;
             case EPlayerState.Transit2Prone:
             {
@@ -220,13 +222,17 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
                     _playedAtLeastOneStep = true;
                     if (Player.CheckSurface(SprintSurfaceRange))
                     {
-                        BotManagerComponent.Instance.BotHearing.PlayAISound(
-                            Player.ProfileId,
-                            SAINSoundType.Sprint,
-                            Player.Position,
-                            SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Sprint,
-                            Player.CalculateMovementVolumeDefaultMultiplier(EAudioMovementState.Sprint)
-                        );
+                        BotManagerComponent botManager = BotManagerComponent.Instance;
+                        if (botManager != null)
+                        {
+                            botManager.BotHearing.PlayAISound(
+                                Player.ProfileId,
+                                SAINSoundType.Sprint,
+                                Player.Position,
+                                SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Sprint,
+                                Player.CalculateMovementVolumeDefaultMultiplier(EAudioMovementState.Sprint)
+                            );
+                        }
                     }
                 }
             }
@@ -234,18 +240,48 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
         }
     }
 
-    public override void Dispose()
+    /// <summary>
+    /// Call after PlayerComponent.StopAllCoroutines, which also ends the step coroutines.
+    /// </summary>
+    public void ClearCoroutines()
     {
-        if (_runCoroutine != null)
+        _runCoroutine = null;
+        _sprintCoroutine = null;
+    }
+
+    /// <summary>
+    /// Restarts the step coroutine for the state the player is already in, after ClearCoroutines.
+    /// </summary>
+    public void ResumeCoroutines()
+    {
+        if (Player.IsAI && Player.AIData != null)
         {
-            player.StopCoroutine(_runCoroutine);
+            return;
         }
 
-        if (_sprintCoroutine != null)
+        if (Player.CurrentState == null)
         {
-            player.StopCoroutine(_sprintCoroutine);
+            return;
         }
 
-        base.Dispose();
+        EPlayerState state = Player.CurrentState.Name;
+        switch (state)
+        {
+            case EPlayerState.Sprint:
+                if (_sprintCoroutine == null)
+                {
+                    _sprintCoroutine = PlayerComponent.StartCoroutine(StartSprintCoroutine(state));
+                }
+                break;
+            case EPlayerState.Run:
+            case EPlayerState.MoveZombieState:
+            case EPlayerState.StartMoveZombieState:
+            case EPlayerState.EndMoveZombieState:
+                if (_runCoroutine == null)
+                {
+                    _runCoroutine = PlayerComponent.StartCoroutine(StartRunCoroutine(state));
+                }
+                break;
+        }
     }
 }
