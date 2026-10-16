@@ -16,7 +16,9 @@ internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
     private const float COVER_DOT_THRESHOLD = 0.25f;
     private const int ESCAPE_DISTANCE_STEPS = 3;
     private const float BLAST_URGENT_DISTANCE = 8f;
+#if DEBUG
     private const float FAIL_LOG_INTERVAL = 2f;
+#endif
 
     /// <summary>
     /// Rough sprint speed, used only to decide whether an escape is worth attempting at all.
@@ -37,6 +39,11 @@ internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
     /// How far the grenade must move before an escape already underway is worth abandoning.
     /// </summary>
     private const float DANGER_MOVED_DISTANCE = 4f;
+
+    /// <summary>
+    /// How soon to search again after going prone or finding nowhere to go.
+    /// </summary>
+    private const float NO_DESTINATION_RETRY_TIME = 0.25f;
 
     /// <summary>
     /// Bearings tried either side of the escape vector, since the ideal one often faces a wall.
@@ -70,6 +77,7 @@ internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
         {
             Bot.Mover.Prone.SetProne(true);
             _destination = null;
+            _nextRepathTime = Time.time + NO_DESTINATION_RETRY_TIME;
             return;
         }
 
@@ -111,6 +119,7 @@ internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
         }
 
         _destination = null;
+        _nextRepathTime = Time.time + NO_DESTINATION_RETRY_TIME;
 #if DEBUG
         if (SAINPlugin.DebugMode && _nextFailLogTime < Time.time)
         {
@@ -122,15 +131,11 @@ internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
 
     private bool ShallPickNewDestination(Vector3 dangerPoint)
     {
-        if (_destination == null)
-        {
-            return true;
-        }
         if ((dangerPoint - _committedDanger).sqrMagnitude > DANGER_MOVED_DISTANCE * DANGER_MOVED_DISTANCE)
         {
             return true;
         }
-        if ((Bot.Position - _destination.Value).sqrMagnitude < ARRIVED_DISTANCE * ARRIVED_DISTANCE)
+        if (_destination != null && (Bot.Position - _destination.Value).sqrMagnitude < ARRIVED_DISTANCE * ARRIVED_DISTANCE)
         {
             return true;
         }
@@ -178,7 +183,9 @@ internal class AvoidGrenadeAction(BotOwner bot) : BotAction(bot), IBotAction
         Bot.Mover.SetTargetMoveSpeed(1f);
     }
 
+#if DEBUG
     private float _nextFailLogTime;
+#endif
     private float _nextRepathTime;
     private Vector3? _destination;
     private Vector3 _committedDanger;

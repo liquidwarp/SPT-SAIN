@@ -331,11 +331,13 @@ public class PlayerComponent : MonoBehaviour, IDisposable
         if (active)
         {
             StartCoroutines();
+            SoundController.ResumeCoroutines();
         }
         else
         {
             StopAllCoroutines();
             _gearCoroutine = null;
+            SoundController.ClearCoroutines();
         }
     }
 
@@ -353,6 +355,11 @@ public class PlayerComponent : MonoBehaviour, IDisposable
     {
         ActivationClass.Disable();
         StopAllCoroutines();
+        _gearCoroutine = null;
+        if (SoundController != null)
+        {
+            SoundController.ClearCoroutines();
+        }
     }
 
     public void Dispose()

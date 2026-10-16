@@ -12,6 +12,7 @@ How bots behave differently in raid compared to the previous release.
 - Long bursts, or you moving or strafing, no longer reset their aim to its starting precision mid-fight.
 - If you peek again from the same spot, the bot keeps the precision it has already built up.
 - The first shots are still forgiving, but long fights and repeated peeks from one spot are noticeably deadlier.
+- Each bot type now gets its own "max aim time" and "max aiming upgrade by time" from the game's data, as was intended. Before, every bot type got the same values (2 and 0.25).
 
 ### Bot recoil works as intended
 
@@ -68,7 +69,12 @@ Some bot settings used to be read only after the preset was saved from the in-ga
 
 The new default hearing and squad talk values only apply if your preset uses the defaults. Values you've changed and saved in your own preset are kept.
 
+The per-bot-type aim values apply to the built-in presets. Custom presets keep the values they were saved with.
+
 ### Other changes
 
 - Removed settings that were never used, along with their code, such as the unstuck/teleport options, door kicking and the AI-vs-AI vision limit. None of it was running before.
-- Safer handling of destroyed game objects, such as despawned players..
+- Safer handling of destroyed game objects, such as despawned players.
+- Bots no longer go deaf to a player's footsteps after that player is briefly deactivated mid-run or mid-sprint.
+- A bot that can't find anywhere to escape a grenade waits a moment before searching again, instead of searching every frame.
+- The preset editor's tabs have their padding back.

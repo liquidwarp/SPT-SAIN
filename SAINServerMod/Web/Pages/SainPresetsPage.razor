@@ -82,7 +82,7 @@
                                     </div>
                                     <MudTooltip Text="Duplicate">
                                         <MudIconButton Icon="@Icons.Material.Outlined.ContentCopy" Size="Size.Small"
-                                                       OnClick="@(() => DuplicateAsync(item.Name))" OnClick:stopPropagation="true" />
+                                                       OnClick="@(() => DuplicateAsync(item.Name))" />
                                     </MudTooltip>
                                 </div>
                             </MudListItem>
@@ -104,20 +104,20 @@
                                     <span>
                                         <MudTooltip Text="Duplicate">
                                             <MudIconButton Icon="@Icons.Material.Outlined.ContentCopy" Size="Size.Small"
-                                                           OnClick="@(() => DuplicateAsync(item.Name))" OnClick:stopPropagation="true" />
+                                                           OnClick="@(() => DuplicateAsync(item.Name))" />
                                         </MudTooltip>
                                         @if (_pendingDelete == item.Name)
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="Color.Error"
-                                                           OnClick="@(() => DeleteAsync(item.Name))" OnClick:stopPropagation="true" />
+                                                           OnClick="@(() => DeleteAsync(item.Name))" />
                                             <MudIconButton Icon="@Icons.Material.Outlined.Close" Size="Size.Small"
-                                                           OnClick="@(() => _pendingDelete = null)" OnClick:stopPropagation="true" />
+                                                           OnClick="@(() => _pendingDelete = null)" />
                                         }
                                         else
                                         {
                                             <MudTooltip Text="Delete">
                                                 <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" Color="Color.Error"
-                                                               OnClick="@(() => _pendingDelete = item.Name)" OnClick:stopPropagation="true" />
+                                                               OnClick="@(() => _pendingDelete = item.Name)" />
                                             </MudTooltip>
                                         }
                                     </span>
