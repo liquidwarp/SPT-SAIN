@@ -49,6 +49,31 @@ public class SelfActionDecisionClass : BotBase
 
     private float _lastReloadTime;
 
+    public override void ManualUpdate()
+    {
+        // Runs whether or not the bot has an enemy, so a stuck reload can't block patrolling either
+        BotReload reload = BotOwner.WeaponManager?.Reload;
+        if (reload?.Reloading == true)
+        {
+            ClearStuckReload(reload);
+        }
+        base.ManualUpdate();
+    }
+
+    private void ClearStuckReload(BotReload reload)
+    {
+        // Vanilla CheckReloadLongTime clears a reload stuck for 16s (magazine) or 40s (loose ammo), but only once per weapon,
+        // and SAIN otherwise only calls it during the 8s reload decision
+        reload._reloadFailDebug = false;
+        reload.CheckReloadLongTime();
+        if (!reload.Reloading)
+        {
+            Logger.LogWarning(
+                $"[{Bot.name}] Reload of [{BotOwner.WeaponManager.CurrentWeapon?.Name}] stuck for {Time.time - reload._reloadStartTime:F1}s, cleared reload state"
+            );
+        }
+    }
+
     private bool CheckDoReload(Enemy enemy, BotComponent bot)
     {
         const float RELOAD_AMMORATIO_MIN_PEACE = 0.7f;
