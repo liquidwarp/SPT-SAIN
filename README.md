@@ -1,10 +1,12 @@
-# Solarint's AI Modifications
+# Modifications of Solarint's AI Modifications
 
-Fork of SAIN.
+Fork of SAIN, whose continued repo is now archived.
 
-## What's new in 5.0.0 (SPT 4.1.6)
+## Requirements
 
-How bots behave differently in raid compared to the previous release.
+- [BotHealingFixes, forked version](https://github.com/liquidwarp/SPT-BotHealingFixes). SAIN doesn't load without it.
+
+## Changes
 
 ### Aim keeps tightening while you stay exposed
 
@@ -71,6 +73,23 @@ Some bot settings used to be read only after the preset was saved from the in-ga
 - SAIN's own bot extraction, which was off by default, has been removed, along with its Looting Bots, Questing Bots and Realism integrations. On default settings nothing changes, and bots still use vanilla extraction or whatever a mod like ORBIT provides.
 - The extraction calls other mods use (`ExtractBot`, `TrySetExfilForBot`, `GetExtractedBots`, `GetExtractionInfos`) still exist but do nothing and report no extracted bots.
 - Bots always use the standard recoil and armor values, whether or not Realism is installed.
+
+### Bots heal properly
+
+Healing now relies on the forked BotHealingFixes, which this SAIN fork requires.
+
+- **Surgery:**
+  - Bots complete surgery and go from one destroyed limb to the next.
+  - A bot whose surgical kit fails to start waits 10 seconds before trying again.
+  - Stopping surgery no longer partly restores destroyed arms, legs and stomach for free.
+- **First aid** is no longer cut off after 6 seconds, and is cancelled when an enemy becomes a threat.
+- **Stims** are no longer cut off after 3 seconds.
+- **Picking meds:** bleeding bots use a bandage, tourniquet or medkit that can stop the bleed, and surgical kits are only used on destroyed limbs.
+
+### Bots reach cover when reloading or out of ammo
+
+- A bot falling back to reload, or with an empty gun, keeps moving to cover instead of restarting its move every second or so.
+- A reload that never finishes is cancelled after 16 seconds (magazine) or 40 seconds (loading rounds one by one), and the bot tries again.
 
 ### Other changes
 
