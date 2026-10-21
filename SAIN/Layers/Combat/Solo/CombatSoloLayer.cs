@@ -21,53 +21,34 @@ internal class CombatSoloLayer(BotOwner bot, int priority) : SAINLayer(bot, prio
             return new Action(typeof(DoSurgeryAction), $"Surgery");
         }
 
-        switch (_lastDecision)
+        System.Type actionType = GetActionType(_lastDecision);
+        if (actionType == null)
         {
-            case ECombatDecision.MoveToEngage:
-                return new Action(typeof(MoveToEngageAction), $"{_lastDecision}");
-
-            case ECombatDecision.MeleeAttack:
-                return new Action(typeof(MeleeAttackAction), $"{_lastDecision}");
-
-            case ECombatDecision.FightZombies:
-                return new Action(typeof(FightZombiesAction), $"{_lastDecision}");
-
-            case ECombatDecision.RushEnemy:
-                return new Action(typeof(RushEnemyAction), $"{_lastDecision}");
-
-            case ECombatDecision.ThrowGrenade:
-                return new Action(typeof(ThrowGrenadeAction), $"{_lastDecision}");
-
-            case ECombatDecision.ShiftCover:
-                return new Action(typeof(ShiftCoverAction), $"{_lastDecision}");
-
-            case ECombatDecision.SeekCover:
-            case ECombatDecision.Retreat:
-                string label;
-                if (_lastSelfDecision != ESelfActionType.None)
-                {
-                    label = $"{_lastDecision} + {_lastSelfDecision}";
-                }
-                else
-                {
-                    label = $"{_lastDecision}";
-                }
-
-                return new Action(typeof(SeekCoverAction), label);
-
-            case ECombatDecision.ShootDistantEnemy:
-            case ECombatDecision.StandAndShoot:
-                return new Action(typeof(StandAndShootAction), $"{_lastDecision}");
-
-            case ECombatDecision.Search:
-                return new Action(typeof(SearchAction), $"{_lastDecision}");
-
-            case ECombatDecision.Freeze:
-                return new Action(typeof(FreezeAction), $"{_lastDecision}");
-
-            default:
-                return new Action(typeof(StandAndShootAction), $"DEFAULT! {_lastDecision}");
+            return new Action(typeof(StandAndShootAction), $"DEFAULT! {_lastDecision}");
         }
+        if (actionType == typeof(SeekCoverAction) && _lastSelfDecision != ESelfActionType.None)
+        {
+            return new Action(actionType, $"{_lastDecision} + {_lastSelfDecision}");
+        }
+        return new Action(actionType, $"{_lastDecision}");
+    }
+
+    private static System.Type GetActionType(ECombatDecision decision)
+    {
+        return decision switch
+        {
+            ECombatDecision.MoveToEngage => typeof(MoveToEngageAction),
+            ECombatDecision.MeleeAttack => typeof(MeleeAttackAction),
+            ECombatDecision.FightZombies => typeof(FightZombiesAction),
+            ECombatDecision.RushEnemy => typeof(RushEnemyAction),
+            ECombatDecision.ThrowGrenade => typeof(ThrowGrenadeAction),
+            ECombatDecision.ShiftCover => typeof(ShiftCoverAction),
+            ECombatDecision.SeekCover or ECombatDecision.Retreat => typeof(SeekCoverAction),
+            ECombatDecision.ShootDistantEnemy or ECombatDecision.StandAndShoot => typeof(StandAndShootAction),
+            ECombatDecision.Search => typeof(SearchAction),
+            ECombatDecision.Freeze => typeof(FreezeAction),
+            _ => null,
+        };
     }
 
     public override bool IsActive()
@@ -101,7 +82,13 @@ internal class CombatSoloLayer(BotOwner bot, int priority) : SAINLayer(bot, prio
         {
             return true;
         }
-        return _currentDecision != _lastDecision;
+        if (_currentDecision == _lastDecision)
+        {
+            return false;
+        }
+        // Decisions that share an action (SeekCover and Retreat) keep it running: restarting SeekCoverAction cancels the move to cover
+        System.Type currentActionType = GetActionType(_currentDecision);
+        return currentActionType == null || currentActionType != GetActionType(_lastDecision);
     }
 
     private bool _doSurgeryAction;
