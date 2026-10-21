@@ -334,7 +334,7 @@ public class SelfActionDecisionClass : BotBase
             Decision = ESelfActionType.Surgery;
             return true;
         }
-        Bot.Medical.TryCancelHeal();
+        medical.Surgery.CancelSurgery();
         Decision = ESelfActionType.None;
         return false;
     }
@@ -346,9 +346,21 @@ public class SelfActionDecisionClass : BotBase
             Decision = ESelfActionType.None;
             return false;
         }
+        // Hold while in hands, BotHealingFixes times the use out
+        var firstAid = BotOwner.Medecine.FirstAid;
+        if (firstAid.Using)
+        {
+            if (!CheckFirstAidEnemies())
+            {
+                firstAid.CancelCurrent();
+                Decision = ESelfActionType.None;
+                return false;
+            }
+            Decision = ESelfActionType.FirstAid;
+            return true;
+        }
         if (timeSinceChange > 6f)
         {
-            Bot.Medical.TryCancelHeal();
             Decision = ESelfActionType.None;
             return false;
         }
@@ -363,9 +375,10 @@ public class SelfActionDecisionClass : BotBase
             Decision = ESelfActionType.None;
             return false;
         }
-        if (timeSinceChange > 3f)
+        // Time limited, the game never clears Using if putting the stim in hand fails
+        bool usingStims = BotOwner.Medecine.Stimulators.Using && timeSinceChange <= MAX_STIMS_USE_TIME;
+        if (!usingStims && timeSinceChange > 3f)
         {
-            Bot.Medical.TryCancelHeal();
             Decision = ESelfActionType.None;
             return false;
         }
@@ -380,7 +393,7 @@ public class SelfActionDecisionClass : BotBase
 
     private bool checkDecisionTooLong()
     {
-        return Time.time - Bot.Decision.ChangeDecisionTime > 60f;
+        return Time.time - Mathf.Max(Bot.Decision.ChangeDecisionTime, Bot.Medical.Surgery.LastSurgeryActivityTime) > 60f;
     }
 
     public bool GetCanUseStims()
@@ -433,6 +446,11 @@ public class SelfActionDecisionClass : BotBase
         {
             return false;
         }
+        return CheckFirstAidEnemies();
+    }
+
+    private bool CheckFirstAidEnemies()
+    {
         foreach (Enemy enemy in Bot.EnemyController.KnownEnemies)
         {
             if (!ShallFirstAidCheckEnemy(enemy))
@@ -440,9 +458,10 @@ public class SelfActionDecisionClass : BotBase
                 return false;
             }
         }
-
         return true;
     }
+
+    private const float MAX_STIMS_USE_TIME = 10f;
 
     private static bool ShallUseStimsCheckEnemy(Enemy enemy)
     {

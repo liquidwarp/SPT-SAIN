@@ -17,6 +17,7 @@ namespace SAIN;
 
 [BepInPlugin(SAINGUID, SAINName, MyModInfo.MOD_VERSION)]
 [BepInDependency(BigBrainGUID, BigBrainVersion)]
+[BepInDependency(BotHealingFixesGUID, BotHealingFixesVersion)]
 //[BepInDependency(SPTGUID, SPTVersion)]
 [BepInProcess(EscapeFromTarkov)]
 [BepInIncompatibility("com.dvize.BushNoESP")]

@@ -33,4 +33,7 @@ public static class AssemblyInfoClass
 
     public const string BigBrainGUID = "xyz.drakia.bigbrain";
     public const string BigBrainVersion = "1.5.0";
+
+    public const string BotHealingFixesGUID = "com.ozen.bothealingfixes";
+    public const string BotHealingFixesVersion = "1.0.0";
 }

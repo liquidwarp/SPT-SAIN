@@ -10,28 +10,66 @@ public class BotSurgery : BotBase
     public BotSurgery(BotComponent bot)
         : base(bot) { }
 
-    public bool SurgeryStarted
-    {
-        get { return _surgeryStarted; }
-        set
-        {
-            if (_surgeryStarted != value && value)
-            {
-                SurgeryStartTime = Time.time;
-            }
-            _surgeryStarted = value;
-        }
-    }
-
     public float SurgeryStartTime { get; private set; }
-
-    private bool _surgeryStarted;
+    public float LastSurgeryActivityTime { get; private set; }
 
     public bool AreaClearForSurgery { get; private set; }
 
     public bool CheckAreaClearForSurgery()
     {
-        return CheckCanStartUsingKit() && CheckEnemies();
+        AreaClearForSurgery = (IsSurgeryInProgress() || IsWaitingForNextSurgery() || CheckCanStartUsingKit()) && CheckEnemies();
+        return AreaClearForSurgery;
+    }
+
+    public void OnSurgeryStarted()
+    {
+        SurgeryStartTime = Time.time;
+        LastSurgeryActivityTime = Time.time;
+    }
+
+    public void OnSurgeryDone()
+    {
+        LastSurgeryActivityTime = Time.time;
+        BotOwner botOwner = BotOwner;
+        var surgicalKit = botOwner == null ? null : botOwner.Medecine?.SurgicalKit;
+        _waitForNextSurgeryUntil = surgicalKit?.HaveWork == true ? surgicalKit._nextPosibleUseTime + NEXT_SURGERY_GRACE : 0f;
+    }
+
+    private bool IsWaitingForNextSurgery()
+    {
+        if (_waitForNextSurgeryUntil < Time.time)
+        {
+            return false;
+        }
+        BotOwner botOwner = BotOwner;
+        if (botOwner == null)
+        {
+            return false;
+        }
+        var surgicalKit = botOwner.Medecine?.SurgicalKit;
+        return surgicalKit?.HaveWork == true && !surgicalKit.Using;
+    }
+
+    // BotHealingFixes times the use out
+    private bool IsSurgeryInProgress()
+    {
+        BotOwner botOwner = BotOwner;
+        if (botOwner == null)
+        {
+            return false;
+        }
+        return botOwner.Medecine?.SurgicalKit?.Using == true;
+    }
+
+    // Safe with BotHealingFixes.
+    public void CancelSurgery()
+    {
+        BotOwner botOwner = BotOwner;
+        if (botOwner == null)
+        {
+            return;
+        }
+        botOwner.Medecine?.SurgicalKit?.CancelCurrent();
     }
 
     public bool CheckCanStartUsingKit()
@@ -41,9 +79,24 @@ public class BotSurgery : BotBase
         {
             return false;
         }
+        if (_nextAllowedStartTime > Time.time)
+        {
+            return false;
+        }
         var medecine = botOwner.Medecine;
         return medecine?.FirstAid?.IsBleeding == false && medecine.SurgicalKit?.ShallStartUse() == true;
     }
+
+    public void OnSurgeryFailedToStart()
+    {
+        _nextAllowedStartTime = Time.time + FAILED_START_COOLDOWN;
+    }
+
+    private const float FAILED_START_COOLDOWN = 10f;
+
+    private const float NEXT_SURGERY_GRACE = 1f;
+    private float _nextAllowedStartTime;
+    private float _waitForNextSurgeryUntil;
 
     private bool CheckEnemies()
     {
