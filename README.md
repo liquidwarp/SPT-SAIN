@@ -6,13 +6,13 @@ Fork of SAIN.
 
 How bots behave differently in raid compared to the previous release.
 
-### Aim tightens over the whole fight
+### Aim keeps tightening while you stay exposed
 
-- Bots start an engagement with loose aim and get steadily more precise for as long as they stay on you, down to their "max aiming upgrade by time" limit.
-- Long bursts, or you moving or strafing, no longer reset their aim to its starting precision mid-fight.
-- Breaking line of sight still resets it: every new peek, from any spot, starts loose again.
-- Fixed bots sometimes opening a new fight with the precision they had built up in an earlier one, for example after being flashed or after a brain layer from EFT or another mod took over for a while.
-- The first shots are still forgiving, but long fights against PMCs, Raiders, bosses and their followers are noticeably deadlier.
+- A bot's aim starts loose when it gets a shot at you and gets steadily more precise for as long as it keeps that shot, down to its "max aiming upgrade by time" limit.
+- Before, its aim went back to loose every 2 or 3 trigger pulls, so a bot firing steadily rarely got close to that limit.
+- It starts loose again as soon as the bot loses its shot: you break line of sight, or it reloads, sprints or switches to another target. Peeking and ducking back out of sight is as forgiving as before.
+- Fixed bots sometimes starting on you with the precision they had built up earlier, for example on another target, before being flashed, or before a brain layer from EFT or another mod took over for a while.
+- The first shots are still forgiving, but staying in the open against PMCs, Raiders, bosses and their followers is noticeably deadlier.
 - Each bot type now gets its own "max aim time" and "max aiming upgrade by time" from the game's data, as was intended. Before, nearly every bot type got the same values (2 and 0.25). On the default presets:
   - Scavs and marksmen barely tighten their aim: their limit is now 0.85 instead of 0.25 (0.4 on impossible difficulty), so long fights against them are much less precise than before.
   - The Goons, Sanitar and their followers can tighten further than before, down to 0.15.
