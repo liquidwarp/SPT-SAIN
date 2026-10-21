@@ -87,7 +87,7 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
                 return false;
             }
         }
-        _activePath.TickPath(Time.fixedDeltaTime, Time.time);
+        _activePath.TickPath(Time.time);
         return true;
     }
 

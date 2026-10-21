@@ -46,7 +46,7 @@ public class LeanClass : BotBase
         {
             Player.MovementContext.SetTilt(0);
             LeanAngleValue.Set(0);
-            LeanAngleValue.Get(Time.fixedDeltaTime);
+            LeanAngleValue.GetSinceLastCall();
         }
         else
         {
@@ -57,7 +57,7 @@ public class LeanClass : BotBase
                 _ => 0f,
             };
             LeanAngleValue.Set(num);
-            float tiltValue = LeanAngleValue.Get(Time.fixedDeltaTime);
+            float tiltValue = LeanAngleValue.GetSinceLastCall();
             Player.MovementContext.SetTilt(tiltValue);
         }
     }

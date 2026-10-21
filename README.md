@@ -78,4 +78,5 @@ Some bot settings used to be read only after the preset was saved from the in-ga
 - Safer handling of destroyed game objects, such as despawned players.
 - Bots no longer miss a player's footsteps for the rest of a run or sprint after that player is briefly deactivated.
 - A bot that can't find anywhere to escape a grenade waits a moment before searching again, instead of searching every frame.
+- Bots crouch, stand up and lean at the same speed whatever the frame rate. Before, they did it faster the higher the frame rate.
 - The preset editor's tabs have their padding back.

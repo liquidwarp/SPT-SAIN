@@ -21,15 +21,14 @@ public class PoseClass : BotBase
         }
         if (Bot.SAINLayersActive && Bot.HasEnemy)
         {
-            float deltaTime = Time.fixedDeltaTime;
             if (_stopSprintAndPoseChangeTime > Time.time)
             {
                 PoseValue.Set(1);
-                PoseValue.Get(deltaTime);
+                PoseValue.GetSinceLastCall();
                 SetPlayerPoseLevel(1);
                 return;
             }
-            SetPlayerPoseLevel(PoseValue.Get(deltaTime));
+            SetPlayerPoseLevel(PoseValue.GetSinceLastCall());
         }
     }
 

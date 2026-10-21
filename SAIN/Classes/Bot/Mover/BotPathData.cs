@@ -36,7 +36,7 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
 {
     public IBotPathFinder PathFinder { get; } = pathFinder;
 
-    public void TickPath(float deltaTime, float CurrentTime)
+    public void TickPath(float CurrentTime)
     {
         Vector3 botPosition = BotPosition();
         BotPathCorner currentCorner = GetCurrentCorner();
