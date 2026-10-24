@@ -56,20 +56,6 @@ public class DebugGizmoSettings : SAINSettingsBase<DebugGizmoSettings>
     [DataMember]
     [Name("Draw Aim Gizmos")]
     public bool DebugDrawAimGizmos = false;
-
-    [Name("Draw Debug Path Safety Tester")]
-    [Hidden]
-    [IgnoreDataMember]
-    public bool DebugDrawSafePaths = false;
-
-    [Name("Path Safety Tester")]
-    [Hidden]
-    [IgnoreDataMember]
-    public bool DebugEnablePathTester = false;
-
-    [Hidden]
-    [IgnoreDataMember]
-    public bool DebugMovementPlan = false;
 }
 
 [DataContract]
@@ -102,11 +88,6 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [DataMember]
     [Name("Debug Aim Calculations")]
     public bool DebugAimCalculations = false;
-
-    [Name("Collect and Export Bot Layer and Brain Info")]
-    [Hidden]
-    [IgnoreDataMember]
-    public bool CollectBotLayerBrainInfo = false;
 }
 
 [DataContract]
