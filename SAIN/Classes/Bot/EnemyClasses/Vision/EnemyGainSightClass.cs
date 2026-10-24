@@ -19,7 +19,7 @@ public static class EnemyGainSightClass
     private const float DIST_SEEN_MIN_DIST = 1f;
     private const float DIST_SEEN_MAX_DIST = 25f;
 
-    private const float DIST_HEARD_MIN_COEF = 0.2f;
+    private const float DIST_HEARD_MIN_COEF = 0.4f;
     private const float DIST_HEARD_MIN_DIST = 1f;
     private const float DIST_HEARD_MAX_DIST = 20f;
 

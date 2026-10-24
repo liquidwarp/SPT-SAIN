@@ -14,7 +14,7 @@ public class HearingSensor : BotComponentClassBase
 
     public HearingInput HearingInput { get; }
     public HearingAnalysis HearingAnalysis { get; }
-    public HearingDispersion HearingDispersion { get; }
+    public HearingPositionEstimator HearingPositionEstimator { get; }
 
     public HearingSensor(BotComponent sain)
         : base(sain)
@@ -22,14 +22,14 @@ public class HearingSensor : BotComponentClassBase
         TickRequirement = ESAINTickState.OnlyNoSleep;
         HearingInput = new HearingInput(this);
         HearingAnalysis = new HearingAnalysis(this);
-        HearingDispersion = new HearingDispersion(this);
+        HearingPositionEstimator = new HearingPositionEstimator(this);
     }
 
     public override void Init()
     {
         HearingInput.Init();
         HearingAnalysis.Init();
-        HearingDispersion.Init();
+        HearingPositionEstimator.Init();
         base.Init();
     }
 
@@ -37,7 +37,7 @@ public class HearingSensor : BotComponentClassBase
     {
         HearingInput.ManualUpdate();
         HearingAnalysis.ManualUpdate();
-        HearingDispersion.ManualUpdate();
+        HearingPositionEstimator.ManualUpdate();
         base.ManualUpdate();
     }
 
@@ -45,7 +45,7 @@ public class HearingSensor : BotComponentClassBase
     {
         HearingInput.Dispose();
         HearingAnalysis.Dispose();
-        HearingDispersion.Dispose();
+        HearingPositionEstimator.Dispose();
         base.Dispose();
     }
 
@@ -57,7 +57,7 @@ public class HearingSensor : BotComponentClassBase
             return;
         }
 
-        Vector3 EstimatedPosition = HearingDispersion.CalcRandomizedPosition(sound, 1f);
+        Vector3 EstimatedPosition = sound.Enemy.Hearing.EstimateSoundPosition(sound);
         ReactToBulletFlyBy(sound, FlyByDistance, EstimatedPosition, underFire);
         OnEnemySoundHeard?.Invoke(sound, sound.Enemy);
     }
@@ -71,7 +71,12 @@ public class HearingSensor : BotComponentClassBase
             {
                 return;
             }
-            EstimatedPosition = HearingDispersion.CalcRandomizedPosition(sound, 1f);
+            // The sound may have become ignored since it was cached. SetHeard would drop it, so it must not feed the estimate either.
+            if (HearingInput.IsIgnoringSounds(sound.IsGunShot))
+            {
+                return;
+            }
+            EstimatedPosition = sound.Enemy.Hearing.EstimateSoundPosition(sound);
             Bot.Squad.SquadInfo?.AddPointToSearch(sound.Enemy, EstimatedPosition, sound, Bot);
             OnEnemySoundHeard?.Invoke(sound, sound.Enemy);
         }

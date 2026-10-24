@@ -3,6 +3,7 @@ using System.Collections;
 using EFT;
 using EFT.Ballistics;
 using SAIN.Components.PlayerComponentSpace;
+using SAIN.Helpers;
 using SAIN.Preset.Shared.Enums;
 using UnityEngine;
 
@@ -44,7 +45,13 @@ public class BotHearingClass : BotManagerBase
                 EPhraseTrigger.OnBeingHurt or EPhraseTrigger.OnAgony => 70,
                 _ => (float)(mask == ETagStatus.Unaware ? 40 : 70),
             };
-            playerComponent.PlayAISound(SAINSoundType.Conversation, player.Position, Range, 1, phrase, mask);
+            SAINSoundType soundType = phrase switch
+            {
+                EPhraseTrigger.OnBreath => SAINSoundType.Breathing,
+                EPhraseTrigger.OnBeingHurt or EPhraseTrigger.OnAgony => SAINSoundType.Pain,
+                _ => SAINSoundType.Conversation,
+            };
+            playerComponent.PlayAISound(soundType, player.Position, Range, 1, phrase, mask);
             PlayerTalk?.Invoke(phrase, mask, player);
         }
     }
@@ -109,27 +116,6 @@ public class BotHearingClass : BotManagerBase
 
     private void playBotEvent(Player player, Vector3 position, float range, SAINSoundType soundType)
     {
-        AISoundType baseSoundType = getBaseSoundType(soundType);
-        BotController.BotEventHandler?.PlaySound(player, position, range, baseSoundType);
-    }
-
-    private AISoundType getBaseSoundType(SAINSoundType soundType)
-    {
-        AISoundType baseSoundType;
-        switch (soundType)
-        {
-            case SAINSoundType.Shot:
-                baseSoundType = AISoundType.gun;
-                break;
-
-            case SAINSoundType.SuppressedShot:
-                baseSoundType = AISoundType.silencedGun;
-                break;
-
-            default:
-                baseSoundType = AISoundType.step;
-                break;
-        }
-        return baseSoundType;
+        BotController.BotEventHandler?.PlaySound(player, position, range, soundType.Convert());
     }
 }

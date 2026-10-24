@@ -253,6 +253,7 @@ public class EnemyKnownPlaces
         if (LastHeardPlace != null)
         {
             LastHeardPlace.IsDanger = report.isDanger;
+            LastHeardPlace.PlaceType = report.placeType;
             LastHeardPlace.SoundType = report.soundType;
             LastHeardPlace.UpdatePosition(report.position);
         }
@@ -275,6 +276,7 @@ public class EnemyKnownPlaces
         if (LastSquadHeardPlace != null)
         {
             LastSquadHeardPlace.IsDanger = memberPlace.IsDanger;
+            LastSquadHeardPlace.PlaceType = memberPlace.PlaceType;
             LastSquadHeardPlace.SoundType = memberPlace.SoundType;
             LastSquadHeardPlace.UpdatePosition(memberPlace.Position);
         }

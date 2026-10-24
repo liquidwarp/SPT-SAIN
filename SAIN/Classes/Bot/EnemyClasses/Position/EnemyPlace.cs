@@ -28,7 +28,7 @@ public class EnemyPlace : IDisposable
     public event Action<EnemyPlace> OnDispose;
 
     public PlaceData PlaceData { get; }
-    public EEnemyPlaceType PlaceType { get; }
+    public EEnemyPlaceType PlaceType { get; set; }
     public SAINSoundType? SoundType { get; set; }
 
     public bool Visible { get; private set; }

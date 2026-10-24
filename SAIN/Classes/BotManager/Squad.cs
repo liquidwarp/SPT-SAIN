@@ -160,15 +160,18 @@ public class Squad
         return false;
     }
 
-    public enum ESearchPointType
-    {
-        Hearing,
-        Flashlight,
-    }
-
     public void AddPointToSearch(Enemy Enemy, Vector3 EstimatedPosition, AISoundData Sound, BotComponent sain)
     {
-        AddPlaceForCheck(EstimatedPosition, Sound.SoundType, sain, Enemy, true, CheckSoundIsDanger(Sound), Time.time);
+        AddPlaceForCheck(
+            EstimatedPosition,
+            Sound.SoundType,
+            EEnemyPlaceType.Hearing,
+            sain,
+            Enemy,
+            true,
+            CheckSoundIsDanger(Sound),
+            Time.time
+        );
     }
 
     private static bool CheckSoundIsDanger(AISoundData sound)
@@ -194,6 +197,7 @@ public class Squad
     private void AddPlaceForCheck(
         Vector3 position,
         SAINSoundType soundType,
+        EEnemyPlaceType placeType,
         BotComponent bot,
         Enemy enemy,
         bool heard,
@@ -203,13 +207,11 @@ public class Squad
     {
         BotsGroup ??= bot.BotOwner.BotsGroup;
 
-        position.y = enemy.EnemyPosition.y;
-
         SAINHearingReport report = new()
         {
             position = position,
             soundType = soundType,
-            placeType = EEnemyPlaceType.Hearing,
+            placeType = placeType,
             isDanger = isDanger,
             shallReportToSquad = true,
         };
@@ -227,7 +229,7 @@ public class Squad
         BotComponent sain,
         AISoundType soundType,
         IPlayer player,
-        ESearchPointType searchType = ESearchPointType.Hearing
+        EEnemyPlaceType placeType = EEnemyPlaceType.Hearing
     )
     {
         Enemy enemy = sain.EnemyController.CheckAddEnemy(player);
@@ -237,7 +239,7 @@ public class Squad
         }
 
         bool isDanger = (position - sain.Position).sqrMagnitude < SOUND_DIST_ALWAYS_DANGER * SOUND_DIST_ALWAYS_DANGER;
-        AddPlaceForCheck(position, soundType.Convert(), sain, enemy, false, isDanger, Time.time);
+        AddPlaceForCheck(position, soundType.Convert(), placeType, sain, enemy, false, isDanger, Time.time);
     }
 
     public bool MemberHasDecision(params ESquadDecision[] decisionsToCheck)

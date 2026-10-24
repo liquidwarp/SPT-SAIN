@@ -10,15 +10,24 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
 {
     static HearingSettings()
     {
-        // Hearing Dispersion
-        HEAR_DISPERSION_VALUES_Defaults = new Dictionary<SAINSoundType, float>()
+        // Hearing Position Estimation
+        HEAR_DIRECTION_ERROR_VALUES_Defaults = new Dictionary<SAINSoundType, float>()
         {
-            { SAINSoundType.Shot, 17.5f },
-            { SAINSoundType.SuppressedShot, 13.5f },
-            { SAINSoundType.FootStep, 12.5f },
+            { SAINSoundType.SuppressedShot, 30f },
+            { SAINSoundType.BulletImpact, 30f },
         };
-        const float defaultDispersion = 12.5f;
-        Helpers.ListHelpers.PopulateKeys(HEAR_DISPERSION_VALUES_Defaults, defaultDispersion);
+        const float defaultDirectionError = 20f;
+        Helpers.ListHelpers.PopulateKeys(HEAR_DIRECTION_ERROR_VALUES_Defaults, defaultDirectionError);
+
+        HEAR_CONFIDENCE_GAIN_VALUES_Defaults = new Dictionary<SAINSoundType, float>()
+        {
+            { SAINSoundType.Shot, 0.35f },
+            { SAINSoundType.SuppressedShot, 0.35f },
+            { SAINSoundType.FootStep, 0.15f },
+            { SAINSoundType.Sprint, 0.15f },
+        };
+        const float defaultConfidenceGain = 0.1f;
+        Helpers.ListHelpers.PopulateKeys(HEAR_CONFIDENCE_GAIN_VALUES_Defaults, defaultConfidenceGain);
 
         // Gunfire Hearing Distances
         HearingDistancesDefaults = new Dictionary<string, float>()
@@ -112,46 +121,86 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
     public float MaxFootstepAudioDistanceNoHeadphones = 50f;
 
     [DataMember]
-    [Name("Hearing Randomization and Estimation")]
-    [Description(Dispersion_descr)]
+    [Name("Hearing Direction Error")]
+    [Description(Direction_error_descr)]
     [Category("Position Randomization")]
     [Advanced]
-    [MinMax(1f, 100f, 1000f)]
-    [DefaultDictionary(nameof(HEAR_DISPERSION_VALUES_Defaults))]
-    public Dictionary<SAINSoundType, float> HEAR_DISPERSION_VALUES = new()
+    [MinMax(0f, 90f, 10f)]
+    [DefaultDictionary(nameof(HEAR_DIRECTION_ERROR_VALUES_Defaults))]
+    public Dictionary<SAINSoundType, float> HEAR_DIRECTION_ERROR_VALUES = new()
     {
-        { SAINSoundType.Shot, 17.5f },
-        { SAINSoundType.SuppressedShot, 13.5f },
-        { SAINSoundType.FootStep, 12.5f },
+        { SAINSoundType.SuppressedShot, 30f },
+        { SAINSoundType.BulletImpact, 30f },
     };
 
     [IgnoreDataMember]
     [Hidden]
-    public static readonly Dictionary<SAINSoundType, float> HEAR_DISPERSION_VALUES_Defaults;
+    public static readonly Dictionary<SAINSoundType, float> HEAR_DIRECTION_ERROR_VALUES_Defaults;
 
     [DataMember]
-    [Name("Max Randomization Distance")]
-    [Description("The max cap, in meters, that an estimated position can be from the real position that a sound is played from. ")]
+    [Name("Hearing Direction Error - Indoors")]
+    [Description("Multiplies the direction error when the sound is made inside a building, where it echoes.")]
     [Category("Position Randomization")]
     [Advanced]
-    [MinMax(10f, 250f, 1000f)]
-    public float HEAR_DISPERSION_MAX_DISPERSION = 50f;
+    [MinMax(1f, 3f, 100f)]
+    public float HEAR_DIRECTION_ERROR_INDOOR_MULTI = 1.5f;
 
     [DataMember]
-    [Name("Hearing Randomization Angle - Maximum")]
+    [Name("Hearing Distance Error")]
+    [Description(
+        "How far off a bot's guess of a sound's distance can be, as a fraction of the real distance. "
+            + "0.4 means a sound 100 meters away can be guessed anywhere from 60 to 140 meters away, before confidence shrinks it."
+    )]
+    [Category("Position Randomization")]
+    [Advanced]
+    [MinMax(0f, 1f, 100f)]
+    public float HEAR_DISTANCE_ERROR = 0.4f;
+
+    [DataMember]
+    [Name("Hearing Confidence Gain")]
+    [Description(Confidence_gain_descr)]
+    [Category("Position Randomization")]
+    [Advanced]
+    [MinMax(0f, 1f, 100f)]
+    [DefaultDictionary(nameof(HEAR_CONFIDENCE_GAIN_VALUES_Defaults))]
+    public Dictionary<SAINSoundType, float> HEAR_CONFIDENCE_GAIN_VALUES = new()
+    {
+        { SAINSoundType.Shot, 0.35f },
+        { SAINSoundType.SuppressedShot, 0.35f },
+        { SAINSoundType.FootStep, 0.15f },
+        { SAINSoundType.Sprint, 0.15f },
+    };
+
+    [IgnoreDataMember]
+    [Hidden]
+    public static readonly Dictionary<SAINSoundType, float> HEAR_CONFIDENCE_GAIN_VALUES_Defaults;
+
+    [DataMember]
+    [Name("Hearing Error at Full Confidence")]
+    [Description(
+        "At full confidence, the direction and distance errors are multiplied by this. "
+            + "0.3 means a bot that has heard an enemy many times is still up to 30% as wrong as on the first sound. Never pinpoints from sound alone above 0."
+    )]
+    [Category("Position Randomization")]
+    [Advanced]
+    [MinMax(0f, 1f, 100f)]
+    public float HEAR_MIN_ERROR_COEF = 0.3f;
+
+    [DataMember]
+    [Name("Hearing Direction Error - Sound Behind")]
     [Description(Hear_angle_descr)]
     [Category("Position Randomization")]
     [Advanced]
     [MinMax(0.1f, 3f, 1000f)]
-    public float HEAR_DISPERSION_ANGLE_MULTI_MAX = 1.5f;
+    public float HEAR_DIRECTION_ERROR_BEHIND_MULTI = 1.5f;
 
     [DataMember]
-    [Name("Hearing Randomization Angle - Minimum")]
+    [Name("Hearing Direction Error - Sound In Front")]
     [Description(Hear_angle_descr)]
     [Category("Position Randomization")]
     [Advanced]
     [MinMax(0.1f, 3f, 1000f)]
-    public float HEAR_DISPERSION_ANGLE_MULTI_MIN = 0.5f;
+    public float HEAR_DIRECTION_ERROR_FRONT_MULTI = 0.5f;
 
     [DataMember]
     [Name("Bunker Audio Range")]
@@ -583,29 +632,35 @@ public class HearingSettings : SAINSettingsBase<HearingSettings>, ISAINSettings
 
     public override void Init(List<ISAINSettings> list)
     {
-        Helpers.ListHelpers.CloneEntries(HEAR_DISPERSION_VALUES_Defaults, HEAR_DISPERSION_VALUES);
+        Helpers.ListHelpers.CloneEntries(HEAR_DIRECTION_ERROR_VALUES_Defaults, HEAR_DIRECTION_ERROR_VALUES);
+        Helpers.ListHelpers.CloneEntries(HEAR_CONFIDENCE_GAIN_VALUES_Defaults, HEAR_CONFIDENCE_GAIN_VALUES);
         Helpers.ListHelpers.CloneEntries(HearingDistancesDefaults, HearingDistances);
         list.Add(this);
     }
 
     [IgnoreDataMember]
     [Hidden]
-    private const string Dispersion_descr =
-        "Higher = Less Randomization and more accuracy. "
-        + "The distance to the sound's position, in meters, is divided by the number here. "
-        + "Example: A unsuppressed gunshot is 150 meters away. And the dispersion value for unsuppressed gunfire is 20. So We divide 150 by 20 to result in 7.5, "
-        + "so the randomized position that a bot thinks a gunshot came from is a position within 7.5 meters from the actual source of the gunshot. "
-        + "Note: this randomized position must be somewhere that is walkable so that they can potentially be able the investigate it. "
-        + "It is also not randomized in height to avoid bots having difficulty navigating to where they think a sound came from, "
-        + "so imagine a flat plane around you that extends 7.5 meters away that includes all walkable space, "
-        + "if you shoot - that bot 150 away will estimate you are somewhere within that 7.5 meter radius, on the same height level that you are on. "
-        + "If there is no walkable space around you, it will find the closest walkable place.";
+    private const string Direction_error_descr =
+        "How far off, in degrees either side, a bot's guess of the direction a sound came from can be. "
+        + "Like a person, a bot gets the direction roughly right and the distance less so, so the error in meters grows with distance. "
+        + "Multiplied by the Sound In Front and Sound Behind values below, and by the indoor multiplier. "
+        + "Example: 20 degrees, bot facing the sound, Sound In Front 0.5: within 10 degrees either side, about 35 meters off sideways at 200 meters. "
+        + "The guess keeps the enemy's height, and shrinks with confidence as the bot keeps hearing them.";
+
+    [IgnoreDataMember]
+    [Hidden]
+    private const string Confidence_gain_descr =
+        "How much each heard sound adds to a bot's confidence about where an enemy is, from 0 to 1. "
+        + "Sounds within half a second of the last guess reuse it and add nothing, so rapid fire doesn't max it out instantly. "
+        + "Confidence shrinks the direction and distance errors toward the 'Error at Full Confidence' value. "
+        + "It is kept through silence, since a quiet enemy is assumed to have stayed put, "
+        + "and resets when the enemy is heard again more than 3 meters away after more than 3 seconds of silence.";
 
     [IgnoreDataMember]
     [Hidden]
     private const string Hear_angle_descr =
-        "If a bot is looking at the source of a sound, they will be more accurate in their position prediction, up to the Minimum value here. "
-        + "If it is directly behind them, randomization will be multiplied by the Maximumm value here. "
-        + "It is a linear scale between these, so a sound directly to their right or left, will have the difference between the Maximumm and Minimum. "
-        + "Setting both the Min and the Max to 1.0 will disable this system.";
+        "If a bot is looking at the source of a sound, its direction error is multiplied by the Sound In Front value. "
+        + "If it is directly behind them, it is multiplied by the Sound Behind value. "
+        + "It is a linear scale between these, so a sound directly to their right or left is halfway between the two. "
+        + "Setting both to 1.0 disables this.";
 }

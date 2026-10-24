@@ -7,9 +7,7 @@ using EFT;
 using HarmonyLib;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
-using SAIN.Models.Structs;
 using SAIN.Preset.Shared.Enums;
-using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
 namespace SAIN.Components;
@@ -56,14 +54,9 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
         Player player = GameWorld.GetAlivePlayerByProfileID(playerProfileID);
         if (player != null)
         {
-            if (!isSmoke)
+            Singleton<GlobalEventDispatcher>.Instance.PlaySound(player, explosionPosition, isSmoke ? 50f : 200f, AISoundType.gun);
+            if (isSmoke)
             {
-                RegisterGrenadeExplosionForSAINBots(explosionPosition, player, playerProfileID, 200f);
-            }
-            else
-            {
-                RegisterGrenadeExplosionForSAINBots(explosionPosition, player, playerProfileID, 50f);
-
                 float radius = smokeRadius * HelpersGClass.SMOKE_GRENADE_RADIUS_COEF;
                 Vector3 position = player.Position;
 
@@ -80,42 +73,6 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
                     if (BotController.DefaultController.BotSmokesVisionSystem != null)
                     {
                         BotController.DefaultController.BotSmokesVisionSystem.TryAddGrenade(throwableId, explosionPosition);
-                    }
-                }
-            }
-        }
-    }
-
-    private void RegisterGrenadeExplosionForSAINBots(Vector3 explosionPosition, Player player, string playerProfileID, float range)
-    {
-        // Play a sound with the input range.
-        Singleton<GlobalEventDispatcher>.Instance?.PlaySound(player, explosionPosition, range, AISoundType.gun);
-        float currentTime = Time.time;
-        // We dont want bots to think the grenade explosion was a place they heard an enemy, so set this manually.
-        foreach (var bot in Bots.Values)
-        {
-            if (bot != null && bot.BotActive)
-            {
-                float distance = (bot.Position - explosionPosition).magnitude;
-                if (distance < range)
-                {
-                    Enemy enemy = bot.EnemyController.GetEnemy(playerProfileID, true);
-                    if (enemy != null)
-                    {
-                        float dispersion = distance / 10f;
-                        Vector3 random = UnityEngine.Random.onUnitSphere * dispersion;
-                        random.y = 0;
-                        Vector3 estimatedThrowPosition = enemy.EnemyPosition + random;
-
-                        SAINHearingReport report = new()
-                        {
-                            position = estimatedThrowPosition,
-                            soundType = SAINSoundType.GrenadeExplosion,
-                            placeType = EEnemyPlaceType.Hearing,
-                            isDanger = distance < 100f || enemy.InLineOfSight,
-                            shallReportToSquad = true,
-                        };
-                        enemy.Hearing.SetHeard(report, currentTime);
                     }
                 }
             }
@@ -142,10 +99,11 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
 
         Vector3 dangerPoint = Vector.DangerPoint(position, force, mass);
         grenade.DestroyEvent += grenadeDestroyed;
-        Singleton<GlobalEventDispatcher>.Instance?.PlaySound(player, grenade.transform.position, 20f, AISoundType.gun);
         OnGrenadeThrown?.Invoke(grenade, dangerPoint, grenade.ProfileId);
         if (GameWorldComponent.TryGetPlayerComponent(player, out PlayerComponent playerComponent))
         {
+            // Bots hear sounds from a cache processed later, so playing it after the event doesn't delay anything.
+            BotController.BotHearing.PlayAISound(playerComponent, SAINSoundType.GrenadeThrow, grenade.transform.position, 20f, 1f, true);
             List<PlayerComponent> RelevantPlayers = [];
             foreach (var otherPlayer in playerComponent.OtherPlayersData.DataDictionary.Values)
             {

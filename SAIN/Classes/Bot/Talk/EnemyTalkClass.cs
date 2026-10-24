@@ -463,9 +463,8 @@ public class EnemyTalk : BotBase
             return;
         }
 
+        // Where the enemy is comes from the hearing system, which hears the same phrase as an AI sound. This only handles replies.
         bool isPain = phrase == EPhraseTrigger.OnAgony || phrase == EPhraseTrigger.OnBeingHurt;
-        float painRange = 40f;
-        float breathRange = player.HeavyBreath ? 35f : 15f;
 
         Enemy enemy = Bot.EnemyController.GetEnemy(player.ProfileId, true);
         if (enemy == null)
@@ -477,53 +476,9 @@ public class EnemyTalk : BotBase
             return;
         }
 
-        if (isPain)
+        if (isPain || phrase == EPhraseTrigger.OnBreath)
         {
-            if (enemy.RealDistance <= painRange)
-            {
-                Vector3 randomizedPos = randomizePos(player.Position, enemy.RealDistance, 20f);
-                SAINHearingReport report = new()
-                {
-                    position = randomizedPos,
-                    soundType = SAINSoundType.Pain,
-                    placeType = EEnemyPlaceType.Hearing,
-                    isDanger = enemy.RealDistance < 25f || enemy.InLineOfSight,
-                    shallReportToSquad = true,
-                };
-                enemy.Hearing.SetHeard(report, Time.time);
-            }
             return;
-        }
-        if (phrase == EPhraseTrigger.OnBreath)
-        {
-            if (enemy.RealDistance <= breathRange)
-            {
-                Vector3 randomizedPos = randomizePos(player.Position, enemy.RealDistance, 20f);
-                SAINHearingReport report = new()
-                {
-                    position = randomizedPos,
-                    soundType = SAINSoundType.Breathing,
-                    placeType = EEnemyPlaceType.Hearing,
-                    isDanger = enemy.RealDistance < 25f || enemy.InLineOfSight,
-                    shallReportToSquad = true,
-                };
-                enemy.Hearing.SetHeard(report, Time.time);
-            }
-            return;
-        }
-
-        if (enemy.RealDistance <= 50f)
-        {
-            Vector3 randomizedPos = randomizePos(player.Position, enemy.RealDistance, 20f);
-            SAINHearingReport report = new()
-            {
-                position = randomizedPos,
-                soundType = SAINSoundType.Conversation,
-                placeType = EEnemyPlaceType.Hearing,
-                isDanger = enemy.RealDistance < 25f || enemy.InLineOfSight,
-                shallReportToSquad = true,
-            };
-            enemy.Hearing.SetHeard(report, Time.time);
         }
 
         if (Bot.Talk.IsSpeaking)
@@ -539,14 +494,6 @@ public class EnemyTalk : BotBase
         {
             SetEnemyTalk(enemy);
         }
-    }
-
-    private Vector3 randomizePos(Vector3 position, float distance, float dispersionFactor = 20f)
-    {
-        float disp = distance / dispersionFactor;
-        Vector3 random = UnityEngine.Random.insideUnitSphere * disp;
-        random.y = 0;
-        return position + random;
     }
 
     private float _nextGestureTime;

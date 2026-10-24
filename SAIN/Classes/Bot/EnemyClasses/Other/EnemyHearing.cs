@@ -1,3 +1,4 @@
+using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using SAIN.Models.Enums;
 using SAIN.Models.Structs;
@@ -6,6 +7,42 @@ using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
 namespace SAIN.Components.BotComponentSpace.Classes.EnemyClasses;
+
+/// <param name="position">Where the bot thinks the enemy is.</param>
+/// <param name="enemyPosition">Where the enemy was when they made the last sound or were seen, to detect when they move.</param>
+/// <param name="timeUpdated">When the bot last heard or saw them.</param>
+/// <param name="confidence">0 to 1, grows with each sound heard. Shrinks the error toward a floor.</param>
+/// <param name="angleOffset">-1 to 1, fraction of the maximum direction error. Drifts a little with each sound.</param>
+/// <param name="distanceOffset">-1 to 1, fraction of the maximum distance error. Drifts a little with each sound.</param>
+/// <param name="fromSighting">The position is where the enemy was seen.</param>
+public readonly struct SoundPositionEstimate(
+    Vector3 position,
+    Vector3 enemyPosition,
+    float timeUpdated,
+    float confidence,
+    float angleOffset,
+    float distanceOffset,
+    bool fromSighting
+)
+{
+    public readonly Vector3 Position = position;
+    public readonly Vector3 EnemyPosition = enemyPosition;
+    public readonly float TimeUpdated = timeUpdated;
+    public readonly float Confidence = confidence;
+    public readonly float AngleOffset = angleOffset;
+    public readonly float DistanceOffset = distanceOffset;
+    public readonly bool FromSighting = fromSighting;
+
+    public static SoundPositionEstimate Sighting(Vector3 position, float time)
+    {
+        return new SoundPositionEstimate(position, position, time, 1f, Vector.RandomRange(1f), Vector.RandomRange(1f), true);
+    }
+
+    public SoundPositionEstimate WithTime(float time)
+    {
+        return new SoundPositionEstimate(Position, EnemyPosition, time, Confidence, AngleOffset, DistanceOffset, FromSighting);
+    }
+}
 
 public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.Enemy.Bot)
 {
@@ -16,14 +53,34 @@ public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.
         get { return Heard ? Time.time - _timeLastHeard : float.MaxValue; }
     }
 
-    public Vector3? LastHeardPosition { get; private set; }
+    public SoundPositionEstimate? PositionEstimate { get; private set; }
 
     private const float REPORT_HEARD_FREQUENCY = 1f;
 
     public override void Init()
     {
         Enemy.Events.OnFirstSeen += resetHeardFromPeace;
+        Enemy.Events.OnPositionUpdated += anchorToSighting;
         base.Init();
+    }
+
+    /// <summary>
+    /// Where the bot thinks the enemy is from this sound, given everything heard and seen before.
+    /// </summary>
+    public Vector3 EstimateSoundPosition(AISoundData sound)
+    {
+        SoundPositionEstimate estimate = Bot.Hearing.HearingPositionEstimator.Estimate(PositionEstimate, sound);
+        PositionEstimate = estimate;
+        return estimate.Position;
+    }
+
+    // Seeing the enemy, or a squadmate reporting a sighting, beats any guess: the next sounds are placed from where they were seen.
+    private void anchorToSighting(Enemy enemy, EnemyPlace place)
+    {
+        if (place.PlaceType == EEnemyPlaceType.Vision)
+        {
+            PositionEstimate = SoundPositionEstimate.Sighting(place.Position, Time.time);
+        }
     }
 
     public void TickEnemy(float currentTime)
@@ -42,6 +99,7 @@ public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.
     public override void Dispose()
     {
         Enemy.Events.OnFirstSeen -= resetHeardFromPeace;
+        Enemy.Events.OnPositionUpdated -= anchorToSighting;
         base.Dispose();
     }
 
@@ -50,7 +108,7 @@ public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.
         if (!known)
         {
             Heard = false;
-            LastHeardPosition = null;
+            PositionEstimate = null;
             _timeLastHeard = 0f;
             EnemyHeardFromPeace = false;
         }

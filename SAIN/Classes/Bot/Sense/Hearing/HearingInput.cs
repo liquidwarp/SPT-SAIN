@@ -25,7 +25,6 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
     private const float IMPACT_HEAR_FREQUENCY_FAR = 0.05f;
     private const float IMPACT_MAX_HEAR_DISTANCE_SQR = 50f * 50f;
     private const float IMPACT_DANGER_DISTANCE_SQR = 25f * 25f;
-    private const float IMPACT_DISPERSION_COEF = 25f;
 
     private bool _ignoreUnderFire = false;
     private bool _ignoreHearing = false;
@@ -49,8 +48,7 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
         Enemy Enemy = Bot.EnemyController.CheckAddEnemy(Source.Player);
         if (Enemy != null)
         {
-            SoundEvent SoundEvent = new(SAINSoundType.BulletImpact, Source.Position, Source, 100, 1, 999);
-            AISoundData Sound = new(SoundEvent, Bot, PlayerComponent.GetDistanceToPlayer(Source.ProfileId), Enemy);
+            AISoundData Sound = AISoundData.FromEnemy(SAINSoundType.BulletImpact, Enemy, Bot);
             Vector3 BulletPosition = Bullet.CurrentPosition;
             Vector3 MyHeadPosition = Bot.Transform.HeadData.HeadPosition;
             float Dist = (BulletPosition - MyHeadPosition).magnitude;
@@ -121,6 +119,8 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
                     break;
 
                 case SAINSoundType.Conversation:
+                case SAINSoundType.Pain:
+                case SAINSoundType.Breathing:
                     AISoundCachedEvents_Conversations.Add(Data);
                     break;
 
@@ -321,7 +321,8 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
 
     private void BulletImpacted(Shot bullet)
     {
-        if (IsIgnoringSounds(true))
+        // Same check SetHeard makes for an impact, so an ignored impact doesn't feed the position estimate.
+        if (IsIgnoringSounds(false))
         {
             return;
         }
@@ -369,11 +370,8 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
         }
         _nextHearImpactTime = currentTime + IMPACT_HEAR_FREQUENCY;
 
-        float dispersion = Mathf.Sqrt(sqrDistance) / IMPACT_DISPERSION_COEF;
-        Vector3 random = UnityEngine.Random.onUnitSphere;
-        random.y = 0;
-        random = random.normalized * dispersion;
-        Vector3 estimatedPos = enemy.EnemyPosition + random;
+        AISoundData sound = AISoundData.FromEnemy(SAINSoundType.BulletImpact, enemy, Bot);
+        Vector3 estimatedPos = sound.Enemy.Hearing.EstimateSoundPosition(sound);
 
         SAINHearingReport report = new()
         {

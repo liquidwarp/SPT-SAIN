@@ -152,7 +152,7 @@ internal class FlashedAction(BotOwner bot) : BotAction(bot), IBotAction
 
     private Vector3 RememberedPoint()
     {
-        Vector3? remembered = Bot.Flashed.LastSeenEnemyPoint;
+        Vector3? remembered = Bot.Flashed.RememberedEnemyPoint;
         if (remembered != null)
         {
             return remembered.Value;

@@ -39,7 +39,7 @@ public class LightDetectionClass(PlayerComponent component) : PlayerComponentBas
                 botComponent,
                 AISoundType.step,
                 Player,
-                SAIN.BotController.Classes.Squad.ESearchPointType.Flashlight
+                SAIN.SAINComponent.Classes.EnemyClasses.EEnemyPlaceType.Flashlight
             );
         }
         else
