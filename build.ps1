@@ -1,7 +1,7 @@
 param(
-    [string]$SPTPath = 'E:\Games\SPT 4.1',
+    [string]$SPTPath = 'E:\Games\SPT\4.1',
 
-    [string]$HeadlessPath = 'E:\Games\SPT 4.1 Headless',
+    [string]$HeadlessPath = 'E:\Games\SPT\4.1 Headless',
 
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Release',
