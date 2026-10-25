@@ -132,7 +132,7 @@ internal static class SAINInterop
     /// </summary>
     /// <param name="path">The Path To Test</param>
     /// <param name="botOwner">The Bot in Question</param>
-    /// <param name="ratioSameOverAll">How many nodes along a path are allowed to be the same divided by the total nodes in the Path To Test. Example: 3 nodes are the same, with 10 total nodes = 0.3 ratio, so if the input value is 0.25, this will return false.</param>
+    /// <param name="ratioSameOverAll">The Path To Test counts as toward the enemy when more than this share of its nodes match the path to them. Example: 3 of 10 nodes are the same, a 0.3 ratio, so with an input of 0.25 this returns true, and with 0.3 or more it returns false. A path with no nodes always returns false.</param>
     /// <param name="sqrDistCheck">How Close a node can be to be considered the same.</param>
     /// <returns>True if the path leads in the same direction as their active enemy.</returns>
     public static bool IsPathTowardEnemy(NavMeshPath path, BotOwner botOwner, float ratioSameOverAll = 0.25f, float sqrDistCheck = 0.05f)
@@ -155,7 +155,7 @@ internal static class SAINInterop
     /// </summary>
     /// <param name="path">The Path To Test</param>
     /// <param name="botOwner">The Bot in Question</param>
-    /// <param name="ratioSameOverAll">How many nodes along a path are allowed to be the same divided by the total nodes in the Path To Test. Example: 3 nodes are the same, with 10 total nodes = 0.3 ratio, so if the input value is 0.25, this will return false.</param>
+    /// <param name="ratioSameOverAll">The Path To Test counts as toward the enemy when more than this share of its nodes match the path to them. Example: 3 of 10 nodes are the same, a 0.3 ratio, so with an input of 0.25 this returns true, and with 0.3 or more it returns false. A path with no nodes always returns false.</param>
     /// <param name="sqrDistCheck">How Close a node can be to be considered the same.</param>
     /// <returns>True if the path leads in the same direction as their active enemy.</returns>
     public static bool CanBotQuest(BotOwner botOwner, Vector3 questPosition, float dotThreshold = 0.33f)

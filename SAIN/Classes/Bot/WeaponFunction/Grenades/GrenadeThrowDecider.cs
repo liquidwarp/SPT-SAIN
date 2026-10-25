@@ -39,6 +39,8 @@ public class GrenadeThrowDecider : BotSubClass<BotGrenadeManager>
         //AIGreandeAng.ang65,
     ];
 
+    private static readonly AIGreandeAng[] _blindCornerAngles = [AIGreandeAng.ang5];
+
     private readonly AIGreanageThrowData[] _validThrowsBuffer = new AIGreanageThrowData[6];
 
     public GrenadeThrowDecider(BotGrenadeManager ThrowWeap)
@@ -249,14 +251,14 @@ public class GrenadeThrowDecider : BotSubClass<BotGrenadeManager>
         {
             return false;
         }
-        if (TryThrowToPos(blindCornerPos, "BlindCornerToEnemy", Mathf.Sqrt(sqrMag), AIGreandeAng.ang5))
+        if (TryThrowToPos(blindCornerPos, "BlindCornerToEnemy", Mathf.Sqrt(sqrMag), _blindCornerAngles))
         {
             return true;
         }
         return false;
     }
 
-    private bool TryThrowToPos(Vector3 pos, string posString, float distance, params AIGreandeAng[] possibleAngles)
+    private bool TryThrowToPos(Vector3 pos, string posString, float distance, AIGreandeAng[] possibleAngles)
     {
         pos += Vector3.up * _checkThrowPos_HeightOffset;
         var weaponRoot = Bot.Transform.WeaponData.WeaponRoot;
@@ -335,7 +337,7 @@ public class GrenadeThrowDecider : BotSubClass<BotGrenadeManager>
         return false;
     }
 
-    private bool CanThrowAGrenade(Vector3 from, Vector3 target, params AIGreandeAng[] possibleAngles)
+    private bool CanThrowAGrenade(Vector3 from, Vector3 target, AIGreandeAng[] possibleAngles)
     {
         if (_nextPossibleAttempt > Time.time)
         {

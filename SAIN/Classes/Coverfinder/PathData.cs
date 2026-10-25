@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SAIN.Helpers;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace SAIN.SAINComponent.SubComponents.CoverFinder;
@@ -22,14 +23,26 @@ public class PathData
         NavMesh.CalculatePath(origin, destination, NavMesh.AllAreas, Path);
         if (Path.status == NavMeshPathStatus.PathComplete)
         {
-            PathLength = Path.CalculatePathLength();
+            LastCornerCount = NavMeshHelpers.GetCorners(Path, ref _cornerBuffer);
+            PathLength = NavMeshHelpers.GetPathLength(_cornerBuffer, LastCornerCount);
             RoundedPathLength = Mathf.FloorToInt(PathLength);
         }
         else
         {
+            LastCornerCount = 0;
             PathLength = float.MaxValue;
             RoundedPathLength = int.MaxValue;
         }
         TimeLastUpdated = Time.time;
     }
+
+    // Corners of the path the last CalcPath call found, on any PathData, valid until the next call. Empty unless the path was complete.
+    public static Vector3[] LastCorners
+    {
+        get { return _cornerBuffer; }
+    }
+
+    public static int LastCornerCount { get; private set; }
+
+    private static Vector3[] _cornerBuffer = new Vector3[32];
 }

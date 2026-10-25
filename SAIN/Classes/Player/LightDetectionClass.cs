@@ -33,14 +33,7 @@ public class LightDetectionClass(PlayerComponent component) : PlayerComponentBas
         var botComponent = PlayerComponent.BotComponent;
         if (botComponent != null)
         {
-            botComponent.Squad.SquadInfo.AddPointToSearch(
-                estimatedPosition,
-                25f,
-                botComponent,
-                AISoundType.step,
-                Player,
-                SAIN.BotController.Classes.Squad.ESearchPointType.Flashlight
-            );
+            botComponent.Squad.SquadInfo.AddPointToSearch(estimatedPosition, botComponent, AISoundType.step, Player);
         }
         else
         {

@@ -250,6 +250,10 @@ public class PlayerComponent : MonoBehaviour, IDisposable
         {
             bool isAI = BotOwner != null;
             Transform.ManualUpdate(Player, isAI);
+            if (SoundController != null)
+            {
+                SoundController.TickStepLoop();
+            }
             if (!isAI || (BotOwner.BotState == EBotState.Active && BotOwner.StandBy.StandByType == BotStandByType.active))
             {
 #if DEBUG
@@ -331,13 +335,13 @@ public class PlayerComponent : MonoBehaviour, IDisposable
         if (active)
         {
             StartCoroutines();
-            SoundController.ResumeCoroutines();
+            SoundController.ResumeStepLoop();
         }
         else
         {
             StopAllCoroutines();
             _gearCoroutine = null;
-            SoundController.ClearCoroutines();
+            SoundController.StopStepLoop();
         }
     }
 
@@ -358,7 +362,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
         _gearCoroutine = null;
         if (SoundController != null)
         {
-            SoundController.ClearCoroutines();
+            SoundController.StopStepLoop();
         }
     }
 

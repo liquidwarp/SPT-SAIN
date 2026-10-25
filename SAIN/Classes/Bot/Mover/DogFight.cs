@@ -213,10 +213,12 @@ public class DogFight : BotBase
                     if (RaycastHit.distance <= 0.5f)
                     {
                         dogFightPath.ClearCorners();
-                        if (NavMesh.CalculatePath(Bot.Position, Point, -1, dogFightPath))
+                        int cornerCount = NavMesh.CalculatePath(Bot.Position, Point, -1, dogFightPath)
+                            ? NavMeshHelpers.GetCorners(dogFightPath, ref _dogFightCorners)
+                            : 0;
+                        if (cornerCount > 0)
                         {
-                            Vector3[] corners = dogFightPath.corners;
-                            MovePoint = corners[corners.Length - 1];
+                            MovePoint = _dogFightCorners[cornerCount - 1];
                             return true;
                         }
                     }
@@ -232,4 +234,5 @@ public class DogFight : BotBase
     }
 
     private readonly NavMeshPath dogFightPath = new();
+    private Vector3[] _dogFightCorners = new Vector3[16];
 }

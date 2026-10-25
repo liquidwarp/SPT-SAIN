@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using CommonAssets.Scripts.Audio;
 using EFT;
 using SAIN.Components;
@@ -15,8 +14,16 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
     private const float RunSurfaceRange = 40f;
     private const float SprintSurfaceRange = 60f;
 
-    private Coroutine _runCoroutine;
-    private Coroutine _sprintCoroutine;
+    private enum EStepLoop
+    {
+        None,
+        Run,
+        Sprint,
+    }
+
+    private EStepLoop _stepLoop;
+    private bool _stepLoopRunning;
+    private EPlayerState _stepLoopState;
 
     private float _lastStepTime = 0f;
     private bool _playedAtLeastOneStep;
@@ -44,12 +51,11 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
             case EPlayerState.MoveZombieState:
             case EPlayerState.StartMoveZombieState:
             case EPlayerState.EndMoveZombieState:
-                if (_runCoroutine == null)
+                if (_stepLoop != EStepLoop.Run)
                 {
                     break;
                 }
-                PlayerComponent.StopCoroutine(_runCoroutine);
-                _runCoroutine = null;
+                StopStepLoop();
                 if (!_playedAtLeastOneStep && Player.SinceLastStep > 0.66f)
                 {
                     if (Player.CheckSurface(RunSurfaceRange))
@@ -66,10 +72,9 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
                 }
                 break;
             case EPlayerState.Sprint:
-                if (_sprintCoroutine != null)
+                if (_stepLoop == EStepLoop.Sprint)
                 {
-                    PlayerComponent.StopCoroutine(_sprintCoroutine);
-                    _sprintCoroutine = null;
+                    StopStepLoop();
                     if (!_playedAtLeastOneStep && Player.CheckSurface(SprintSurfaceRange))
                     {
                         BotManagerComponent.Instance.BotHearing.PlayAISound(
@@ -108,7 +113,7 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
                 );
                 break;
             case EPlayerState.Sprint:
-                _sprintCoroutine = PlayerComponent.StartCoroutine(StartSprintCoroutine(nextState));
+                StartStepLoop(EStepLoop.Sprint, nextState);
                 break;
             case EPlayerState.Jump:
                 float vol = Player.CalculateMovementVolumeDefaultMultiplier(EAudioMovementState.Jump);
@@ -128,7 +133,7 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
             case EPlayerState.MoveZombieState:
             case EPlayerState.StartMoveZombieState:
             case EPlayerState.EndMoveZombieState:
-                _runCoroutine = PlayerComponent.StartCoroutine(StartRunCoroutine(nextState));
+                StartStepLoop(EStepLoop.Run, nextState);
                 break;
             case EPlayerState.Transit2Prone:
             {
@@ -172,87 +177,90 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
         return calc;
     }
 
-    private IEnumerator StartRunCoroutine(EPlayerState state = EPlayerState.Run)
+    private void StartStepLoop(EStepLoop loop, EPlayerState state)
     {
+        _stepLoop = loop;
+        _stepLoopState = state;
+        _stepLoopRunning = true;
         _playedAtLeastOneStep = false;
-        while (Player.CurrentState.Name == state)
-        {
-            float single = Player.LeftStanceCurrentCurveValue;
-            if (Math.Abs(_lastAnimatorSign - single) >= float.Epsilon)
-            {
-                _lastAnimatorSign = single;
-                float sinceLastStep = Time.time - _lastStepTime;
-                if (sinceLastStep > 0.2f && Player.MovementContext.FreefallTime < 1f)
-                {
-                    _lastStepTime = Time.time;
-                    _playedAtLeastOneStep = true;
-                    if (Player.CheckSurface(RunSurfaceRange))
-                    {
-                        BotManagerComponent botManager = BotManagerComponent.Instance;
-                        if (botManager != null)
-                        {
-                            botManager.BotHearing.PlayAISound(
-                                Player.ProfileId,
-                                SAINSoundType.FootStep,
-                                Player.Position,
-                                SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Footstep,
-                                CalculateStepVolume()
-                            );
-                        }
-                    }
-                }
-            }
-            yield return null;
-        }
+        TickStepLoop();
     }
 
-    private IEnumerator StartSprintCoroutine(EPlayerState state = EPlayerState.Sprint)
+    /// <summary>
+    /// Also called while the player component is inactive. ResumeStepLoop restarts it.
+    /// </summary>
+    public void StopStepLoop()
     {
-        _playedAtLeastOneStep = false;
-        while (Player.CurrentState.Name == state)
+        _stepLoop = EStepLoop.None;
+        _stepLoopRunning = false;
+    }
+
+    /// <summary>
+    /// Plays a footstep each time the animator's stance curve changes, while the player stays in the run or sprint state the loop started in.
+    /// </summary>
+    public void TickStepLoop()
+    {
+        if (!_stepLoopRunning)
         {
-            float single = Player.LeftStanceCurrentCurveValue;
-            if (Math.Abs(_lastAnimatorSign - single) >= float.Epsilon)
-            {
-                _lastAnimatorSign = single;
-                float sinceLastStep = Time.time - _lastStepTime;
-                if (sinceLastStep > 0.2f && Player.MovementContext.FreefallTime < 0.6f)
-                {
-                    _lastStepTime = Time.time;
-                    _playedAtLeastOneStep = true;
-                    if (Player.CheckSurface(SprintSurfaceRange))
-                    {
-                        BotManagerComponent botManager = BotManagerComponent.Instance;
-                        if (botManager != null)
-                        {
-                            botManager.BotHearing.PlayAISound(
-                                Player.ProfileId,
-                                SAINSoundType.Sprint,
-                                Player.Position,
-                                SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Sprint,
-                                Player.CalculateMovementVolumeDefaultMultiplier(EAudioMovementState.Sprint)
-                            );
-                        }
-                    }
-                }
-            }
-            yield return null;
+            return;
+        }
+        var currentState = Player.CurrentState;
+        if (currentState == null || currentState.Name != _stepLoopState)
+        {
+            _stepLoopRunning = false;
+            return;
+        }
+
+        float single = Player.LeftStanceCurrentCurveValue;
+        if (Math.Abs(_lastAnimatorSign - single) < float.Epsilon)
+        {
+            return;
+        }
+        _lastAnimatorSign = single;
+
+        bool sprint = _stepLoop == EStepLoop.Sprint;
+        float sinceLastStep = Time.time - _lastStepTime;
+        if (sinceLastStep <= 0.2f || Player.MovementContext.FreefallTime >= (sprint ? 0.6f : 1f))
+        {
+            return;
+        }
+        _lastStepTime = Time.time;
+        _playedAtLeastOneStep = true;
+        if (!Player.CheckSurface(sprint ? SprintSurfaceRange : RunSurfaceRange))
+        {
+            return;
+        }
+        BotManagerComponent botManager = BotManagerComponent.Instance;
+        if (botManager == null)
+        {
+            return;
+        }
+        if (sprint)
+        {
+            botManager.BotHearing.PlayAISound(
+                Player.ProfileId,
+                SAINSoundType.Sprint,
+                Player.Position,
+                SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Sprint,
+                Player.CalculateMovementVolumeDefaultMultiplier(EAudioMovementState.Sprint)
+            );
+        }
+        else
+        {
+            botManager.BotHearing.PlayAISound(
+                Player.ProfileId,
+                SAINSoundType.FootStep,
+                Player.Position,
+                SAINPlugin.LoadedPreset.GlobalSettings.Hearing.BaseSoundRange_Footstep,
+                CalculateStepVolume()
+            );
         }
     }
 
     /// <summary>
-    /// Call after PlayerComponent.StopAllCoroutines, which also ends the step coroutines.
+    /// Restarts the step loop for the state the player is already in, after StopStepLoop.
     /// </summary>
-    public void ClearCoroutines()
-    {
-        _runCoroutine = null;
-        _sprintCoroutine = null;
-    }
-
-    /// <summary>
-    /// Restarts the step coroutine for the state the player is already in, after ClearCoroutines.
-    /// </summary>
-    public void ResumeCoroutines()
+    public void ResumeStepLoop()
     {
         if (Player.IsAI && Player.AIData != null)
         {
@@ -268,18 +276,18 @@ public sealed class PlayerSoundController(PlayerComponent player) : PlayerCompon
         switch (state)
         {
             case EPlayerState.Sprint:
-                if (_sprintCoroutine == null)
+                if (_stepLoop == EStepLoop.None)
                 {
-                    _sprintCoroutine = PlayerComponent.StartCoroutine(StartSprintCoroutine(state));
+                    StartStepLoop(EStepLoop.Sprint, state);
                 }
                 break;
             case EPlayerState.Run:
             case EPlayerState.MoveZombieState:
             case EPlayerState.StartMoveZombieState:
             case EPlayerState.EndMoveZombieState:
-                if (_runCoroutine == null)
+                if (_stepLoop == EStepLoop.None)
                 {
-                    _runCoroutine = PlayerComponent.StartCoroutine(StartRunCoroutine(state));
+                    StartStepLoop(EStepLoop.Run, state);
                 }
                 break;
         }

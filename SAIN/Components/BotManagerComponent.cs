@@ -95,10 +95,12 @@ public class BotManagerComponent : MonoBehaviour
 
     public void ManualUpdate(float currentTime, float deltaTime)
     {
+        BotHearing.Update(currentTime);
         BotSpawnController.ManualUpdate(currentTime, deltaTime);
         TimeVision.Update(currentTime, deltaTime);
         WeatherVision.Update(currentTime, deltaTime);
         BotSquads.Update(currentTime, deltaTime);
+        GrenadeController.Update();
 
         HashSet<BotComponent> BotsArray = BotSpawnController.SAINBots;
         foreach (BotComponent BotComponent in BotsArray)

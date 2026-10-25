@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Comfort.Common;
@@ -7,9 +6,7 @@ using EFT;
 using HarmonyLib;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
-using SAIN.Models.Structs;
 using SAIN.Preset.Shared.Enums;
-using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
 
 namespace SAIN.Components;
@@ -56,14 +53,9 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
         Player player = GameWorld.GetAlivePlayerByProfileID(playerProfileID);
         if (player != null)
         {
-            if (!isSmoke)
+            Singleton<GlobalEventDispatcher>.Instance.PlaySound(player, explosionPosition, isSmoke ? 50f : 200f, AISoundType.gun);
+            if (isSmoke)
             {
-                RegisterGrenadeExplosionForSAINBots(explosionPosition, player, playerProfileID, 200f);
-            }
-            else
-            {
-                RegisterGrenadeExplosionForSAINBots(explosionPosition, player, playerProfileID, 50f);
-
                 float radius = smokeRadius * HelpersGClass.SMOKE_GRENADE_RADIUS_COEF;
                 Vector3 position = player.Position;
 
@@ -80,42 +72,6 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
                     if (BotController.DefaultController.BotSmokesVisionSystem != null)
                     {
                         BotController.DefaultController.BotSmokesVisionSystem.TryAddGrenade(throwableId, explosionPosition);
-                    }
-                }
-            }
-        }
-    }
-
-    private void RegisterGrenadeExplosionForSAINBots(Vector3 explosionPosition, Player player, string playerProfileID, float range)
-    {
-        // Play a sound with the input range.
-        Singleton<GlobalEventDispatcher>.Instance?.PlaySound(player, explosionPosition, range, AISoundType.gun);
-        float currentTime = Time.time;
-        // We dont want bots to think the grenade explosion was a place they heard an enemy, so set this manually.
-        foreach (var bot in Bots.Values)
-        {
-            if (bot != null && bot.BotActive)
-            {
-                float distance = (bot.Position - explosionPosition).magnitude;
-                if (distance < range)
-                {
-                    Enemy enemy = bot.EnemyController.GetEnemy(playerProfileID, true);
-                    if (enemy != null)
-                    {
-                        float dispersion = distance / 10f;
-                        Vector3 random = UnityEngine.Random.onUnitSphere * dispersion;
-                        random.y = 0;
-                        Vector3 estimatedThrowPosition = enemy.EnemyPosition + random;
-
-                        SAINHearingReport report = new()
-                        {
-                            position = estimatedThrowPosition,
-                            soundType = SAINSoundType.GrenadeExplosion,
-                            placeType = EEnemyPlaceType.Hearing,
-                            isDanger = distance < 100f || enemy.InLineOfSight,
-                            shallReportToSquad = true,
-                        };
-                        enemy.Hearing.SetHeard(report, currentTime);
                     }
                 }
             }
@@ -141,48 +97,56 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
         }
 
         Vector3 dangerPoint = Vector.DangerPoint(position, force, mass);
-        grenade.DestroyEvent += grenadeDestroyed;
-        Singleton<GlobalEventDispatcher>.Instance?.PlaySound(player, grenade.transform.position, 20f, AISoundType.gun);
         OnGrenadeThrown?.Invoke(grenade, dangerPoint, grenade.ProfileId);
         if (GameWorldComponent.TryGetPlayerComponent(player, out PlayerComponent playerComponent))
         {
-            List<PlayerComponent> RelevantPlayers = [];
+            BotController.BotHearing.PlayAISound(playerComponent, SAINSoundType.GrenadeThrow, grenade.transform.position, 20f, 1f);
+
+            List<PlayerComponent> relevantPlayers = _playerListPool.Count > 0 ? _playerListPool.Pop() : [];
             foreach (var otherPlayer in playerComponent.OtherPlayersData.DataDictionary.Values)
             {
-                if (otherPlayer.DistanceData.Distance < 125f && otherPlayer.OtherPlayerComponent.IsSAINBot)
+                PlayerComponent otherPlayerComponent = otherPlayer.OtherPlayerComponent;
+                if (otherPlayer.DistanceData.Distance < 125f && otherPlayerComponent != null && otherPlayerComponent.IsSAINBot)
                 {
-                    RelevantPlayers.Add(otherPlayer.OtherPlayerComponent);
+                    relevantPlayers.Add(otherPlayerComponent);
                 }
             }
-            ActiveGrenades[grenade] = RelevantPlayers;
-            BotController.StartCoroutine(GrenadeTracker(grenade, playerComponent, RelevantPlayers, dangerPoint));
-        }
-    }
+            ActiveGrenades[grenade] = relevantPlayers;
 
-    public readonly Dictionary<Throwable, List<PlayerComponent>> ActiveGrenades = [];
-
-    private void grenadeDestroyed(Throwable Grenade)
-    {
-        ActiveGrenades.Remove(Grenade);
-    }
-
-    private IEnumerator GrenadeTracker(Grenade Grenade, PlayerComponent Thrower, List<PlayerComponent> RelevantPlayers, Vector3 DangerPoint)
-    {
-        Rigidbody Rigidbody = (Rigidbody)_rigidBodyField.GetValue(Grenade);
-
-        if (Rigidbody == null)
-        {
+            Rigidbody rigidbody = (Rigidbody)_rigidBodyField.GetValue(grenade);
 #if DEBUG
-            Logger.LogError("RigidBody Null");
+            if (rigidbody == null)
+            {
+                Logger.LogError("RigidBody Null");
+            }
 #endif
-            yield break;
+            _onGrenadeDestroyed ??= grenadeDestroyed;
+            grenade.DestroyEvent += _onGrenadeDestroyed;
+            _trackedGrenades.Add(new TrackedGrenade(grenade, rigidbody));
         }
-        while (Grenade != null && BotController != null && Rigidbody != null)
+    }
+
+    public void Update()
+    {
+        for (int i = _trackedGrenades.Count - 1; i >= 0; i--)
         {
-            Vector3 Velocity = Rigidbody.velocity;
+            TrackedGrenade tracked = _trackedGrenades[i];
+            Grenade grenade = tracked.Grenade;
+            if (grenade == null)
+            {
+                RemoveTrackedGrenade(i);
+                continue;
+            }
+            Rigidbody rigidbody = tracked.Rigidbody;
+            if (rigidbody == null)
+            {
+                continue;
+            }
+
+            Vector3 Velocity = rigidbody.velocity;
             if (Velocity.magnitude < 0.1f)
             {
-                OnGrenadeDangerUpdated?.Invoke(Grenade, Grenade.transform.position);
+                OnGrenadeDangerUpdated?.Invoke(grenade, grenade.transform.position);
             }
             else if (Velocity.y < 0)
             {
@@ -190,7 +154,7 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
                 if (
                     Vector3.Dot(VelocityNormal, Vector3.down) > 0.5f
                     && Physics.Raycast(
-                        Grenade.transform.position,
+                        grenade.transform.position,
                         VelocityNormal,
                         out RaycastHit Hit,
                         5,
@@ -198,12 +162,54 @@ public class GrenadeController(BotManagerComponent controller) : BotManagerBase(
                     )
                 )
                 {
-                    OnGrenadeDangerUpdated?.Invoke(Grenade, Hit.point);
+                    OnGrenadeDangerUpdated?.Invoke(grenade, Hit.point);
                 }
             }
-            yield return null;
         }
     }
+
+    /// <summary>
+    /// SAIN bots within 125 meters of each grenade's thrower, by grenade, until the grenade is destroyed.
+    /// The lists are pooled and reused for later grenades, so don't keep one after its grenade is gone.
+    /// </summary>
+    public readonly Dictionary<Throwable, List<PlayerComponent>> ActiveGrenades = [];
+
+    private readonly Stack<List<PlayerComponent>> _playerListPool = new();
+
+    private void grenadeDestroyed(Throwable grenade)
+    {
+        if (ActiveGrenades.TryGetValue(grenade, out List<PlayerComponent> relevantPlayers))
+        {
+            ActiveGrenades.Remove(grenade);
+            relevantPlayers.Clear();
+            _playerListPool.Push(relevantPlayers);
+        }
+        for (int i = 0; i < _trackedGrenades.Count; i++)
+        {
+            if (_trackedGrenades[i].Grenade == grenade)
+            {
+                RemoveTrackedGrenade(i);
+                break;
+            }
+        }
+    }
+
+    private void RemoveTrackedGrenade(int index)
+    {
+        int last = _trackedGrenades.Count - 1;
+        _trackedGrenades[index] = _trackedGrenades[last];
+        _trackedGrenades.RemoveAt(last);
+    }
+
+    private readonly struct TrackedGrenade(Grenade grenade, Rigidbody rigidbody)
+    {
+        public readonly Grenade Grenade = grenade;
+        public readonly Rigidbody Rigidbody = rigidbody;
+    }
+
+    private readonly List<TrackedGrenade> _trackedGrenades = [];
+
+    private Action<Throwable> _onGrenadeDestroyed;
 
     static GrenadeController()
     {

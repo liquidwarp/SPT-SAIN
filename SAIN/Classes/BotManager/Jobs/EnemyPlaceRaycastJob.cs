@@ -169,7 +169,8 @@ public class EnemyPlaceRaycastJob : BotManagerBase
                 EnemyPlace Place = PlacesToCheck[i];
                 Vector3 HeadPosition = Place.PlaceData.Owner.Transform.EyePosition;
                 Vector3 PlacePosition = Place.Position + Vector3.up;
-                _commands[i] = new RaycastCommand(HeadPosition, PlacePosition - HeadPosition, new QueryParameters { layerMask = Mask }, 1f);
+                Vector3 toPlace = PlacePosition - HeadPosition;
+                _commands[i] = new RaycastCommand(HeadPosition, toPlace.normalized, new QueryParameters { layerMask = Mask }, toPlace.magnitude);
             }
 
             RaycastJobHandle = RaycastCommand.ScheduleBatch(_commands, _hits, 32);

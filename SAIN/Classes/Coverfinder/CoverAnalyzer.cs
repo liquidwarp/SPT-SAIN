@@ -170,7 +170,8 @@ public class CoverAnalyzer(BotComponent bot) : BotBase(bot)
             return false;
         }
 
-        if (checkEnemy && !checkPathToEnemy(pathData.Path, targetPosition))
+        // CalcPath just copied this path's corners, so reuse them rather than copying again
+        if (checkEnemy && !checkPathToEnemy(PathData.LastCorners, PathData.LastCornerCount, targetPosition))
         {
             return false;
         }
@@ -178,11 +179,10 @@ public class CoverAnalyzer(BotComponent bot) : BotBase(bot)
         return true;
     }
 
-    private static bool checkPathToEnemy(NavMeshPath path, Vector3 targetPosition)
+    private static bool checkPathToEnemy(Vector3[] corners, int count, Vector3 targetPosition)
     {
         const float PATH_NODE_MIN_DIST_SQR = 0.5f;
-        Vector3[] corners = path.corners;
-        for (int i = 0; i < corners.Length - 1; i++)
+        for (int i = 0; i < count - 1; i++)
         {
             if (IsPositionNearLineSegment(targetPosition, corners[i], corners[i + 1], PATH_NODE_MIN_DIST_SQR))
             {

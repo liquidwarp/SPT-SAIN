@@ -104,7 +104,6 @@ public enum SAINSoundType
     Reload,
     GearSound,
     GrenadePin,
-    GrenadeExplosion,
     GrenadeDraw,
     Jump,
     Door,
@@ -122,6 +121,7 @@ public enum SAINSoundType
     Bush,
     BulletImpact,
     Land,
+    GrenadeThrow,
 }
 
 public enum ELocation

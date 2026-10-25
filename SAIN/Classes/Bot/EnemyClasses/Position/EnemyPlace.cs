@@ -88,7 +88,6 @@ public class EnemyPlace : IDisposable
     public EnemyPlace(PlaceData placeData, Vector3 position, bool isDanger, EEnemyPlaceType placeType, SAINSoundType? soundType)
     {
         PlaceData = placeData;
-        Visible = placeData.OwnerEnemy.InLineOfSight;
         IsDanger = isDanger;
         PlaceType = placeType;
         SoundType = soundType;
@@ -98,7 +97,6 @@ public class EnemyPlace : IDisposable
     public EnemyPlace(PlaceData placeData, SAINHearingReport report)
     {
         PlaceData = placeData;
-        Visible = placeData.OwnerEnemy.InLineOfSight;
         IsDanger = report.isDanger;
         PlaceType = report.placeType;
         SoundType = report.soundType;
@@ -143,7 +141,6 @@ public class EnemyPlace : IDisposable
         _position = value;
         _timeLastUpdated = Time.time;
         BotPositionWhenUpdated = PlaceData.Owner.Position;
-        Visible = PlaceData.OwnerEnemy.InLineOfSight;
         SetLastKnownPartPositions(PlaceData.OwnerEnemy);
         HasArrivedPersonal = false;
         HasArrivedSquad = false;

@@ -31,7 +31,7 @@ public struct SoundStruct
 
     public bool ShallLook
     {
-        get { return clearForLook && TimeSinceHeard < TIME_TO_LOOK; }
+        get { return clearForLook && TimeSinceHeard < TIME_TO_LOOK && Place.Visible; }
     }
 
     private bool clearForLook
@@ -48,7 +48,6 @@ public struct SoundStruct
 public class HeardSoundSteeringClass : BotSubClass<SAINSteeringClass>, IBotClass
 {
     public SoundStruct? LastHeardDanger { get; private set; }
-    public SoundStruct? LastHeardVisibleDanger { get; private set; }
 
     public HeardSoundSteeringClass(SAINSteeringClass steering)
         : base(steering) { }
@@ -74,10 +73,6 @@ public class HeardSoundSteeringClass : BotSubClass<SAINSteeringClass>, IBotClass
             {
                 clearPlace(LastHeardDanger.Value.Place);
             }
-            if (LastHeardVisibleDanger?.ShallClear == true)
-            {
-                clearPlace(LastHeardVisibleDanger.Value.Place);
-            }
         }
     }
 
@@ -95,11 +90,6 @@ public class HeardSoundSteeringClass : BotSubClass<SAINSteeringClass>, IBotClass
             LastHeardDanger.Value.Place.OnDispose -= clearPlace;
             LastHeardDanger = null;
         }
-        if (LastHeardVisibleDanger?.Place == place)
-        {
-            LastHeardVisibleDanger.Value.Place.OnDispose -= clearPlace;
-            LastHeardVisibleDanger = null;
-        }
     }
 
     public override void Dispose()
@@ -110,35 +100,9 @@ public class HeardSoundSteeringClass : BotSubClass<SAINSteeringClass>, IBotClass
 
     public void LookToHeardPosition()
     {
-        var visibleDanger = LastHeardVisibleDanger;
-        if (visibleDanger?.ShallLook == true)
-        {
-            if (visibleDanger.Value.Enemy.InLineOfSight)
-            {
-                BaseClass.LookToFloorPoint(visibleDanger.Value.Position);
-                return;
-            }
-            if (visibleDanger.Value.Enemy.GetVisibilePathPoint(out Vector3 point))
-            {
-                BaseClass.LookToPoint(point);
-                return;
-            }
-            BaseClass.LookToFloorPoint(visibleDanger.Value.Position);
-            return;
-        }
         var heardSound = LastHeardDanger;
         if (heardSound?.ShallLook == true)
         {
-            if (heardSound.Value.Enemy.InLineOfSight)
-            {
-                BaseClass.LookToFloorPoint(heardSound.Value.Position);
-                return;
-            }
-            if (heardSound.Value.Enemy.GetVisibilePathPoint(out Vector3 point))
-            {
-                BaseClass.LookToPoint(point);
-                return;
-            }
             BaseClass.LookToFloorPoint(heardSound.Value.Position);
             return;
         }
@@ -147,46 +111,10 @@ public class HeardSoundSteeringClass : BotSubClass<SAINSteeringClass>, IBotClass
 
     private void enemyHeard(Enemy enemy, SAINSoundType soundType, bool isDanger, EnemyPlace place)
     {
-        if (place == null)
+        if (place == null || !isDanger || place.PlaceData.Owner != Bot)
         {
             return;
         }
-        if (!place.Visible)
-        {
-            return;
-        }
-        if (!isDanger)
-        {
-            return;
-        }
-        if (place.PlaceData.OwnerID == Bot.ProfileId)
-        {
-            setLastVisSound(place, enemy);
-            return;
-        }
-        var myEnemy = Bot.EnemyController.GetEnemy(enemy.EnemyProfileId, true);
-        if (myEnemy == null)
-        {
-            return;
-        }
-        if (myEnemy.InLineOfSight)
-        {
-            setLastVisSound(place, myEnemy);
-            return;
-        }
-    }
-
-    private void setLastVisSound(EnemyPlace place, Enemy enemy)
-    {
-        if (place.Visible && place.PlaceData.Owner == Bot)
-        {
-            LastHeardVisibleDanger = new SoundStruct(enemy, place);
-            return;
-        }
-        var activeEnemy = Bot.GoalEnemy;
-        if (activeEnemy == null || enemy != activeEnemy)
-        {
-            LastHeardDanger = new SoundStruct(enemy, place);
-        }
+        LastHeardDanger = new SoundStruct(enemy, place);
     }
 }

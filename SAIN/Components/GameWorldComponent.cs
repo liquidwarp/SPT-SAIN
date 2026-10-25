@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using EFT;
 using EFT.Ballistics;
@@ -36,68 +35,115 @@ public class GameWorldComponent : MonoBehaviour
 
     public void RegisterShot(Player Player, Shot Bullet, Item Weapon)
     {
-        if (TryGetPlayerComponent(Player, out PlayerComponent PlayerComponent))
+        if (!TryGetPlayerComponent(Player, out PlayerComponent PlayerComponent))
         {
-            StartCoroutine(TrackBullet(PlayerComponent, Bullet));
-            //// Add any other AI Controlled players that are in the direction this shot is going
+            return;
         }
-    }
 
-    private IEnumerator TrackBullet(PlayerComponent Player, Shot Bullet)
-    {
-        var OtherPlayerData = Player.OtherPlayersData.DataDictionary;
-        Vector3 PlayerLookDir = Player.LookDirection;
+        TrackedBullet tracked = _bulletPool.Count > 0 ? _bulletPool.Pop() : new TrackedBullet();
+        tracked.Shooter = PlayerComponent;
+        tracked.Bullet = Bullet;
 
-        List<OtherPlayerData> PlayersToCheck = [];
-        foreach (var Data in OtherPlayerData)
+        // AI players roughly in the direction this shot is going
+        Vector3 PlayerLookDir = PlayerComponent.LookDirection;
+        foreach (var Data in PlayerComponent.OtherPlayersData.DataDictionary)
         {
             OtherPlayerData data = Data.Value;
-            PlayerComponent PlayerComponent = data.OtherPlayerComponent;
+            PlayerComponent otherPlayerComponent = data.OtherPlayerComponent;
             if (
-                PlayerComponent != null
-                && PlayerComponent.IsAI
-                && PlayerComponent.IsActive
+                otherPlayerComponent != null
+                && otherPlayerComponent.IsAI
+                && otherPlayerComponent.IsActive
                 && Vector3.Dot(data.DistanceData.DirectionNormal, PlayerLookDir) > 0.75f
             )
             {
-                PlayersToCheck.Add(data);
+                tracked.PlayersToCheck.Add(data);
             }
         }
 
-        const float MaxFlyByDistSqr = 10 * 10;
-
-        if (PlayersToCheck.Count > 0)
+        // Checked once right away, as the bullet can finish before the next tick.
+        if (TickBullet(tracked))
         {
-            while (!Bullet.IsShotFinished && Player != null && Player.IsActive && PlayersToCheck.Count > 0)
-            {
-                Vector3 BulletPosition = Bullet.CurrentPosition;
-
-                for (int i = PlayersToCheck.Count - 1; i >= 0; i--)
-                {
-                    OtherPlayerData Data = PlayersToCheck[i];
-                    if (Data == null)
-                    {
-                        continue;
-                    }
-                    PlayerComponent otherPlayerComponent = Data.OtherPlayerComponent;
-                    if (otherPlayerComponent != null && !otherPlayerComponent.IsActive)
-                    {
-                        PlayersToCheck.RemoveAt(i);
-                        continue;
-                    }
-                    Vector3 PlayerPosition = Data.DistanceData.Position;
-                    float BulletDistSqr = (PlayerPosition - BulletPosition).sqrMagnitude;
-                    if (BulletDistSqr < MaxFlyByDistSqr)
-                    {
-                        Data.OtherPlayerComponent.RegisterFlyBy(Player, Bullet);
-                        PlayersToCheck.RemoveAt(i);
-                        continue;
-                    }
-                }
-                yield return null;
-            }
+            _trackedBullets.Add(tracked);
+        }
+        else
+        {
+            ReleaseBullet(tracked);
         }
     }
+
+    private void TickTrackedBullets()
+    {
+        for (int i = _trackedBullets.Count - 1; i >= 0; i--)
+        {
+            TrackedBullet tracked = _trackedBullets[i];
+            if (TickBullet(tracked))
+            {
+                continue;
+            }
+            int last = _trackedBullets.Count - 1;
+            _trackedBullets[i] = _trackedBullets[last];
+            _trackedBullets.RemoveAt(last);
+            ReleaseBullet(tracked);
+        }
+    }
+
+    /// <returns>True while there are still players this bullet may fly by.</returns>
+    private static bool TickBullet(TrackedBullet tracked)
+    {
+        const float MaxFlyByDistSqr = 10 * 10;
+
+        PlayerComponent Player = tracked.Shooter;
+        Shot Bullet = tracked.Bullet;
+        List<OtherPlayerData> PlayersToCheck = tracked.PlayersToCheck;
+        if (PlayersToCheck.Count == 0 || Bullet.IsShotFinished || Player == null || !Player.IsActive)
+        {
+            return false;
+        }
+
+        Vector3 BulletPosition = Bullet.CurrentPosition;
+        for (int i = PlayersToCheck.Count - 1; i >= 0; i--)
+        {
+            OtherPlayerData Data = PlayersToCheck[i];
+            if (Data == null)
+            {
+                continue;
+            }
+            PlayerComponent otherPlayerComponent = Data.OtherPlayerComponent;
+            if (otherPlayerComponent == null || !otherPlayerComponent.IsActive)
+            {
+                PlayersToCheck.RemoveAt(i);
+                continue;
+            }
+            Vector3 PlayerPosition = Data.DistanceData.Position;
+            float BulletDistSqr = (PlayerPosition - BulletPosition).sqrMagnitude;
+            if (BulletDistSqr < MaxFlyByDistSqr)
+            {
+                otherPlayerComponent.RegisterFlyBy(Player, Bullet);
+                PlayersToCheck.RemoveAt(i);
+            }
+        }
+        return PlayersToCheck.Count > 0;
+    }
+
+    private void ReleaseBullet(TrackedBullet tracked)
+    {
+        tracked.Shooter = null;
+        tracked.Bullet = null;
+        tracked.PlayersToCheck.Clear();
+        _bulletPool.Push(tracked);
+    }
+
+    // Pooled, so tracking a shot allocates nothing once the pool has grown to the number of bullets in flight.
+    private sealed class TrackedBullet
+    {
+        public PlayerComponent Shooter;
+        public Shot Bullet;
+        public readonly List<OtherPlayerData> PlayersToCheck = [];
+    }
+
+    private readonly List<TrackedBullet> _trackedBullets = [];
+    private readonly Stack<TrackedBullet> _bulletPool = new();
 
     public static GameWorldComponent Instance { get; private set; }
     public GameWorld GameWorld { get; private set; }
@@ -110,6 +156,7 @@ public class GameWorldComponent : MonoBehaviour
     public void WorldTick(float deltaTime)
     {
         float currentTime = Time.time;
+        TickTrackedBullets();
         ManualUpdate(currentTime, deltaTime);
         SAINBotController.ManualUpdate(currentTime, deltaTime);
     }
@@ -279,6 +326,8 @@ public class GameWorldComponent : MonoBehaviour
         }
 
         StopAllCoroutines();
+        _trackedBullets.Clear();
+        _bulletPool.Clear();
         Instance = null;
         GameWorld.OnDispose -= DestroyComponent;
         Destroy(this);

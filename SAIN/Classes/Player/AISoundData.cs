@@ -38,6 +38,13 @@ public struct AISoundData(SoundEvent InSound, BotComponent InBot, float InPlayer
         get { return Sound.EnvironmentId; }
     }
 
+    public static AISoundData FromEnemy(SAINSoundType soundType, Enemy enemy, BotComponent bot)
+    {
+        PlayerComponent source = enemy.EnemyPlayerComponent;
+        SoundEvent soundEvent = new(soundType, source.Position, source, 100, 1, 999);
+        return new AISoundData(soundEvent, bot, enemy.RealDistance, enemy);
+    }
+
     public readonly bool CanReport(float ReactionDelay)
     {
         return Sound.IsValid() && Time.time - Sound.TimeCreated >= SoundTravelTime + ReactionDelay;

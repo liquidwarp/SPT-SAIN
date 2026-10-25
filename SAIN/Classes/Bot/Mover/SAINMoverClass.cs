@@ -1,6 +1,7 @@
 ﻿using System;
 using EFT;
 using SAIN.Components;
+using SAIN.Helpers;
 using SAIN.Models.Enums;
 using SAIN.Models.PlayerData;
 using SAIN.SAINComponent.SubComponents.CoverFinder;
@@ -130,6 +131,10 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
     private readonly BotPathDataManual _preparedPath1;
     private readonly BotPathDataManual _preparedPath2;
 
+    private readonly NavMeshPath _canGoPath = new();
+    private Vector3[] _corners = new Vector3[32];
+    private int _cornerCount;
+
     public bool RunToPoint(
         Vector3 point,
         bool mustHaveCompletePath = true,
@@ -163,9 +168,9 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
             return true;
         }
 
-        if (Bot.Mover.CanGoToPoint(point, out NavMeshPath path, mustHaveCompletePath))
+        if (CanGoToPoint(point, out NavMeshPath path, mustHaveCompletePath))
         {
-            TriggerNewMove(path.corners, point, true, urgency, path);
+            TriggerNewMove(_corners, _cornerCount, point, true, urgency, path);
             _activePath.SetDestinationReachDistance(reachDist);
             _activePath.PathStatus = path.status;
             return true;
@@ -196,13 +201,13 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
             return false;
         }
 
-        Vector3[] pathCorners = path.corners;
-        if (pathCorners.Length <= 1)
+        int cornerCount = NavMeshHelpers.GetCorners(path, ref _corners);
+        if (cornerCount <= 1)
         {
             return false;
         }
 
-        Vector3 lastCorner = pathCorners[pathCorners.Length - 1];
+        Vector3 lastCorner = _corners[cornerCount - 1];
         if (reachDist <= 0)
         {
             reachDist = BASE_DESTINATION_REACH_DIST;
@@ -228,7 +233,7 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
             _activePath.SetDestinationReachDistance(reachDist);
             return true;
         }
-        TriggerNewMove(path.corners, lastCorner, true, urgency, path);
+        TriggerNewMove(_corners, cornerCount, lastCorner, true, urgency, path);
         _activePath.SetDestinationReachDistance(reachDist);
         return true;
     }
@@ -261,9 +266,9 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
 
             return true;
         }
-        if (Bot.Mover.CanGoToPoint(point, out NavMeshPath path, mustHaveCompletePath))
+        if (CanGoToPoint(point, out NavMeshPath path, mustHaveCompletePath))
         {
-            TriggerNewMove(path.corners, point, false, ESprintUrgency.None, path);
+            TriggerNewMove(_corners, _cornerCount, point, false, ESprintUrgency.None, path);
             _activePath.SetDestinationReachDistance(reachDist);
             _activePath.PathStatus = path.status;
             return true;
@@ -288,13 +293,13 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
             return false;
         }
 
-        Vector3[] pathCorners = path.corners;
-        if (pathCorners.Length <= 1)
+        int cornerCount = NavMeshHelpers.GetCorners(path, ref _corners);
+        if (cornerCount <= 1)
         {
             return false;
         }
 
-        Vector3 lastCorner = pathCorners[pathCorners.Length - 1];
+        Vector3 lastCorner = _corners[cornerCount - 1];
         if (reachDist <= 0)
         {
             reachDist = BASE_DESTINATION_REACH_DIST;
@@ -319,7 +324,7 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
             return true;
         }
 
-        TriggerNewMove(pathCorners, lastCorner, false, ESprintUrgency.None, path);
+        TriggerNewMove(_corners, cornerCount, lastCorner, false, ESprintUrgency.None, path);
         _activePath.SetDestinationReachDistance(reachDist);
         return true;
     }
@@ -329,23 +334,30 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
         return _preparedPath1.TryUpdatePath(point) || _preparedPath2.TryUpdatePath(point);
     }
 
-    private void TriggerNewMove(Vector3[] pathCorners, Vector3 point, bool shallSprint, ESprintUrgency urgency, NavMeshPath path)
+    private void TriggerNewMove(
+        Vector3[] pathCorners,
+        int cornerCount,
+        Vector3 point,
+        bool shallSprint,
+        ESprintUrgency urgency,
+        NavMeshPath path
+    )
     {
         if (_activePath != null)
         {
             _activePath.Cancel();
             if (_activePath == _preparedPath1)
             {
-                _preparedPath2.Initialize(Bot.NavMeshPosition, point, shallSprint, urgency, pathCorners, path);
+                _preparedPath2.Initialize(Bot.NavMeshPosition, point, shallSprint, urgency, pathCorners, cornerCount, path);
             }
             else
             {
-                _preparedPath1.Initialize(Bot.NavMeshPosition, point, shallSprint, urgency, pathCorners, path);
+                _preparedPath1.Initialize(Bot.NavMeshPosition, point, shallSprint, urgency, pathCorners, cornerCount, path);
             }
             return;
         }
         _activePath = _preparedPath1;
-        _activePath.Initialize(Bot.NavMeshPosition, point, shallSprint, urgency, pathCorners, path);
+        _activePath.Initialize(Bot.NavMeshPosition, point, shallSprint, urgency, pathCorners, cornerCount, path);
         _activePath.Start();
     }
 
@@ -425,8 +437,11 @@ public class SAINMoverClass : BotComponentClassBase, IBotPathFinder
         }
         if (NavMesh.SamplePosition(point, out NavMeshHit targetHit, navSampleRange, -1))
         {
-            path = new NavMeshPath();
-            if (NavMesh.CalculatePath(navData.Position, targetHit.position, -1, path) && path.corners.Length > 1)
+            path = _canGoPath;
+            _cornerCount = NavMesh.CalculatePath(navData.Position, targetHit.position, -1, path)
+                ? NavMeshHelpers.GetCorners(path, ref _corners)
+                : 0;
+            if (_cornerCount > 1)
             {
                 if (mustHaveCompletePath && path.status != NavMeshPathStatus.PathComplete)
                 {

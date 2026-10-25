@@ -228,6 +228,7 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
         bool shallSprint,
         ESprintUrgency urgency,
         Vector3[] corners,
+        int cornerCount,
         NavMeshPath path
     )
     {
@@ -237,7 +238,7 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
         WantToSprint = shallSprint;
         SprintUrgency = urgency;
         CurrentCornerMoveData = new() { Dot = 1, SqrMagnitude = float.MaxValue };
-        CreatePath(corners);
+        CreatePath(corners, cornerCount);
         Destination = destination;
         PathLength = PathCorners.CalcPathLength();
         Status = EBotMoveStatus.ReadyToMove;
@@ -252,14 +253,14 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
 
     protected readonly BotComponent Bot = bot;
 
-    private void CreatePath(Vector3[] corners)
+    private void CreatePath(Vector3[] corners, int cornerCount)
     {
         // skip first corner
         PathCorners.Clear();
-        for (int i = 1; i < corners.Length; i++)
+        for (int i = 1; i < cornerCount; i++)
         {
             Vector3 start = corners[i - 1];
-            EBotCornerType type = Util.FindCornerType(corners.Length, i);
+            EBotCornerType type = Util.FindCornerType(cornerCount, i);
             PathCorners.Add(new(start, corners[i], type, i));
         }
     }

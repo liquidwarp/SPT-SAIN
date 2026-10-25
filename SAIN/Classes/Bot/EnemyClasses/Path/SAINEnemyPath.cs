@@ -1,3 +1,4 @@
+using SAIN.Helpers;
 using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.GlobalSettings.Categories;
 using UnityEngine;
@@ -101,13 +102,7 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
 
     private void CacheCorners()
     {
-        int count = PathToEnemy.GetCornersNonAlloc(_pathCorners);
-        while (count == _pathCorners.Length && _pathCorners.Length < MAX_PATH_CORNERS)
-        {
-            _pathCorners = new Vector3[_pathCorners.Length * 2];
-            count = PathToEnemy.GetCornersNonAlloc(_pathCorners);
-        }
-        PathCornerCount = count;
+        PathCornerCount = NavMeshHelpers.GetCorners(PathToEnemy, ref _pathCorners, MAX_PATH_CORNERS);
     }
 
     public BotVisiblePathNode[] AllPathNodes { get; } =

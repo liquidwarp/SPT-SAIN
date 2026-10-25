@@ -449,8 +449,7 @@ public class CheckFlashlightPatch : ModulePatch
                 SAINSoundType.GearSound,
                 playerComponent.Player.WeaponRoot.position,
                 35f,
-                1f,
-                true
+                1f
             );
             var flashLight = playerComponent.Flashlight;
             flashLight.CheckDevice();

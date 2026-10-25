@@ -124,19 +124,7 @@ public class SteerPriorityClass(SAINSteeringClass steering) : BotSubClass<SAINSt
 
     private bool HeardThreat()
     {
-        if (BaseClass.HeardSoundSteering.LastHeardVisibleDanger?.ShallLook == true)
-        {
-            return true;
-        }
-        if (Bot.Search.SearchActive)
-        {
-            return false;
-        }
-        if (BaseClass.HeardSoundSteering.LastHeardDanger?.ShallLook == true)
-        {
-            return true;
-        }
-        return false;
+        return BaseClass.HeardSoundSteering.LastHeardDanger?.ShallLook == true;
     }
 
     private bool EnemyShotMe()

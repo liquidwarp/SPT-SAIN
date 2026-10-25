@@ -81,6 +81,7 @@ public class SAINBotTalkClass : BotComponentClassBase
     {
         base.ManualUpdate();
         GroupTalk.ManualUpdate();
+        EnemyTalk.TickPendingReplies(Time.time);
 
         if (SAINPlugin.LoadedPreset.GlobalSettings.Talk.DisableBotTalkPatching)
         {

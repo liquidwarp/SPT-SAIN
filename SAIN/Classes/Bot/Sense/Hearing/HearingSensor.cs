@@ -1,5 +1,6 @@
 ﻿using System;
 using SAIN.Components;
+using SAIN.Components.BotComponentSpace.Classes.EnemyClasses;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using SAIN.SAINComponent;
@@ -14,7 +15,7 @@ public class HearingSensor : BotComponentClassBase
 
     public HearingInput HearingInput { get; }
     public HearingAnalysis HearingAnalysis { get; }
-    public HearingDispersion HearingDispersion { get; }
+    public HearingPositionEstimator HearingPositionEstimator { get; }
 
     public HearingSensor(BotComponent sain)
         : base(sain)
@@ -22,14 +23,14 @@ public class HearingSensor : BotComponentClassBase
         TickRequirement = ESAINTickState.OnlyNoSleep;
         HearingInput = new HearingInput(this);
         HearingAnalysis = new HearingAnalysis(this);
-        HearingDispersion = new HearingDispersion(this);
+        HearingPositionEstimator = new HearingPositionEstimator(this);
     }
 
     public override void Init()
     {
         HearingInput.Init();
         HearingAnalysis.Init();
-        HearingDispersion.Init();
+        HearingPositionEstimator.Init();
         base.Init();
     }
 
@@ -37,7 +38,7 @@ public class HearingSensor : BotComponentClassBase
     {
         HearingInput.ManualUpdate();
         HearingAnalysis.ManualUpdate();
-        HearingDispersion.ManualUpdate();
+        HearingPositionEstimator.ManualUpdate();
         base.ManualUpdate();
     }
 
@@ -45,7 +46,7 @@ public class HearingSensor : BotComponentClassBase
     {
         HearingInput.Dispose();
         HearingAnalysis.Dispose();
-        HearingDispersion.Dispose();
+        HearingPositionEstimator.Dispose();
         base.Dispose();
     }
 
@@ -57,25 +58,50 @@ public class HearingSensor : BotComponentClassBase
             return;
         }
 
-        Vector3 EstimatedPosition = HearingDispersion.CalcRandomizedPosition(sound, 1f);
-        ReactToBulletFlyBy(sound, FlyByDistance, EstimatedPosition, underFire);
+        AISoundData placedFrom = TakeUnchasedGunshot(sound.Enemy) ?? sound;
+        SoundPositionEstimate estimate = sound.Enemy.Hearing.EstimateSoundPosition(placedFrom);
+        ReactToBulletFlyBy(sound, FlyByDistance, estimate, underFire);
         OnEnemySoundHeard?.Invoke(sound, sound.Enemy);
     }
 
     public void ReactToHeardSound(AISoundData sound)
     {
-        Vector3 EstimatedPosition;
         if (HearingAnalysis.CheckIfSoundHeard(sound))
         {
-            if (sound.IsGunShot && !ShallChaseGunshot(sound.PlayerDistance))
+            if (sound.IsGunShot && !ShallChaseGunshot(sound.PlayerDistance) && !WasJustShotAtBy(sound.Enemy))
             {
+                _unchasedGunshot = sound;
+                _timeUnchasedGunshot = Time.time;
                 return;
             }
-            EstimatedPosition = HearingDispersion.CalcRandomizedPosition(sound, 1f);
-            Bot.Squad.SquadInfo?.AddPointToSearch(sound.Enemy, EstimatedPosition, sound, Bot);
+            SoundPositionEstimate estimate = sound.Enemy.Hearing.EstimateSoundPosition(sound);
+            Bot.Squad.SquadInfo?.AddPointToSearch(sound.Enemy, estimate, sound, Bot);
             OnEnemySoundHeard?.Invoke(sound, sound.Enemy);
         }
     }
+
+    private AISoundData? TakeUnchasedGunshot(Enemy enemy)
+    {
+        if (_unchasedGunshot == null)
+        {
+            return null;
+        }
+        AISoundData gunshot = _unchasedGunshot.Value;
+        if (Time.time - _timeUnchasedGunshot >= SAINPlugin.LoadedPreset.GlobalSettings.Hearing.HEAR_REPLACE_TIME)
+        {
+            _unchasedGunshot = null;
+            return null;
+        }
+        if (gunshot.Enemy != enemy)
+        {
+            return null;
+        }
+        _unchasedGunshot = null;
+        return gunshot;
+    }
+
+    private AISoundData? _unchasedGunshot;
+    private float _timeUnchasedGunshot;
 
     private bool ShallChaseGunshot(float Distance)
     {
@@ -91,9 +117,15 @@ public class HearingSensor : BotComponentClassBase
         return true;
     }
 
-    private void ReactToBulletFlyBy(AISoundData sound, float ProjectionPointDistance, Vector3 EstimatedPosition, bool UnderFire)
+    private static bool WasJustShotAtBy(Enemy enemy)
+    {
+        return Time.time - enemy.Status.TimeLastShotAtMe < SAINPlugin.LoadedPreset.GlobalSettings.Hearing.HEAR_REPLACE_TIME;
+    }
+
+    private void ReactToBulletFlyBy(AISoundData sound, float ProjectionPointDistance, SoundPositionEstimate estimate, bool UnderFire)
     {
         Enemy enemy = sound.Enemy;
+        Vector3 EstimatedPosition = estimate.Position;
         if (UnderFire)
         {
             if (BotOwner != null)
@@ -105,6 +137,6 @@ public class HearingSensor : BotComponentClassBase
         }
         Bot.Suppression.CheckAddSuppression(enemy, ProjectionPointDistance);
         enemy.Status.RegisterEnemyFlyBy();
-        Bot.Squad.SquadInfo?.AddPointToSearch(enemy, EstimatedPosition, sound, Bot);
+        Bot.Squad.SquadInfo?.AddPointToSearch(enemy, estimate, sound, Bot);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EFT;
 using EFT.Ballistics;
 using SAIN.Components;
+using SAIN.Components.BotComponentSpace.Classes.EnemyClasses;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using SAIN.Models.Enums;
@@ -160,15 +161,9 @@ public class Squad
         return false;
     }
 
-    public enum ESearchPointType
+    public void AddPointToSearch(Enemy Enemy, SoundPositionEstimate Estimate, AISoundData Sound, BotComponent sain)
     {
-        Hearing,
-        Flashlight,
-    }
-
-    public void AddPointToSearch(Enemy Enemy, Vector3 EstimatedPosition, AISoundData Sound, BotComponent sain)
-    {
-        AddPlaceForCheck(EstimatedPosition, Sound.SoundType, sain, Enemy, true, CheckSoundIsDanger(Sound), Time.time);
+        AddPlaceForCheck(Estimate.Position, Sound.SoundType, sain, Enemy, true, CheckSoundIsDanger(Sound), Time.time, Estimate);
     }
 
     private static bool CheckSoundIsDanger(AISoundData sound)
@@ -198,12 +193,11 @@ public class Squad
         Enemy enemy,
         bool heard,
         bool isDanger,
-        float currentTime
+        float currentTime,
+        SoundPositionEstimate? estimate = null
     )
     {
         BotsGroup ??= bot.BotOwner.BotsGroup;
-
-        position.y = enemy.EnemyPosition.y;
 
         SAINHearingReport report = new()
         {
@@ -212,6 +206,7 @@ public class Squad
             placeType = EEnemyPlaceType.Hearing,
             isDanger = isDanger,
             shallReportToSquad = true,
+            estimate = estimate,
         };
         EnemyPlace place = enemy.Hearing.SetHeard(report, currentTime);
 
@@ -221,14 +216,7 @@ public class Squad
         }
     }
 
-    public void AddPointToSearch(
-        Vector3 position,
-        float soundPower,
-        BotComponent sain,
-        AISoundType soundType,
-        IPlayer player,
-        ESearchPointType searchType = ESearchPointType.Hearing
-    )
+    public void AddPointToSearch(Vector3 position, BotComponent sain, AISoundType soundType, IPlayer player)
     {
         Enemy enemy = sain.EnemyController.CheckAddEnemy(player);
         if (enemy == null)
@@ -240,20 +228,13 @@ public class Squad
         AddPlaceForCheck(position, soundType.Convert(), sain, enemy, false, isDanger, Time.time);
     }
 
-    public bool MemberHasDecision(params ESquadDecision[] decisionsToCheck)
+    public bool MemberHasDecision(ESquadDecision decisionToCheck)
     {
         foreach (var member in MemberInfos.Values)
         {
-            if (member != null && member.Bot != null)
+            if (member != null && member.Bot != null && member.SquadDecision == decisionToCheck)
             {
-                var memberDecision = member.SquadDecision;
-                foreach (var decision in decisionsToCheck)
-                {
-                    if (decision == memberDecision)
-                    {
-                        return true;
-                    }
-                }
+                return true;
             }
         }
         return false;

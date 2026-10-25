@@ -20,6 +20,7 @@ public readonly struct SoundEvent(
     public readonly EPhraseTrigger Phrase = InPhrase;
     public readonly ETagStatus TagStatus = InTagStatus;
     public readonly Vector3 Position = InPosition;
+    public readonly Vector3 PlayerPosition = InPlayerComponent.Position;
     public readonly float SoundSpeed = InSoundSpeed;
     public readonly float Range = InRange;
     public readonly float Volume = InVolume;

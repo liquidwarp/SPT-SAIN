@@ -23,7 +23,7 @@ public class BotFlashedClass : BotComponentClassBase
         get { return _flashEndTime > Time.time; }
     }
 
-    public Vector3? LastSeenEnemyPoint { get; private set; }
+    public Vector3? RememberedEnemyPoint { get; private set; }
 
     public bool BlindFireReady
     {
@@ -47,7 +47,8 @@ public class BotFlashedClass : BotComponentClassBase
         }
 
         Enemy enemy = Bot.GoalEnemy;
-        LastSeenEnemyPoint = enemy != null ? enemy.EnemyPosition + (Vector3.up * REMEMBERED_HEIGHT) : null;
+        Vector3? lastKnown = enemy != null ? enemy.LastKnownPosition : null;
+        RememberedEnemyPoint = lastKnown != null ? lastKnown.Value + (Vector3.up * REMEMBERED_HEIGHT) : null;
 
         BotOwner.BotsGroup.AddPointToSearch(position, SEARCH_POINT_RANGE, BotOwner);
 
@@ -99,7 +100,7 @@ public class BotFlashedClass : BotComponentClassBase
         if (_firstStage != null && !IsFlashed)
         {
             Dismiss();
-            LastSeenEnemyPoint = null;
+            RememberedEnemyPoint = null;
         }
         base.ManualUpdate();
     }

@@ -1,12 +1,10 @@
-using System.Collections;
+using System.Collections.Generic;
 using Comfort.Common;
 using EFT;
 using SAIN.Components;
 using SAIN.Models.Enums;
-using SAIN.Models.Structs;
 using SAIN.Preset;
 using SAIN.Preset.Shared.BotSettings.SAINSettings;
-using SAIN.Preset.Shared.Enums;
 using SAIN.Preset.Shared.Models.Preset.Personalities;
 using SAIN.Preset.Shared.Personalities.BasePersonality.Categories;
 using SAIN.SAINComponent.Classes.EnemyClasses;
@@ -104,6 +102,7 @@ public class EnemyTalk : BotBase
         {
             Bot.EnemyController.Events.OnEnemyKilled -= enemyKilled;
         }
+        _pendingReplies.Clear();
         base.Dispose();
     }
 
@@ -355,33 +354,76 @@ public class EnemyTalk : BotBase
         return true;
     }
 
-    private IEnumerator RespondToFriendly(EPhraseTrigger trigger, ETagStatus mask, float delay, Player sourcePlayer, float chance = 100f)
+    private readonly struct PendingReply(EPhraseTrigger trigger, ETagStatus mask, float playTime, Player sourcePlayer, Enemy enemy)
     {
-        if (!EFTMath.RandomBool(chance))
+        public readonly EPhraseTrigger Trigger = trigger;
+        public readonly ETagStatus Mask = mask;
+        public readonly float PlayTime = playTime;
+
+        /// <summary>Set for a reply to a friendly.</summary>
+        public readonly Player SourcePlayer = sourcePlayer;
+
+        /// <summary>Set for a reply to an enemy.</summary>
+        public readonly Enemy Enemy = enemy;
+    }
+
+    private readonly List<PendingReply> _pendingReplies = [];
+    private const float REPLY_EXPIRE_TIME = 1f;
+
+    public void TickPendingReplies(float currentTime)
+    {
+        for (int i = _pendingReplies.Count - 1; i >= 0; i--)
         {
-            yield break;
+            PendingReply reply = _pendingReplies[i];
+            if (reply.PlayTime > currentTime)
+            {
+                continue;
+            }
+            _pendingReplies.RemoveAt(i);
+            // Not ticked while the bot sleeps: a reply that came due then is stale, so drop it as if never heard.
+            if (currentTime - reply.PlayTime > REPLY_EXPIRE_TIME)
+            {
+                continue;
+            }
+            if (reply.Enemy != null)
+            {
+                RespondToEnemy(reply.Trigger, reply.Mask, reply.Enemy);
+            }
+            else
+            {
+                RespondToFriendly(reply.Trigger, reply.Mask, reply.SourcePlayer);
+            }
         }
+    }
 
-        yield return new WaitForSeconds(delay);
+    private void QueueFriendlyResponse(EPhraseTrigger trigger, ETagStatus mask, float delay, Player sourcePlayer, float chance = 100f)
+    {
+        if (EFTMath.RandomBool(chance))
+        {
+            _pendingReplies.Add(new PendingReply(trigger, mask, Time.time + delay, sourcePlayer, null));
+        }
+    }
 
+    private void RespondToFriendly(EPhraseTrigger trigger, ETagStatus mask, Player sourcePlayer)
+    {
         if (sourcePlayer == null || BotOwner == null || Player == null || Bot == null)
         {
-            yield break;
+            return;
         }
         if (!sourcePlayer.HealthController.IsAlive || !Player.HealthController.IsAlive)
         {
-            yield break;
+            return;
         }
 
         if (Bot.Talk.IsSpeaking)
         {
-            yield break;
+            return;
         }
 
         if (!BotOwner.Memory.IsPeace)
         {
             Bot.Talk.Say(trigger, null, false);
-            yield break;
+            return;
         }
         if (_nextGestureTime < Time.time)
         {
@@ -391,25 +433,23 @@ public class EnemyTalk : BotBase
         Bot.Talk.Say(trigger, mask, false);
     }
 
-    private IEnumerator RespondToEnemy(EPhraseTrigger trigger, ETagStatus mask, float delay, Enemy enemy)
+    private void RespondToEnemy(EPhraseTrigger trigger, ETagStatus mask, Enemy enemy)
     {
-        yield return new WaitForSeconds(delay);
-
-        if (enemy == null || !enemy.CheckValid())
+        if (!enemy.CheckValid())
         {
-            yield break;
+            return;
         }
         if (BotOwner == null || Player == null || Bot == null)
         {
-            yield break;
+            return;
         }
         if (Bot.Talk.IsSpeaking)
         {
-            yield break;
+            return;
         }
         if (!Player.HealthController.IsAlive)
         {
-            yield break;
+            return;
         }
         Bot.Talk.Say(trigger, mask, false, true);
     }
@@ -448,7 +488,7 @@ public class EnemyTalk : BotBase
                 return;
             }
             _nextResponseTime = Time.time + 2f;
-            Bot.StartCoroutine(RespondToEnemy(trigger.Value, ETagStatus.Combat, Random.Range(0.4f, 0.75f), enemy));
+            _pendingReplies.Add(new PendingReply(trigger.Value, ETagStatus.Combat, Time.time + Random.Range(0.4f, 0.75f), null, enemy));
         }
     }
 
@@ -463,67 +503,19 @@ public class EnemyTalk : BotBase
             return;
         }
 
-        bool isPain = phrase == EPhraseTrigger.OnAgony || phrase == EPhraseTrigger.OnBeingHurt;
-        float painRange = 40f;
-        float breathRange = player.HeavyBreath ? 35f : 15f;
+        if (phrase == EPhraseTrigger.OnAgony || phrase == EPhraseTrigger.OnBeingHurt || phrase == EPhraseTrigger.OnBreath)
+        {
+            return;
+        }
 
         Enemy enemy = Bot.EnemyController.GetEnemy(player.ProfileId, true);
         if (enemy == null)
         {
-            if (!isPain && phrase != EPhraseTrigger.OnBreath && phrase != EPhraseTrigger.OnFight)
+            if (phrase != EPhraseTrigger.OnFight)
             {
                 SetFriendlyTalked(player);
             }
             return;
-        }
-
-        if (isPain)
-        {
-            if (enemy.RealDistance <= painRange)
-            {
-                Vector3 randomizedPos = randomizePos(player.Position, enemy.RealDistance, 20f);
-                SAINHearingReport report = new()
-                {
-                    position = randomizedPos,
-                    soundType = SAINSoundType.Pain,
-                    placeType = EEnemyPlaceType.Hearing,
-                    isDanger = enemy.RealDistance < 25f || enemy.InLineOfSight,
-                    shallReportToSquad = true,
-                };
-                enemy.Hearing.SetHeard(report, Time.time);
-            }
-            return;
-        }
-        if (phrase == EPhraseTrigger.OnBreath)
-        {
-            if (enemy.RealDistance <= breathRange)
-            {
-                Vector3 randomizedPos = randomizePos(player.Position, enemy.RealDistance, 20f);
-                SAINHearingReport report = new()
-                {
-                    position = randomizedPos,
-                    soundType = SAINSoundType.Breathing,
-                    placeType = EEnemyPlaceType.Hearing,
-                    isDanger = enemy.RealDistance < 25f || enemy.InLineOfSight,
-                    shallReportToSquad = true,
-                };
-                enemy.Hearing.SetHeard(report, Time.time);
-            }
-            return;
-        }
-
-        if (enemy.RealDistance <= 50f)
-        {
-            Vector3 randomizedPos = randomizePos(player.Position, enemy.RealDistance, 20f);
-            SAINHearingReport report = new()
-            {
-                position = randomizedPos,
-                soundType = SAINSoundType.Conversation,
-                placeType = EEnemyPlaceType.Hearing,
-                isDanger = enemy.RealDistance < 25f || enemy.InLineOfSight,
-                shallReportToSquad = true,
-            };
-            enemy.Hearing.SetHeard(report, Time.time);
         }
 
         if (Bot.Talk.IsSpeaking)
@@ -539,14 +531,6 @@ public class EnemyTalk : BotBase
         {
             SetEnemyTalk(enemy);
         }
-    }
-
-    private Vector3 randomizePos(Vector3 position, float distance, float dispersionFactor = 20f)
-    {
-        float disp = distance / dispersionFactor;
-        Vector3 random = UnityEngine.Random.insideUnitSphere * disp;
-        random.y = 0;
-        return position + random;
     }
 
     private float _nextGestureTime;
@@ -593,14 +577,12 @@ public class EnemyTalk : BotBase
             {
                 float chance = player.IsAI ? _friendlyResponseChanceAI : _friendlyResponseChance;
 
-                Bot.StartCoroutine(
-                    RespondToFriendly(
-                        EPhraseTrigger.MumblePhrase,
-                        Bot.EnemyController.AtPeace ? ETagStatus.Unaware : ETagStatus.Combat,
-                        Random.Range(_friendlyResponseMinRandom, _friendlyResponseMaxRandom),
-                        player,
-                        chance
-                    )
+                QueueFriendlyResponse(
+                    EPhraseTrigger.MumblePhrase,
+                    Bot.EnemyController.AtPeace ? ETagStatus.Unaware : ETagStatus.Combat,
+                    Random.Range(_friendlyResponseMinRandom, _friendlyResponseMaxRandom),
+                    player,
+                    chance
                 );
             }
         }
@@ -618,14 +600,12 @@ public class EnemyTalk : BotBase
             if (_saySilenceTime < Time.time)
             {
                 _saySilenceTime = Time.time + 20f;
-                Bot.StartCoroutine(
-                    RespondToFriendly(
-                        EPhraseTrigger.Silence,
-                        Bot.EnemyController.AtPeace ? ETagStatus.Unaware : ETagStatus.Aware,
-                        Random.Range(0.2f, 0.5f),
-                        player,
-                        33f
-                    )
+                QueueFriendlyResponse(
+                    EPhraseTrigger.Silence,
+                    Bot.EnemyController.AtPeace ? ETagStatus.Unaware : ETagStatus.Aware,
+                    Random.Range(0.2f, 0.5f),
+                    player,
+                    33f
                 );
             }
         }
