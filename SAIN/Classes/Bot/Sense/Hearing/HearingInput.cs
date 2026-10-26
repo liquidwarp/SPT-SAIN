@@ -237,10 +237,15 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
                 {
                     if (PreviouslyDeaf && Sound.PlayerDistance > Sound.Sound.BaseRangeWithVolume * DeafenCoef)
                     {
+                        LogDropped(Sound, "Not heard: deafened by a gunshot");
                         continue;
                     }
 
                     Results.Add(Sound);
+                }
+                else
+                {
+                    LogDropped(Sound, "Not heard: beyond base range");
                 }
             }
             Sounds.Clear();
@@ -264,6 +269,7 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
                     bool thisShotDeafened = Sound.PlayerDistance <= Sound.Sound.BaseRangeWithVolume * DeafenCoef;
                     if (previouslyDeaf && !thisShotDeafened)
                     {
+                        LogDropped(Sound, "Not heard: deafened by a gunshot");
                         continue;
                     }
 
@@ -274,10 +280,22 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
 
                     Results.Add(Sound);
                 }
+                else
+                {
+                    LogDropped(Sound, "Not heard: beyond base range");
+                }
             }
             Sounds.Clear();
         }
         return DeafeningShot;
+    }
+
+    private static void LogDropped(AISoundData sound, string reason)
+    {
+        if (HearingAnalysis.ShallLogHearing(sound))
+        {
+            HearingAnalysis.LogHearing(sound, reason);
+        }
     }
 
     private void CheckResetHearing()

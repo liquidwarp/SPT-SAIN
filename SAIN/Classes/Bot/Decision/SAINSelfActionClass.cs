@@ -1,3 +1,4 @@
+using System;
 using EFT;
 using SAIN.Components;
 using SAIN.Preset.Shared.Enums;
@@ -129,7 +130,10 @@ public class SAINSelfActionClass : BotComponentClassBase
             {
                 stims.TryApply();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.LogError($"[{BotOwner.name}] Failed to use a stim: {ex}");
+            }
             return true;
         }
         return false;

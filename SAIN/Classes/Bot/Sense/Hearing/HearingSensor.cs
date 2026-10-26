@@ -70,6 +70,10 @@ public class HearingSensor : BotComponentClassBase
         {
             if (sound.IsGunShot && !ShallChaseGunshot(sound.PlayerDistance) && !WasJustShotAtBy(sound.Enemy))
             {
+                if (HearingAnalysis.ShallLogHearing(sound))
+                {
+                    HearingAnalysis.LogHearing(sound, "Not chasing: gunshot is too far away for this personality");
+                }
                 _unchasedGunshot = sound;
                 _timeUnchasedGunshot = Time.time;
                 return;
@@ -98,6 +102,16 @@ public class HearingSensor : BotComponentClassBase
         }
         _unchasedGunshot = null;
         return gunshot;
+    }
+
+    public AISoundData? UnchasedGunshot
+    {
+        get { return _unchasedGunshot; }
+    }
+
+    public float TimeUnchasedGunshot
+    {
+        get { return _timeUnchasedGunshot; }
     }
 
     private AISoundData? _unchasedGunshot;

@@ -50,7 +50,6 @@ public class BotSurgery : BotBase
         return surgicalKit?.HaveWork == true && !surgicalKit.Using;
     }
 
-    // BotHealingFixes times the use out
     private bool IsSurgeryInProgress()
     {
         BotOwner botOwner = BotOwner;
@@ -61,7 +60,6 @@ public class BotSurgery : BotBase
         return botOwner.Medecine?.SurgicalKit?.Using == true;
     }
 
-    // Safe with BotHealingFixes.
     public void CancelSurgery()
     {
         BotOwner botOwner = BotOwner;

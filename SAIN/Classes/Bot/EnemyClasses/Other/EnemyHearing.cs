@@ -17,6 +17,7 @@ namespace SAIN.Components.BotComponentSpace.Classes.EnemyClasses;
 /// <param name="angleOffset">-1 to 1, fraction of the maximum direction error. Drifts a little with each sound.</param>
 /// <param name="distanceOffset">-1 to 1, fraction of the maximum distance error. Drifts a little with each sound.</param>
 /// <param name="soundType">The sound this estimate comes from, or null when it is where the enemy was seen.</param>
+/// <param name="step">How the estimator got to this estimate, for debugging.</param>
 public readonly struct SoundPositionEstimate(
     Vector3 position,
     Vector3 enemyPosition,
@@ -25,7 +26,8 @@ public readonly struct SoundPositionEstimate(
     float confidenceBefore,
     float angleOffset,
     float distanceOffset,
-    SAINSoundType? soundType
+    SAINSoundType? soundType,
+    EEstimateStep step
 )
 {
     public readonly Vector3 Position = position;
@@ -36,6 +38,7 @@ public readonly struct SoundPositionEstimate(
     public readonly float AngleOffset = angleOffset;
     public readonly float DistanceOffset = distanceOffset;
     public readonly SAINSoundType? SoundType = soundType;
+    public readonly EEstimateStep Step = step;
 
     public bool FromSighting
     {
@@ -52,11 +55,12 @@ public readonly struct SoundPositionEstimate(
             1f,
             HearingPositionEstimator.RollOffset(),
             HearingPositionEstimator.RollOffset(),
-            null
+            null,
+            EEstimateStep.Sighting
         );
     }
 
-    public SoundPositionEstimate WithTime(float time)
+    public SoundPositionEstimate With(float time, EEstimateStep step)
     {
         return new SoundPositionEstimate(
             Position,
@@ -66,9 +70,34 @@ public readonly struct SoundPositionEstimate(
             ConfidenceBefore,
             AngleOffset,
             DistanceOffset,
-            SoundType
+            SoundType,
+            step
         );
     }
+}
+
+public enum EEstimateStep
+{
+    /// <summary>The enemy is visible, or was seen more recently than heard.</summary>
+    Sighting,
+
+    /// <summary>First sound with nothing to build on.</summary>
+    FirstSound,
+
+    /// <summary>Heard where they were last seen, so the sighting stands.</summary>
+    SightingHeld,
+
+    /// <summary>A sound that gives away more replaced the last one from the same spot.</summary>
+    BetterClue,
+
+    /// <summary>Same spot heard again soon after, so the last guess stands.</summary>
+    Reused,
+
+    /// <summary>Moved after a long silence, so the error was rolled again.</summary>
+    ResetAfterSilence,
+
+    /// <summary>Moved while being heard, so the error drifted a little from the last guess.</summary>
+    Drift,
 }
 
 public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.Enemy.Bot)
@@ -78,6 +107,11 @@ public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.
     public float TimeSinceHeard
     {
         get { return Heard ? Time.time - _timeLastHeard : float.MaxValue; }
+    }
+
+    public SoundPositionEstimate? PositionEstimate
+    {
+        get { return _positionEstimate; }
     }
 
     private SoundPositionEstimate? _positionEstimate;

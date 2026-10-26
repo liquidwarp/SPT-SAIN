@@ -1,7 +1,10 @@
 using System;
 using System.Text;
 using EFT;
+using SAIN.Classes.Bot.Sense.Hearing;
 using SAIN.Components;
+using SAIN.Components.BotComponentSpace.Classes.EnemyClasses;
+using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using SAIN.Models.Enums;
 using SAIN.SAINComponent.Classes.EnemyClasses;
@@ -147,13 +150,15 @@ public static class DebugOverlay
                 }
             }
 
-            if (debug.Overlay_EnemyInfo)
+            Enemy enemyToShow = null;
+            if (debug.Overlay_EnemyInfo || debug.Overlay_Hearing)
             {
-                Enemy infoToShow = getEnemy2Show(bot);
-                if (infoToShow != null)
-                {
-                    CreateEnemyInfo(stringBuilder, infoToShow);
-                }
+                enemyToShow = getEnemy2Show(bot);
+            }
+
+            if (debug.Overlay_EnemyInfo && enemyToShow != null)
+            {
+                CreateEnemyInfo(stringBuilder, enemyToShow);
             }
 
             if (debug.Overlay_Search)
@@ -210,6 +215,11 @@ public static class DebugOverlay
                     }
                 }
             }
+
+            if (debug.Overlay_Hearing)
+            {
+                AddHearingInfo(bot, enemyToShow, stringBuilder);
+            }
         }
         catch (Exception ex)
         {
@@ -235,6 +245,61 @@ public static class DebugOverlay
             Color.yellow
         );
         stringBuilder.AppendLabeledValue("Sprint Status", $"{moveData.CurrentSprintStatus}", Color.white, Color.yellow);
+    }
+
+    private static void AddHearingInfo(BotComponent bot, Enemy enemy, StringBuilder stringBuilder)
+    {
+        HearingSensor hearing = bot.Hearing;
+        HearingInput input = hearing.HearingInput;
+        stringBuilder.AppendLabeledValue(
+            "Hearing",
+            $"Deafened [{input.IsBotDeafened}] Ignoring [{input.IsIgnoringSounds(false)}] Ignoring Gunfire [{input.IsIgnoringSounds(true)}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+
+        AISoundData? gunshot = hearing.UnchasedGunshot;
+        float gunshotAge = Time.time - hearing.TimeUnchasedGunshot;
+        if (gunshot != null && gunshotAge < SAINPlugin.LoadedPreset.GlobalSettings.Hearing.HEAR_REPLACE_TIME)
+        {
+            stringBuilder.AppendLabeledValue(
+                "Unchased Gunshot",
+                $"[{gunshot.Value.HeardPlayerComponent.Name}] {gunshot.Value.PlayerDistance:0}m, {gunshotAge:0.0}s ago",
+                Color.white,
+                Color.yellow,
+                true
+            );
+        }
+
+        if (enemy == null)
+        {
+            return;
+        }
+        SoundPositionEstimate? estimate = enemy.Hearing.PositionEstimate;
+        if (estimate == null)
+        {
+            stringBuilder.AppendLabeledValue("Estimate", "None", Color.white, Color.yellow, true);
+            return;
+        }
+
+        SoundPositionEstimate value = estimate.Value;
+        string source = value.SoundType != null ? value.SoundType.Value.ToString() : "Seen";
+        float error = (value.Position - enemy.EnemyPosition).magnitude;
+        stringBuilder.AppendLabeledValue(
+            "Estimate",
+            $"{source} {value.Step} {Time.time - value.TimeUpdated:0.0}s ago, Error {error:0.0}m",
+            Color.white,
+            Color.yellow,
+            true
+        );
+        stringBuilder.AppendLabeledValue(
+            "Confidence",
+            $"{value.ConfidenceBefore:0.00} > {value.Confidence:0.00} Offsets Angle [{value.AngleOffset:0.00}] Distance [{value.DistanceOffset:0.00}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
     }
 
     private static Enemy getEnemy2Show(BotComponent bot)

@@ -20,9 +20,24 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
 
     public SoundPositionEstimate Estimate(SoundPositionEstimate? estimate, AISoundData Sound)
     {
+        SoundPositionEstimate result = GetEstimate(estimate, Sound);
+        if (SAINPlugin.DebugSettings.Gizmos.DrawHearingEstimates && IsNewPlacement(result.Step) && HearingAnalysis.IsFromMainPlayer(Sound))
+        {
+            DrawEstimate(result, Sound);
+        }
+        return result;
+    }
+
+    private static bool IsNewPlacement(EEstimateStep step)
+    {
+        return step != EEstimateStep.Reused && step != EEstimateStep.SightingHeld;
+    }
+
+    private SoundPositionEstimate GetEstimate(SoundPositionEstimate? estimate, AISoundData Sound)
+    {
         if (estimate == null)
         {
-            return Place(Sound, 0f, RollOffset(), RollOffset());
+            return Place(Sound, 0f, RollOffset(), RollOffset(), EEstimateStep.FirstSound);
         }
         SoundPositionEstimate last = estimate.Value;
 
@@ -31,7 +46,7 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
         bool moved = (enemyPosition - last.EnemyPosition).sqrMagnitude >= moveDistance * moveDistance;
         if (last.FromSighting && !moved)
         {
-            return last.WithTime(Time.time);
+            return last.With(Time.time, EEstimateStep.SightingHeld);
         }
 
         float sinceUpdated = Time.time - last.TimeUpdated;
@@ -39,22 +54,36 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
 
         if (!moved && sinceUpdated < settings.HEAR_REPLACE_TIME && IsBetterClue(Sound.SoundType, last.SoundType))
         {
-            return Place(Sound, last.ConfidenceBefore, last.AngleOffset, last.DistanceOffset);
+            return Place(Sound, last.ConfidenceBefore, last.AngleOffset, last.DistanceOffset, EEstimateStep.BetterClue);
         }
 
         if (!moved && sinceUpdated < settings.HEAR_REUSE_TIME)
         {
-            return last;
+            return last.With(last.TimeUpdated, EEstimateStep.Reused);
         }
 
         if (moved && sinceUpdated > settings.HEAR_RESET_SILENCE_TIME)
         {
-            return Place(Sound, GetRememberedConfidence(last, enemyPosition, sinceUpdated, moveDistance), RollOffset(), RollOffset());
+            float confidence = GetRememberedConfidence(last, enemyPosition, sinceUpdated, moveDistance);
+            return Place(Sound, confidence, RollOffset(), RollOffset(), EEstimateStep.ResetAfterSilence);
         }
-        return Place(Sound, last.Confidence, Drift(last.AngleOffset), Drift(last.DistanceOffset));
+        return Place(Sound, last.Confidence, Drift(last.AngleOffset), Drift(last.DistanceOffset), EEstimateStep.Drift);
     }
 
-    private SoundPositionEstimate Place(AISoundData Sound, float confidence, float angleOffset, float distanceOffset)
+    private void DrawEstimate(SoundPositionEstimate estimate, AISoundData Sound)
+    {
+        const float expireTime = 10f;
+        Vector3 enemyPosition = Sound.Sound.PlayerPosition;
+        float error = (estimate.Position - enemyPosition).magnitude;
+        Color color = Color.Lerp(Color.red, Color.green, estimate.Confidence);
+        string label =
+            $"[{Bot.PlayerComponent.Name}] {Sound.SoundType} {estimate.Step}\n"
+            + $"Confidence {estimate.Confidence:0.00} Error {error:0.0}m";
+        DebugGizmos.DrawSphere(estimate.Position, 0.25f, color, expireTime, label);
+        DebugGizmos.DrawLine(enemyPosition, estimate.Position, color, 0.05f, expireTime);
+    }
+
+    private SoundPositionEstimate Place(AISoundData Sound, float confidence, float angleOffset, float distanceOffset, EEstimateStep step)
     {
         Vector3 enemyPosition = Sound.Sound.PlayerPosition;
         Vector3 botPosition = Bot.Position;
@@ -75,12 +104,6 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
             result.y = enemyPosition.y;
             result = SnapToNavMesh(result, enemyPosition);
         }
-#if DEBUG
-        if (Sound.HeardPlayer.IsYourPlayer)
-        {
-            DebugGizmos.DrawLine(enemyPosition, result, Color.magenta, 0.1f, 10f, false);
-        }
-#endif
 
         float confidenceAfter = Mathf.Min(1f, confidence + GetConfidenceGain(Sound.SoundType));
         return new SoundPositionEstimate(
@@ -91,7 +114,8 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
             confidence,
             angleOffset,
             distanceOffset,
-            Sound.SoundType
+            Sound.SoundType,
+            step
         );
     }
 

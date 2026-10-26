@@ -190,7 +190,7 @@ public class VisionRaycastJob : BotManagerBase
                 Vector3 castPoint = _castPoints[colliderTypeCount];
                 colliderTypeCount++;
 
-                if (SAINPlugin.LoadedPreset.GlobalSettings.General.Debug.Gizmos.DrawLineOfSightGizmos)
+                if (SAINPlugin.DebugSettings.Gizmos.DrawLineOfSightGizmos)
                 {
                     var cmd = commands[hits];
                     var hit = raycastHits[hits];
@@ -221,6 +221,10 @@ public class VisionRaycastJob : BotManagerBase
             {
                 foreach (Enemy enemy in bot.EnemyController.EnemiesArray)
                 {
+                    if (enemy.EnemyPlayerComponent.HiddenFromBots)
+                    {
+                        continue;
+                    }
                     if (enemy.ShallCheckLoS(currentTime))
                     {
                         enemies.Add(enemy);

@@ -20,31 +20,71 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
             return false;
         }
 
-        if (!sound.IsGunShot && !DoIDetectFootsteps(sound))
+        bool log = ShallLogHearing(sound);
+        if (!sound.IsGunShot && !DoIDetectFootsteps(sound, out float chanceToHear, out float maxDistance))
         {
+            if (log)
+            {
+                LogHearing(
+                    sound,
+                    sound.PlayerDistance > maxDistance
+                        ? $"Not heard: beyond max footstep distance [{maxDistance:0.0}m]"
+                        : $"Not heard: failed {chanceToHear:0}% chance roll"
+                );
+            }
             return false;
         }
 
         if ((sound.Sound.Position - sound.Sound.PlayerComponent.Position).sqrMagnitude > 5f * 5f)
         {
+            if (log)
+            {
+                LogHearing(sound, "Not heard: sound is more than 5m from its source");
+            }
             return false;
         }
 
         float EnvironmentModifier = CalcEnvironmentMod(sound);
         float ConditionModifier = CalcConditionMod(sound.SoundType);
         float OcclusionModifier = CalcOcclusionMod(sound.Enemy, sound.SoundType);
+        float DifficultyModifier = Bot.Info.Difficulty.HearingDistanceModifier;
         float FinalModifier = Mathf.Clamp(
-            1.0f * EnvironmentModifier * ConditionModifier * OcclusionModifier * Bot.Info.Difficulty.HearingDistanceModifier,
+            1.0f * EnvironmentModifier * ConditionModifier * OcclusionModifier * DifficultyModifier,
             _settings.HEAR_MODIFIER_MIN_CLAMP,
             _settings.HEAR_MODIFIER_MAX_CLAMP
         );
         float FinalRange = sound.Sound.Range * sound.Sound.Volume * FinalModifier;
-        if (sound.PlayerDistance > FinalRange)
+        bool heard = sound.PlayerDistance <= FinalRange;
+        if (log)
+        {
+            LogHearing(
+                sound,
+                $"{(heard ? "Heard" : "Not heard: out of range")} Range [{FinalRange:0.0}m] = Base [{sound.Sound.Range:0.0}m] x Volume [{sound.Sound.Volume:0.00}] "
+                    + $"x Modifier [{FinalModifier:0.00}] (Environment [{EnvironmentModifier:0.00}] Condition [{ConditionModifier:0.00}] "
+                    + $"Occlusion [{OcclusionModifier:0.00}] Difficulty [{DifficultyModifier:0.00}])"
+            );
+        }
+        return heard;
+    }
+
+    public static bool ShallLogHearing(AISoundData sound)
+    {
+        return SAINPlugin.DebugSettings.Logs.DebugHearingChecks && IsFromMainPlayer(sound);
+    }
+
+    public static bool IsFromMainPlayer(AISoundData sound)
+    {
+        PlayerComponent source = sound.HeardPlayerComponent;
+        if (source == null)
         {
             return false;
         }
+        return source.IsMainPlayer;
+    }
 
-        return true;
+    public static void LogHearing(AISoundData sound, string result)
+    {
+        Logger.LogDebug($"[{sound.Bot.PlayerComponent.Name}] {sound.SoundType} at {sound.PlayerDistance:0.0}m: {result}");
     }
 
     private static HearingSettings _settings
@@ -74,21 +114,23 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
         return 1f;
     }
 
-    private bool DoIDetectFootsteps(AISoundData sound)
+    private bool DoIDetectFootsteps(AISoundData sound, out float chanceToHear, out float farhearing)
     {
         bool hasheadPhones = Bot.PlayerComponent.Equipment.GearInfo.HasEarPiece;
         float closehearing = hasheadPhones ? _settings.HEAR_CHANCE_MIN_DIST_HEADPHONES : _settings.HEAR_CHANCE_MIN_DIST;
+        farhearing = hasheadPhones
+            ? SAINPlugin.LoadedPreset.GlobalSettings.Hearing.MaxFootstepAudioDistance
+            : SAINPlugin.LoadedPreset.GlobalSettings.Hearing.MaxFootstepAudioDistanceNoHeadphones;
         float distance = sound.PlayerDistance;
         if (distance <= closehearing)
         {
+            chanceToHear = 100f;
             return true;
         }
 
-        float farhearing = hasheadPhones
-            ? SAINPlugin.LoadedPreset.GlobalSettings.Hearing.MaxFootstepAudioDistance
-            : SAINPlugin.LoadedPreset.GlobalSettings.Hearing.MaxFootstepAudioDistanceNoHeadphones;
         if (distance > farhearing)
         {
+            chanceToHear = 0f;
             return false;
         }
 
@@ -125,16 +167,16 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
 
         float num = farhearing - closehearing;
         float num2 = distance - closehearing;
-        float chanceToHear = 1f - num2 / num;
+        chanceToHear = 1f - num2 / num;
         chanceToHear *= 100f;
 
         chanceToHear = Mathf.Clamp(chanceToHear, minimumChance, 100f);
         return EFTMath.RandomBool(chanceToHear);
     }
 
-    private static float CalcOcclusionMod(Enemy Enemy, SAINSoundType SoundType)
+    private float CalcOcclusionMod(Enemy Enemy, SAINSoundType SoundType)
     {
-        if (Enemy.InLineOfSight)
+        if (IsInLineOfSight(Enemy))
         {
             return 1f;
         }
@@ -159,6 +201,20 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
             default:
                 return _settings.OTHER_OCCLUSION_MOD;
         }
+    }
+
+    private bool IsInLineOfSight(Enemy enemy)
+    {
+        if (!enemy.EnemyPlayerComponent.HiddenFromBots)
+        {
+            return enemy.InLineOfSight;
+        }
+
+        // Hiding stops the vision raycasts that keep InLineOfSight current, but walls should still muffle sounds.
+        Vector3 eyePosition = Bot.Transform.EyePosition;
+        PlayerTransformClass target = enemy.EnemyTransform;
+        LayerMask mask = LayersMaskController.HighPolyWithTerrainNoGrassMask;
+        return !Physics.Linecast(eyePosition, target.EyePosition, mask) || !Physics.Linecast(eyePosition, target.BodyPosition, mask);
     }
 
     private float CalcEnvironmentMod(AISoundData sound)

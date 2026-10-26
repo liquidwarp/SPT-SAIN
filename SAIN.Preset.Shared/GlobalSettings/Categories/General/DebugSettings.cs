@@ -36,6 +36,9 @@ public class DebugOverlaySettings : SAINSettingsBase<DebugOverlaySettings>
 
     [DataMember]
     public bool OverLay_AlwaysShowMainPlayerInfo = false;
+
+    [DataMember]
+    public bool Overlay_Hearing = false;
 }
 
 [DataContract]
@@ -56,6 +59,11 @@ public class DebugGizmoSettings : SAINSettingsBase<DebugGizmoSettings>
     [DataMember]
     [Name("Draw Aim Gizmos")]
     public bool DebugDrawAimGizmos = false;
+
+    [DataMember]
+    [Name("Draw Hearing Estimates")]
+    [Description("Draws where bots guess you are when they hear you, from red at low confidence to green at high.")]
+    public bool DrawHearingEstimates = false;
 }
 
 [DataContract]
@@ -74,6 +82,11 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     public bool ForceBotsToTryCrawl;
 
     [DataMember]
+    [Name("Bots Can't See Me")]
+    [Description("Bots ignore seeing you, so only hearing tells them where you are.")]
+    public bool BotsCantSeeMainPlayer;
+
+    [DataMember]
     [Name("Draw Debug Labels")]
     public bool DrawDebugLabels;
 
@@ -88,18 +101,16 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [DataMember]
     [Name("Debug Aim Calculations")]
     public bool DebugAimCalculations = false;
+
+    [DataMember]
+    [Name("Debug Hearing Checks")]
+    [Description("Logs why bots did or didn't hear the sounds you make.")]
+    public bool DebugHearingChecks = false;
 }
 
 [DataContract]
 public class DebugSettings : SAINSettingsBase<DebugSettings>, ISAINSettings
 {
-    public DebugSettings()
-    {
-        Instance = this;
-    }
-
-    public static DebugSettings Instance { get; private set; }
-
     [DataMember]
     public DebugLogSettings Logs = new();
 

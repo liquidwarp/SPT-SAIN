@@ -66,6 +66,13 @@ public class SAINBotLookClass : BotBase
         {
             if (enemy.ShallCheckLook(currentTime, out float deltaTime))
             {
+                if (enemy.EnemyPlayerComponent.HiddenFromBots)
+                {
+                    // CheckLookEnemy is what updates these, so clear them instead of leaving them as they were.
+                    enemy.EnemyInfo.SetCanShoot(false);
+                    enemy.EnemyInfo.SetVisibleType(EEnemyPartVisibleType.NotVisible);
+                    continue;
+                }
                 enemy.EnemyInfo.CheckLookEnemy(lookAll, deltaTime);
                 updated++;
             }

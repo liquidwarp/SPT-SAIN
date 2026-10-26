@@ -184,7 +184,7 @@ internal class AimOffsetPatch : ModulePatch
         __instance.EndTargetPoint = result;
 
 #if DEBUG
-        if (SAINPlugin.LoadedPreset.GlobalSettings.General.Debug.Gizmos.DebugDrawAimGizmos)
+        if (SAINPlugin.DebugSettings.Gizmos.DebugDrawAimGizmos)
         {
             Vector3 weaponRoot = __instance._owner.WeaponRoot.position;
             DebugGizmos.DrawLine(weaponRoot, result, Color.red, 0.02f, 0.25f, true);
@@ -220,7 +220,7 @@ public class AimTimePatch : ModulePatch
     private static float CalculateAim(BotComponent botComponent, float distance, float angle, bool moving, bool panicing, float aimDelay)
     {
         BotOwner botOwner = botComponent.BotOwner;
-        StringBuilder stringBuilder = SAINPlugin.LoadedPreset.GlobalSettings.General.Debug.Logs.DebugAimCalculations
+        StringBuilder stringBuilder = SAINPlugin.DebugSettings.Logs.DebugAimCalculations
             ? new StringBuilder()
             : null;
         stringBuilder?.AppendLine(

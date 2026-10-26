@@ -156,10 +156,17 @@ public sealed class ConfigInfoClass
         get
         {
             return Hidden
+                || (Debug && !IsDebugBuild)
                 || (AdvancedOption && !PresetHandler.EditorDefaults.AdvancedBotConfigs)
-                || (DeveloperOption && !PresetHandler.EditorDefaults.DevBotConfigs); // || (Debug && !SAINPlugin.DebugMode)
+                || (DeveloperOption && !PresetHandler.EditorDefaults.DevBotConfigs);
         }
     }
+
+#if DEBUG
+    private const bool IsDebugBuild = true;
+#else
+    private const bool IsDebugBuild = false;
+#endif
 
     public bool MenuOpen;
 

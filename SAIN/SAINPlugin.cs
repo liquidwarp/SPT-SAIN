@@ -28,8 +28,17 @@ public class SAINPlugin : BaseUnityPlugin
 
     public static DebugSettings DebugSettings
     {
+#if DEBUG
         get { return LoadedPreset.GlobalSettings.General.Debug; }
+#else
+        get { return _releaseDebugSettings; }
+#endif
     }
+
+#if !DEBUG
+    // Release builds hide the debug options, so ignore any a preset has saved.
+    private static readonly DebugSettings _releaseDebugSettings = new();
+#endif
 
     public static bool DebugMode
     {

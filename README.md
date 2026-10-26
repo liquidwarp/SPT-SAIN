@@ -29,6 +29,7 @@ Fork of SAIN, whose continued repo is now archived.
 
 - SAIN's own bot extraction, which was off by default, and its Looting Bots, Questing Bots and Realism integrations. Bots use vanilla extraction or a mod like ORBIT.
 - Settings that never did anything, such as the unstuck/teleport options and door kicking.
+- Debug options in release builds. They now only appear in the editor of debug builds, and release builds ignore any a preset has saved.
 
 ## Fixes
 
@@ -44,3 +45,7 @@ Fork of SAIN, whose continued repo is now archived.
 - Fix bots crouching, standing and leaning faster at higher frame rates.
 - Fix errors with despawned players and other destroyed objects.
 - Smaller fixes to footstep hearing, grenade escape and the preset editor.
+
+## Development
+
+- Debug builds add hearing test tools under General → Debug: a hearing overlay, markers where bots guess you are, logs of why a sound was or wasn't heard, and a "Bots Can't See Me" option to test hearing alone.

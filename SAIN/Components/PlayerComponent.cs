@@ -83,6 +83,24 @@ public class PlayerComponent : MonoBehaviour, IDisposable
     public BotComponent BotComponent { get; private set; }
     public Player Player { get; private set; }
 
+    public bool IsMainPlayer
+    {
+        get
+        {
+            Player player = Player;
+            if (player == null)
+            {
+                return false;
+            }
+            return player.IsYourPlayer;
+        }
+    }
+
+    public bool HiddenFromBots
+    {
+        get { return SAINPlugin.DebugSettings.Logs.BotsCantSeeMainPlayer && IsMainPlayer; }
+    }
+
     public PlayerMovementController CharacterController { get; private set; } = new();
     public PlayerTickData PlayerTickData { get; private set; }
     public OtherPlayersData OtherPlayersData { get; private set; }

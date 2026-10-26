@@ -49,6 +49,7 @@ public class GeneralSettings : SAINSettingsBase<GeneralSettings>, ISAINSettings
     public JokeSettings Jokes = new();
 
     [DataMember]
+    [Debug]
     public DebugSettings Debug = new();
 
     [DataMember]

@@ -55,11 +55,7 @@ public class DebugGizmos
             float expireTime = gizmo.ExpireTime;
             if (expireTime > 0 && expireTime < currentTime)
             {
-                if (gizmo.GameObject != null)
-                {
-                    Object.Destroy(gizmo.GameObject);
-                    gizmo.GameObject = null;
-                }
+                DestroyGizmoObject(gizmo.GameObject);
                 _gizmos.RemoveAt(i);
             }
         }
@@ -67,7 +63,7 @@ public class DebugGizmos
 
     public static void OnGUI()
     {
-        if (DebugSettings.Instance.Logs.DrawDebugLabels)
+        if (SAINPlugin.DebugSettings.Logs.DrawDebugLabels)
         {
             foreach (DebugGizmo gizmo in _gizmos)
             {
@@ -102,11 +98,7 @@ public class DebugGizmos
         {
             if (_gizmos[i].Label == obj)
             {
-                if (_gizmos[i].GameObject != null)
-                {
-                    Object.Destroy(_gizmos[i].GameObject);
-                }
-
+                DestroyGizmoObject(_gizmos[i].GameObject);
                 _gizmos.RemoveAt(i);
                 break;
             }
@@ -185,7 +177,7 @@ public class DebugGizmos
     {
         if (Sphere != null)
         {
-            Sphere.GetComponent<Renderer>().material.color = color;
+            SetRendererColor(Sphere.GetComponent<Renderer>(), color);
             Sphere.transform.position = new Vector3(position.x, position.y, position.z);
             Sphere.transform.localScale = new Vector3(size, size, size);
         }
@@ -265,8 +257,32 @@ public class DebugGizmos
         }
         if (gameObject != null && gameObject.TryGetComponent<Renderer>(out var renderer))
         {
-            renderer.material.color = color;
+            SetRendererColor(renderer, color);
         }
+    }
+
+    private static void SetRendererColor(Renderer renderer, Color color)
+    {
+        renderer.GetPropertyBlock(_propertyBlock);
+        _propertyBlock.SetColor(_colorId, color);
+        renderer.SetPropertyBlock(_propertyBlock);
+    }
+
+    private static void DestroyGizmoObject(GameObject gameObject)
+    {
+        if (gameObject == null)
+        {
+            return;
+        }
+        if (gameObject.TryGetComponent<LineRenderer>(out var lineRenderer))
+        {
+            Material material = lineRenderer.sharedMaterial;
+            if (material != null)
+            {
+                Object.Destroy(material);
+            }
+        }
+        Object.Destroy(gameObject);
     }
 
     public static void SetLineWidth(GameObject gameObject, float lineWidth, bool taperLine = false)
@@ -293,7 +309,7 @@ public class DebugGizmos
 
     private static void PresetUpdated(SAINPresetClass preset)
     {
-        if (!preset.GlobalSettings.General.Debug.Gizmos.DrawDebugGizmos)
+        if (!SAINPlugin.DrawDebugGizmos)
         {
             ClearGizmos();
         }
@@ -323,10 +339,7 @@ public class DebugGizmos
     {
         for (int i = 0; i < _gizmos.Count; i++)
         {
-            if (_gizmos[i].GameObject != null)
-            {
-                Object.Destroy(_gizmos[i].GameObject);
-            }
+            DestroyGizmoObject(_gizmos[i].GameObject);
         }
         _gizmos.Clear();
     }
@@ -335,4 +348,6 @@ public class DebugGizmos
     private static float _nextCheckScreenTime;
     private static GUIStyle _defaultStyle;
     private static readonly List<DebugGizmo> _gizmos = [];
+    private static readonly MaterialPropertyBlock _propertyBlock = new();
+    private static readonly int _colorId = Shader.PropertyToID("_Color");
 }

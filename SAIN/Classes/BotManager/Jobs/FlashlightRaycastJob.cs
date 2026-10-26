@@ -125,7 +125,7 @@ public class FlashlightRaycastJob : SainJobTemplate, IDisposable
             {
                 foreach (Enemy Enemy in Bot.EnemyController.Enemies.Values)
                 {
-                    if (Enemy != null && Enemy.PlayerComponent.IsActive)
+                    if (Enemy != null && Enemy.PlayerComponent.IsActive && !Enemy.EnemyPlayerComponent.HiddenFromBots)
                     {
                         FlashLightClass EnemyLight = Enemy.EnemyPlayerComponent.Flashlight;
                         if (

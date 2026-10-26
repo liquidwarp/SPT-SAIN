@@ -371,7 +371,6 @@ public class SelfActionDecisionClass : BotBase
             Decision = ESelfActionType.None;
             return false;
         }
-        // Hold while in hands, BotHealingFixes times the use out
         var firstAid = BotOwner.Medecine.FirstAid;
         if (firstAid.Using)
         {
@@ -400,9 +399,7 @@ public class SelfActionDecisionClass : BotBase
             Decision = ESelfActionType.None;
             return false;
         }
-        // Time limited, the game never clears Using if putting the stim in hand fails
-        bool usingStims = BotOwner.Medecine.Stimulators.Using && timeSinceChange <= MAX_STIMS_USE_TIME;
-        if (!usingStims && timeSinceChange > 3f)
+        if (!BotOwner.Medecine.Stimulators.Using && timeSinceChange > 3f)
         {
             Decision = ESelfActionType.None;
             return false;
@@ -486,7 +483,6 @@ public class SelfActionDecisionClass : BotBase
         return true;
     }
 
-    private const float MAX_STIMS_USE_TIME = 10f;
 
     private static bool ShallUseStimsCheckEnemy(Enemy enemy)
     {
