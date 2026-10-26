@@ -48,7 +48,7 @@ public static class Vector
             return false;
         }
 
-        Vector3 direction2 = midPoint - target;
+        Vector3 direction2 = target - midPoint;
         if (
             Physics.Raycast(
                 new Ray(midPoint, direction2),

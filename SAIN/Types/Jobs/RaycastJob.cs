@@ -90,7 +90,7 @@ public struct RaycastJob : IDisposable
         for (int i = 0; i < Count; i++)
         {
             Vector3 Direction = Points[i] - ViewPosition;
-            Result[i] = new RaycastCommand(ViewPosition, Direction, new QueryParameters { layerMask = Mask }, 1f);
+            Result[i] = new RaycastCommand(ViewPosition, Direction.normalized, new QueryParameters { layerMask = Mask }, Direction.magnitude);
         }
         return Result;
     }
@@ -121,7 +121,8 @@ public struct PathVisionJob
         NativeArray<RaycastCommand> commands = new(nodeCount, Allocator.TempJob);
         for (int i = 0; i < nodeCount; i++)
         {
-            commands[i] = new RaycastCommand(origin, (allPathNodes[i].Point - origin), queryParameters, 1f);
+            Vector3 toNode = allPathNodes[i].Point - origin;
+            commands[i] = new RaycastCommand(origin, toNode.normalized, queryParameters, toNode.magnitude);
         }
         Commands = commands;
         Hits = new NativeArray<RaycastHit>(nodeCount, Allocator.TempJob);
