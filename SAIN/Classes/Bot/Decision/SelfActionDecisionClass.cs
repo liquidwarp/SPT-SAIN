@@ -260,7 +260,7 @@ public class SelfActionDecisionClass : BotBase
                 Decision = ESelfActionType.FirstAid;
                 return true;
             }
-            if (Bot.Medical.Surgery.CheckCanStartUsingKit())
+            if (Bot.Medical.Surgery.CheckAreaClearForSurgery())
             {
                 Decision = ESelfActionType.Surgery;
                 return true;
