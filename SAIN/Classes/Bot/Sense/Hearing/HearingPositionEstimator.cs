@@ -67,6 +67,11 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
             float confidence = GetRememberedConfidence(last, enemyPosition, sinceUpdated, moveDistance);
             return Place(Sound, confidence, RollOffset(), RollOffset(), EEstimateStep.ResetAfterSilence);
         }
+        // Re-rolling the error for a source that hasn't moved makes the guess, and the bots aiming at it, jitter
+        if (!moved)
+        {
+            return Place(Sound, last.Confidence, last.AngleOffset, last.DistanceOffset, EEstimateStep.Refined);
+        }
         return Place(Sound, last.Confidence, Drift(last.AngleOffset), Drift(last.DistanceOffset), EEstimateStep.Drift);
     }
 

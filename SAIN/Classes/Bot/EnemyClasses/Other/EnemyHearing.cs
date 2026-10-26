@@ -98,6 +98,9 @@ public enum EEstimateStep
 
     /// <summary>Moved while being heard, so the error drifted a little from the last guess.</summary>
     Drift,
+
+    /// <summary>Same spot heard again after the reuse time, so the guess keeps its error and gains confidence.</summary>
+    Refined,
 }
 
 public class EnemyHearing(EnemyData enemyData) : EnemyBase(enemyData, enemyData.Enemy.Bot)
