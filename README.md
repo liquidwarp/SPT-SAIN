@@ -6,96 +6,41 @@ Fork of SAIN, whose continued repo is now archived.
 
 - [BotHealingFixes, forked version](https://github.com/liquidwarp/SPT-BotHealingFixes). SAIN doesn't load without it.
 
-## Changes
+## Reworks and new behavior
 
-### Aim keeps tightening while you stay exposed
+### Hearing
 
-- A bot's aim starts loose when it gets a shot at you and gets steadily more precise for as long as it keeps that shot, down to its "max aiming upgrade by time" limit.
-- Before, its aim went back to loose every 2 or 3 trigger pulls, so a bot firing steadily rarely got close to that limit.
-- It starts loose again as soon as the bot loses its shot: you break line of sight, or it reloads, sprints or switches to another target. Peeking and ducking back out of sight is as forgiving as before.
-- Fixed bots sometimes starting on you with the precision they had built up earlier, for example on another target, before being flashed, or before a brain layer from EFT or another mod took over for a while.
-- The first shots are still forgiving, but staying in the open against PMCs, Raiders, bosses and their followers is noticeably deadlier.
-- Each bot type now gets its own "max aim time" and "max aiming upgrade by time" from the game's data, as was intended. Before, nearly every bot type got the same values (2 and 0.25). On the default presets:
-  - Scavs and marksmen barely tighten their aim: their limit is now 0.85 instead of 0.25 (0.4 on impossible difficulty), so long fights against them are much less precise than before.
-  - The Goons, Sanitar and their followers can tighten further than before, down to 0.15.
-  - Most bots finish aiming in at most 1.5 seconds instead of 2, and Rogues in 1.1.
-  - The Easy preset still keeps every bot at 2 seconds and 0.4 or looser, and the Harder PMCs preset still sets its own values for PMCs.
+- **Reworked hearing** that no longer uses your real position as a basis. Bots get the direction roughly right and the distance less so, are worse at it from far away or behind, and get better the more they hear you. Their mistakes stay consistent instead of jumping around you, and moving quietly after making noise can shake them off.
+- **Pain, breathing and voice lines** follow normal hearing, so walls and distance apply.
+- **Grenade explosions** no longer reveal the thrower.
+- **Headsets and helmets** follow EFT's rules: built-in headsets count, any headset removes the helmet penalty, and there's a new light-helmet setting.
+- New hearing settings replace the old position randomization settings.
 
-### Bot recoil works as intended
+### Less hidden information
 
-- Fixed a bug that cancelled bot recoil almost immediately on about 1 shot in 4.
-- Recoil now fades at the same rate no matter how often a bot updates.
-- Sustained full-auto fire from bots is a little less accurate and behaves the same from bot to bot.
+- Bots turn toward a sound only when they can see where they think it came from, not because they secretly have line of sight to you.
+- Flashed bots fire at where they last knew (or thought) you were, not at your real position.
 
-### Hearing follows EFT's headset rules
+### Healing
 
-- Headsets built into helmets now count as headphones. Before, only the ear-piece slot counted.
-- Any headset now removes the helmet hearing penalty, as it does in EFT.
-- Armored face covers that muffle sound now count, and a new "Light Helmet" setting sits between no helmet and a heavy helmet.
-- New default multipliers (unsuppressed gunshots are not affected):
+- Bot healing relies on the forked BotHealingFixes.
 
-| Bot gear | Before | Now |
-|---|---|---|
-| Headset, with or without helmet | 1.0 (0.8 with heavy helmet) | 1.0 |
-| No headset, no helmet | 0.6 | 0.7 |
-| No headset, light helmet | 0.6 | 0.63 |
-| No headset, heavy helmet | 0.48 | 0.48 |
+### Removed
 
-### Preset settings apply as soon as a bot spawns
+- SAIN's own bot extraction, which was off by default, and its Looting Bots, Questing Bots and Realism integrations. Bots use vanilla extraction or a mod like ORBIT.
+- Settings that never did anything, such as the unstuck/teleport options and door kicking.
 
-Some bot settings used to be read only after the preset was saved from the in-game editor, and the Squad Talk settings were never read at all, so freshly spawned bots ran on built-in values. They now follow your preset from the start:
+## Fixes
 
-- **Taunts and enemy voice lines depend on personality.** Before, every bot taunted, and none faked death or begged.
-  - GigaChad, Wreckless, SnappingTurtle and Chad taunt, and more often than before.
-  - Rat, Timmy, Coward and Normal no longer taunt.
-  - Each bot type's "Bot Taunts" setting is respected.
-  - GigaChad, Wreckless and SnappingTurtle can fake death when solo and badly hurt, or when a grenade explodes near them mid-fight.
-  - Timmy and Coward can beg for their lives.
-  - SnappingTurtle, Chad, Rat and Timmy no longer answer enemy voice lines.
-- **Friendly voice lines:** bots answer a friendly player's voice lines from up to 65 meters away instead of 60.
-- **Grenades:**
-  - The global "Bots Use Grenades" toggle and each bot type's grenade setting are respected.
-  - Bots skip throws that need far more strength than the distance calls for, which mostly happens when you're well above them.
-- **Squad callouts use the Squad Talk settings:**
-  - "Reloading" calls: at most every 4 seconds instead of every second.
-  - "Heard a noise" calls: 50% chance instead of 40%, but at most every 30 seconds instead of every second, so far less chatter.
-  - Enemy direction calls ("on our six", "left flank"): 70% chance instead of 60%.
-
-### "Not looking" reaction
-
-- The "Bot Reaction Changes Toggle" now controls the small delay in how fast a bot spots you when your back is turned. Before, the delay applied even with the toggle off.
-- The time limit now runs from when you enter the bot's line of sight and resets when sight is broken.
-- The look angle now accounts for looking up or down at a bot.
-- The accuracy penalty in these settings never did anything and has been removed.
-
-### Extraction
-
-- SAIN's own bot extraction, which was off by default, has been removed, along with its Looting Bots, Questing Bots and Realism integrations. On default settings nothing changes, and bots still use vanilla extraction or whatever a mod like ORBIT provides.
-- The extraction calls other mods use (`ExtractBot`, `TrySetExfilForBot`, `GetExtractedBots`, `GetExtractionInfos`) still exist but do nothing and report no extracted bots.
-- Bots always use the standard recoil and armor values, whether or not Realism is installed.
-
-### Bots heal properly
-
-Healing now relies on the forked BotHealingFixes, which this SAIN fork requires.
-
-- **Surgery:**
-  - Bots complete surgery and go from one destroyed limb to the next.
-  - A bot whose surgical kit fails to start waits 10 seconds before trying again.
-  - Stopping surgery no longer partly restores destroyed arms, legs and stomach for free.
-- **First aid** is no longer cut off after 6 seconds, and is cancelled when an enemy becomes a threat.
-- **Stims** are no longer cut off after 3 seconds.
-- **Picking meds:** bleeding bots use a bandage, tourniquet or medkit that can stop the bleed, and surgical kits are only used on destroyed limbs.
-
-### Bots reach cover when reloading or out of ammo
-
-- A bot falling back to reload, or with an empty gun, keeps moving to cover instead of restarting its move every second or so.
-- A reload that never finishes is cancelled after 16 seconds (magazine) or 40 seconds (loading rounds one by one), and the bot tries again.
-
-### Other changes
-
-- Removed settings that were never used, along with their code, such as the unstuck/teleport options, door kicking and the AI-vs-AI vision limit. None of it was running before.
-- Safer handling of destroyed game objects, such as despawned players.
-- Bots no longer miss a player's footsteps for the rest of a run or sprint after that player is briefly deactivated.
-- A bot that can't find anywhere to escape a grenade waits a moment before searching again, instead of searching every frame.
-- Bots crouch, stand up and lean at the same speed whatever the frame rate. Before, they did it faster the higher the frame rate.
-- The preset editor's tabs have their padding back.
+- Fix bots looking, suppressing and leaning at you through walls instead of watching the corner or doorway you'd come out of.
+- Fix bots noticing flashlight beams through walls, and mispredicting where grenades land when a wall is in the way.
+- Fix bot aim resetting every few shots. It now keeps tightening while a bot keeps its shot on you, and resets when you break line of sight, so staying exposed is deadlier while peeking is as forgiving as before.
+- Fix aim limits ignoring each bot type's own game data. Scavs and marksmen are now less precise in long fights, and the Goons and Sanitar more precise.
+- Fix bot recoil resetting early on some shots.
+- Fix bots restarting their move to cover when reloading or out of ammo, and reloads that get stuck never being retried.
+- Fix bots not finishing surgery, first aid and stims, and picking meds that don't fit their wounds.
+- Fix preset settings only applying after saving from the in-game editor. Taunting, faking death and begging now depend on personality, squad callouts follow the Squad Talk settings with far less chatter, and the grenade toggles are respected.
+- Fix the "Bot Reaction Changes Toggle" not controlling the "not looking" reaction delay.
+- Fix bots crouching, standing and leaning faster at higher frame rates.
+- Fix errors with despawned players and other destroyed objects.
+- Smaller fixes to footstep hearing, grenade escape and the preset editor.
