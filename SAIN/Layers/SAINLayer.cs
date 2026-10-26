@@ -96,9 +96,13 @@ public abstract class SAINLayer : CustomLayer
         {
             // If we activated this (SAIN) layer, wipe the builtin bot mover
             mover.Stop();
+            SetLayer(true);
         }
         else if (_currentLayerName == LayerName)
         {
+            // A higher priority layer took over without IsActive being called again, so ActiveLayer would go stale
+            SetLayer(false);
+
             // If we switched away from this layer to a different one, set the player to the navmesh to ensure it has a consistent state
             var playerPosition = BotOwner.GetPlayer.Position;
             mover._lastGoodCastPoint = mover._prevSuccessLinkedFrom = mover._prevLinkPos = mover.PositionOnWayInner = playerPosition;
