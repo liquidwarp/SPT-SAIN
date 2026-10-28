@@ -120,6 +120,7 @@ public class Squad
                     && reportedEnemy.Player != null
                     && reportedEnemy.EnemyPlayer != null
                     && reportedEnemy.Player.ProfileId != member.ProfileId
+                    && isInCommunicationRange(reportedEnemy.Bot, member)
                 )
                 {
                     member
