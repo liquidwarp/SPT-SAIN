@@ -73,21 +73,21 @@ public class SearchPathFinder : BotSubClass<SearchClass>
             return;
         }
 
-        if (ReachedEndOfPartialPath(enemy))
+        if (ReachedEndOfPath(enemy))
         {
             enemy.KnownPlaces.SetPlaceAsSearched(targetPlace);
             Reset();
         }
     }
 
-    private bool ReachedEndOfPartialPath(Enemy enemy)
+    private bool ReachedEndOfPath(Enemy enemy)
     {
-        if (enemy.Path.PathToEnemyStatus != NavMeshPathStatus.PathPartial)
+        int cornerCount = enemy.Path.PathCornerCount;
+        if (cornerCount < 1)
         {
             return false;
         }
-        int cornerCount = enemy.Path.PathCornerCount;
-        if (cornerCount < 1)
+        if (enemy.Path.PathToEnemyStatus == NavMeshPathStatus.PathComplete && cornerCount > 2)
         {
             return false;
         }
