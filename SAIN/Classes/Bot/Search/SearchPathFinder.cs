@@ -23,6 +23,12 @@ public class SearchPathFinder : BotSubClass<SearchClass>
         return CheckEnemyPath(enemy, out failReason);
     }
 
+    public bool CanStillReachTarget(Enemy enemy)
+    {
+        NavMeshPath path = enemy.Path.PathToEnemy;
+        return path != null && path.status != NavMeshPathStatus.PathInvalid;
+    }
+
     public void UpdateSearchDestination(Enemy enemy)
     {
         if (!SearchedTargetPosition)

@@ -36,6 +36,12 @@ public class SearchDecider : BotSubClass<SearchClass>
                 reasons.NotSearchReason = ENotSearchReason.NullTargetPlace;
                 return false;
             }
+            if (!BaseClass.PathFinder.CanStillReachTarget(enemy))
+            {
+                reasons.NotSearchReason = ENotSearchReason.PathCalcFailed;
+                reasons.PathCalcFailReason = "path lost during search";
+                return false;
+            }
             return true;
         }
 
