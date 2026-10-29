@@ -15,6 +15,8 @@ Fork of SAIN, whose continued repo is now archived.
 - **Grenade explosions** no longer reveal the thrower.
 - **Headsets and helmets** follow EFT's rules: built-in headsets count, any headset removes the helmet penalty, and there's a new light-helmet setting.
 - New hearing settings replace the old position randomization settings.
+- Hearing guesses are placed more reliably on walkable ground, and bots stop searching when their path becomes invalid or they reach its endpoint.
+- **Squad communication:** Bots share enemy positions only within communication range, unless both have earpieces.
 
 ### Less hidden information
 
@@ -33,6 +35,7 @@ Fork of SAIN, whose continued repo is now archived.
 
 ## Fixes
 
+- Fix missing enemy relationships between groups when bots spawn before other groups finish activating.
 - Fix bots looking, suppressing and leaning at you through walls instead of watching the corner or doorway you'd come out of.
 - Fix bots noticing flashlight beams through walls, and mispredicting where grenades land when a wall is in the way.
 - Fix bot aim resetting every few shots. It now keeps tightening while a bot keeps its shot on you, and resets when you break line of sight, so staying exposed is deadlier while peeking is as forgiving as before.
