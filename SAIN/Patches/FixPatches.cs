@@ -1,7 +1,12 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using BepInEx.Logging;
+using Comfort.Common;
 using EFT;
 using HarmonyLib;
 using SAIN.Components;
+using SAIN.Helpers;
 using SAIN.Extensions;
 using SAIN.Models.Enums;
 using SAIN.SAINComponent.Classes.EnemyClasses;
@@ -232,6 +237,119 @@ internal class BotGroupAddEnemyPatch : ModulePatch
         }
 
         return true;
+    }
+}
+internal class GroupHostilityPatch : ModulePatch
+{
+    private static readonly ManualLogSource _log = BepInEx.Logging.Logger.CreateLogSource("SAIN Hostility");
+
+    protected override MethodBase GetTargetMethod()
+    {
+        return AccessTools.Method(typeof(BotOwner), nameof(BotOwner.PreActivate));
+    }
+
+    [PatchPostfix]
+    public static void PatchPostfix(BotOwner __instance)
+    {
+        BotsGroup ownGroup = __instance.BotsGroup;
+        if (ownGroup == null)
+        {
+            return;
+        }
+        try
+        {
+            AddToInactiveGroups(__instance, ownGroup);
+            if (ownGroup._initialBot == __instance)
+            {
+                AddExistingBots(__instance, ownGroup);
+            }
+        }
+        catch (Exception exception)
+        {
+            _log.LogError($"Could not check hostility for {__instance.Profile.Info.Nickname}: {exception}");
+        }
+    }
+
+    private static void AddToInactiveGroups(BotOwner bot, BotsGroup ownGroup)
+    {
+        foreach (BotZoneGroups zoneGroups in bot.BotsController.Groups().Values)
+        {
+            foreach (BotsGroup group in zoneGroups._bossGroup)
+            {
+                CheckInactiveGroup(group, ownGroup, bot);
+            }
+            foreach (BotsGroup group in zoneGroups.data.Values)
+            {
+                CheckInactiveGroup(group, ownGroup, bot);
+            }
+            List<BotsGroup> noConnectionGroups = zoneGroups._noConnectionGroups;
+            for (int i = 0; i < noConnectionGroups.Count; i++)
+            {
+                CheckInactiveGroup(noConnectionGroups[i], ownGroup, bot);
+            }
+        }
+    }
+
+    private static void CheckInactiveGroup(BotsGroup group, BotsGroup ownGroup, BotOwner bot)
+    {
+        // Groups that had an active member got the bot from the game, or have all died
+        if (group == null || group == ownGroup || group._isFirstMemberAdded)
+        {
+            return;
+        }
+        // The group's first bot never finished spawning
+        if (group._initialBot == null || group._initialBot.BotsGroup == null)
+        {
+            return;
+        }
+        TryAddEnemy(group, bot);
+    }
+
+    private static void AddExistingBots(BotOwner bot, BotsGroup ownGroup)
+    {
+        List<Player> players = Singleton<EFT.GameWorld>.Instance.AllAlivePlayersList;
+        for (int i = 0; i < players.Count; i++)
+        {
+            Player player = players[i];
+            // Humans are handled when the group is created
+            if (player == null || !player.IsAI || player.AIData == null)
+            {
+                continue;
+            }
+            BotOwner other = player.AIData.BotOwner;
+            // A bot without a group yet checks this one itself once it gets its own
+            if (other == null || other == bot || other.BotsGroup == null || other.BotsGroup == ownGroup)
+            {
+                continue;
+            }
+            TryAddEnemy(ownGroup, other);
+        }
+    }
+
+    private static void TryAddEnemy(BotsGroup group, BotOwner bot)
+    {
+        string profileId = bot.ProfileId;
+        // Enemies a group gets before its first member activates wait in the recheck list
+        if (
+            BotsGroupHelpers.ContainsPlayer(group._recheckPersonsAfterInit, profileId)
+            || BotsGroupHelpers.ContainsPlayer(group.Enemies, profileId)
+            || BotsGroupHelpers.ContainsPlayer(group.Allies, profileId)
+        )
+        {
+            return;
+        }
+        try
+        {
+            if (!group.IsPlayerEnemy(bot))
+            {
+                return;
+            }
+            group.AddEnemy(bot, EBotEnemyCause.initial);
+        }
+        catch (Exception exception)
+        {
+            _log.LogError($"Could not check {bot.Profile.Info.Nickname} against group {group.Id}: {exception}");
+        }
     }
 }
 
