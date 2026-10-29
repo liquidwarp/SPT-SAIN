@@ -8,6 +8,7 @@ using SAIN.Preset.Shared.GlobalSettings.Categories;
 using SAIN.SAINComponent;
 using SAIN.SAINComponent.Classes.EnemyClasses;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SAIN.Classes.Bot.Sense.Hearing;
 
@@ -163,13 +164,66 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
 
     private static Vector3 SnapToNavMesh(Vector3 guess, Vector3 enemyPosition)
     {
-        return SampleSameFloor(guess, enemyPosition.y) ?? SampleSameFloor(Vector3.Lerp(enemyPosition, guess, 0.5f), enemyPosition.y) ?? guess;
+        Vector3? snapped = SampleSameFloor(guess, enemyPosition.y);
+        if (snapped != null)
+        {
+            return snapped.Value;
+        }
+        snapped = SampleAlongLine(guess, enemyPosition);
+        if (snapped != null)
+        {
+            return snapped.Value;
+        }
+
+        Vector3? enemyOnMesh = SampleSameFloor(enemyPosition, enemyPosition.y);
+        if (enemyOnMesh == null)
+        {
+            return guess;
+        }
+
+        Vector3 start = enemyOnMesh.Value;
+        Vector3 target = guess;
+        target.y = start.y;
+        bool blocked = NavMesh.Raycast(start, target, out NavMeshHit hit, NavMesh.AllAreas);
+        Vector3? castEnd = blocked ? hit.position : SampleSameFloor(target, enemyPosition.y);
+        if (castEnd == null || Mathf.Abs(castEnd.Value.y - enemyPosition.y) > _settings.HEAR_NAV_MAX_HEIGHT_DIFF)
+        {
+            return start;
+        }
+        return castEnd.Value;
     }
+
+    private const float CAST_AT_ENEMY_DISTANCE = 1f;
+
+    private static Vector3? SampleAlongLine(Vector3 guess, Vector3 enemyPosition)
+    {
+        float distance = (guess - enemyPosition).magnitude;
+        float step = Mathf.Max(LINE_SAMPLE_SPACING, distance / LINE_SAMPLE_MAX_STEPS);
+        float radius = Mathf.Min(step, _settings.HEAR_NAV_SAMPLE_RANGE);
+        for (float fromGuess = _settings.HEAR_NAV_SAMPLE_RANGE; fromGuess < distance; fromGuess += step)
+        {
+            Vector3 point = Vector3.Lerp(guess, enemyPosition, fromGuess / distance);
+            Vector3? snapped = SampleSameFloor(point, enemyPosition.y, radius);
+            if (snapped != null)
+            {
+                return snapped;
+            }
+        }
+        return null;
+    }
+
+    private const float LINE_SAMPLE_SPACING = 2f;
+    private const int LINE_SAMPLE_MAX_STEPS = 10;
 
     private static Vector3? SampleSameFloor(Vector3 point, float floorHeight)
     {
+        return SampleSameFloor(point, floorHeight, _settings.HEAR_NAV_SAMPLE_RANGE);
+    }
+
+    private static Vector3? SampleSameFloor(Vector3 point, float floorHeight, float radius)
+    {
         HearingSettings settings = _settings;
-        Vector3? sampled = NavMeshHelpers.GetNearbyNavMeshPoint(point, settings.HEAR_NAV_SAMPLE_RANGE);
+        Vector3? sampled = NavMeshHelpers.GetNearbyNavMeshPoint(point, radius);
         if (sampled == null || Mathf.Abs(sampled.Value.y - floorHeight) > settings.HEAR_NAV_MAX_HEIGHT_DIFF)
         {
             return null;
