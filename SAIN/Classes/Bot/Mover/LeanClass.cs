@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using EFT;
 using SAIN.Components;
 using SAIN.Preset.Shared.Enums;
@@ -30,8 +29,6 @@ public class LeanClass : BotBase
     {
         TickInterval = 1f / 20f;
     }
-
-    private static readonly ECombatDecision[] DontLean = [ECombatDecision.Retreat, ECombatDecision.RunAway, ECombatDecision.MeleeAttack];
 
     public override void ManualUpdate()
     {
@@ -116,7 +113,11 @@ public class LeanClass : BotBase
         }
         var CurrentDecision = Bot.Decision.CurrentCombatDecision;
         var enemy = Bot.GoalEnemy;
-        if (enemy == null || DontLean.Contains(CurrentDecision) || Bot.Suppression.IsHeavySuppressed)
+        if (
+            enemy == null
+            || CurrentDecision is ECombatDecision.Retreat or ECombatDecision.RunAway or ECombatDecision.MeleeAttack
+            || Bot.Suppression.IsHeavySuppressed
+        )
         {
             return false;
         }

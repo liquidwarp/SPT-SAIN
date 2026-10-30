@@ -48,6 +48,7 @@ public class SelfActionDecisionClass : BotBase
     }
 
     private float _lastReloadTime;
+    private float _nextStuckReloadCheckTime;
 
     public override void ManualUpdate()
     {
@@ -62,14 +63,48 @@ public class SelfActionDecisionClass : BotBase
 
     private void ClearStuckReload(BotReload reload)
     {
-        // Vanilla CheckReloadLongTime clears a reload stuck for 16s (magazine) or 40s (loose ammo), but only once per weapon,
-        // and SAIN otherwise only calls it during the 8s reload decision
-        reload._reloadFailDebug = false;
-        reload.CheckReloadLongTime();
-        if (!reload.Reloading)
+        float elapsed = Time.time - reload._reloadStartTime;
+        float timeout =
+            reload._reloadType == BotReload.EReloadType.MagReload ? BotReload.MAG_RELOAD_MAX_TIME : BotReload.AMMO_RELOAD_MAX_TIME;
+        if (elapsed <= timeout || _nextStuckReloadCheckTime > Time.time)
         {
+            return;
+        }
+        // Reloading is AI state only; it can be cleared freely unless a reload operation is still running in hands.
+        bool finishedOperation = false;
+        if (Player.HandsController is Player.FirearmController controller && controller.IsInReloadOperation())
+        {
+            if (!ReferenceEquals(controller.Item, BotOwner.WeaponManager.CurrentWeapon))
+            {
+                _nextStuckReloadCheckTime = Time.time + 1f;
+                return;
+            }
+            // Only internal magazine reloads accept a trigger press; Fika's overrides send AbortReload from it.
+            if (controller.CurrentOperation is Player.FirearmController.ReloadInternalMagBase reloadOperation)
+            {
+                reloadOperation.SetTriggerPressed(true);
+            }
+            // Finish the owned operation so ammunition commits, inventory events and Fika callbacks run.
+            // Clearing BotReload.Reloading alone leaves the hands operation running.
+            if (controller.IsInReloadOperation())
+            {
+                controller.FastForwardCurrentState();
+            }
+            if (controller.IsInReloadOperation())
+            {
+                // Retry slowly instead of every frame while the operation refuses to finish.
+                _nextStuckReloadCheckTime = Time.time + 1f;
+                return;
+            }
+            finishedOperation = true;
+        }
+        if (reload.Reloading)
+        {
+            reload.Reloading = false;
             Logger.LogWarning(
-                $"[{Bot.name}] Reload of [{BotOwner.WeaponManager.CurrentWeapon?.Name}] stuck for {Time.time - reload._reloadStartTime:F1}s, cleared reload state"
+                finishedOperation
+                    ? $"[{Bot.name}] Finished a reload operation stuck for {elapsed:F1}s and cleared its reload state"
+                    : $"[{Bot.name}] Cleared stale reload state after {elapsed:F1}s; no reload operation was running"
             );
         }
     }
@@ -336,8 +371,6 @@ public class SelfActionDecisionClass : BotBase
             return false;
         }
 
-        reload.CheckReloadLongTime();
-
         if (timeSinceChange > 8f)
         {
             return false;
@@ -482,7 +515,6 @@ public class SelfActionDecisionClass : BotBase
         }
         return true;
     }
-
 
     private static bool ShallUseStimsCheckEnemy(Enemy enemy)
     {

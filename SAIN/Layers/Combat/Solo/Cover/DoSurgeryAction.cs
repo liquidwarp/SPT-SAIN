@@ -36,14 +36,6 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner), IBotAct
                     bot.Decision.ResetDecisions();
                 }
             }
-            else if (_actionStartedTime + 30f < Time.time)
-            {
-                if (bot.Player != null)
-                {
-                    bot.Player.ActiveHealthController?.RestoreFullHealth();
-                }
-                bot.Decision.ResetDecisions();
-            }
         }
         else
         {
@@ -63,22 +55,12 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner), IBotAct
     private void onSurgeryDone()
     {
         Bot.Medical.Surgery.OnSurgeryDone();
-        _actionStartedTime = Time.time;
         _startSurgeryTime = Time.time + 1f;
 
-        if (BotOwner.Medecine.SurgicalKit.HaveWork)
+        if (!BotOwner.Medecine.SurgicalKit.HaveWork)
         {
-            if (Bot.GoalEnemy == null || Bot.GoalEnemy.TimeSinceSeen > 90f)
-            {
-                if (Bot.Player != null)
-                {
-                    Bot.Player.ActiveHealthController?.RestoreFullHealth();
-                }
-                Bot.Decision.ResetDecisions();
-            }
-            return;
+            Bot.Decision.ResetDecisions();
         }
-        Bot.Decision.ResetDecisions();
     }
 
     public override void Start()
@@ -86,15 +68,15 @@ internal class DoSurgeryAction(BotOwner botOwner) : BotAction(botOwner), IBotAct
         base.Start();
         Bot.Mover.PauseMovement(3f);
         _startSurgeryTime = Time.time + 1f;
-        _actionStartedTime = Time.time;
     }
 
     private float _startSurgeryTime;
-    private float _actionStartedTime;
 
     public override void Stop()
     {
         base.Stop();
+        // Ending the AI action must not abandon a medical operation in hands.
+        Bot.Medical.Surgery.CancelSurgery();
         Bot.Mover?.ActivePath?.UnPause();
     }
 
