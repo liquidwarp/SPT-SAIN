@@ -179,7 +179,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
         if (IsActive && AIData.AISoundPlayer.ShallPlayAISound())
         {
 #if DEBUG
-            if (Player.IsYourPlayer)
+            if (SAINPlugin.DebugMode && Player.IsYourPlayer)
             {
                 Logger.LogDebug($"Sound Cached: [{InSoundType}, {InRange}, {InVolume}]");
             }

@@ -31,7 +31,10 @@ public abstract class SainJobTemplate(string InName, MonoBehaviour InOwner, bool
     protected virtual IEnumerator Loop()
     {
 #if DEBUG
-        Logger.LogDebug($"Starting Job: [{Name}]");
+        if (SAINPlugin.DebugMode)
+        {
+            Logger.LogDebug($"Starting Job: [{Name}]");
+        }
 #endif
         WaitForSeconds Wait = new(LoopInterval);
         while (LoopCondition())
@@ -45,7 +48,10 @@ public abstract class SainJobTemplate(string InName, MonoBehaviour InOwner, bool
             yield return Wait;
         }
 #if DEBUG
-        Logger.LogDebug($"Job Ended [{Name}]");
+        if (SAINPlugin.DebugMode)
+        {
+            Logger.LogDebug($"Job Ended [{Name}]");
+        }
 #endif
     }
 

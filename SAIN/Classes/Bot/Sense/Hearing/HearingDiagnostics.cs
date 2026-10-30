@@ -52,7 +52,8 @@ internal static class HearingDiagnostics
     private const float SNAP_SUMMARY_INTERVAL = 120f;
     private const int SNAP_COUNT = (int)EHearingSnap.RawGuess + 1;
 
-    private static readonly ManualLogSource _log = BepInEx.Logging.Logger.CreateLogSource("SAIN Diagnostics");
+    // Shared by the other temporary diagnostics to keep investigation output in one log source.
+    internal static readonly ManualLogSource Log = BepInEx.Logging.Logger.CreateLogSource("SAIN Diagnostics");
 
     public static bool Enabled
     {
@@ -193,7 +194,7 @@ internal static class HearingDiagnostics
         {
             sb.Append($" {(EHearingSnap)i} {_snapCounts[i]} ({100f * _snapCounts[i] / total:0.0}%)");
         }
-        _log.LogInfo(sb.ToString());
+        Log.LogInfo(sb.ToString());
     }
     private static readonly List<PlayerComponent> _sideBots = [];
     private static readonly Dictionary<string, float> _nextSidesPairLogTime = [];
@@ -243,7 +244,7 @@ internal static class HearingDiagnostics
                     continue;
                 }
                 _nextSidesPairLogTime[key] = time + SIDES_PAIR_LOG_INTERVAL;
-                _log.LogInfo(
+                Log.LogInfo(
                     $"[Sides] {Describe(a)} / {Describe(b)} at {Mathf.Sqrt(distanceSqr):0}m | {Relation(a, b)} | {Relation(b, a)}"
                 );
             }
@@ -450,7 +451,7 @@ internal static class HearingDiagnostics
             sb.Append($" | flybys {stats.FlyBys} (closest {stats.ClosestFlyBy:0.0}m, under fire {stats.FlyBysUnderFire})");
         }
         AppendShooterState(sb, stats.Listener, stats.ShooterId, time);
-        _log.LogInfo(sb.ToString());
+        Log.LogInfo(sb.ToString());
     }
 
     private static void AppendShooterState(StringBuilder sb, BotComponent listener, string shooterId, float time)
@@ -490,7 +491,7 @@ internal static class HearingDiagnostics
         _nextDropLogTime[botId] = time + DROP_LOG_INTERVAL;
 
         bool active = previous.WasValid && Enemy.IsEnemyActive(previous);
-        _log.LogInfo(
+        Log.LogInfo(
             $"[Dropped enemy] {bot.PlayerComponent.Name} ({bot.Info.Personality}) dropped {previous.EnemyName} at {previous.RealDistance:0}m"
                 + $" | sinceShotAtMe {SinceTime(previous.Status.TimeLastShotAtMe, time)}, sinceGunfireHeard {FormatSince(sinceGunfire)}"
                 + $" | knownEnemies {bot.EnemyController.KnownEnemies.Count}, known {previous.EnemyKnown}, valid {previous.WasValid}, active {active}"
@@ -543,7 +544,7 @@ internal static class HearingDiagnostics
         }
         Enemy enemy = sound.Enemy;
         string enemyName = enemy == null ? "?" : enemy.EnemyName;
-        _log.LogInfo(
+        Log.LogInfo(
             $"[Estimate] {bot.PlayerComponent.Name} ({bot.Info.Personality}, SeekCover {held:0}s) {result.Step} {sound.SoundType} from {enemyName}"
                 + $" at {sound.PlayerDistance:0}m: {moved}, confidence {result.Confidence:0.00}, skipped {skippedSinceLast}"
         );

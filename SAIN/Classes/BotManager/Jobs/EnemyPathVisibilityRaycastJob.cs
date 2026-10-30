@@ -125,7 +125,10 @@ public class EnemyPathVisibilityRaycastJob : SainJobTemplate, IDisposable
                 if (!pointFound)
                 {
 #if DEBUG
-                    Logger.LogDebug($"[{enemy.Bot.name}] No visible path point found for enemy {enemy.EnemyName}");
+                    if (SAINPlugin.DebugMode)
+                    {
+                        Logger.LogDebug($"[{enemy.Bot.name}] No visible path point found for enemy {enemy.EnemyName}");
+                    }
 #endif
                     enemy.ClearVisiblePathPoint();
                 }

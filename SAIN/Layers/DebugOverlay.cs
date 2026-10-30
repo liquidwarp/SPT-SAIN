@@ -2,6 +2,8 @@
 using System;
 using System.Text;
 using EFT;
+using EFT.HealthSystem;
+using EFT.InventoryLogic;
 using SAIN.Classes.Bot.Sense.Hearing;
 using SAIN.Components;
 using SAIN.Components.BotComponentSpace.Classes.EnemyClasses;
@@ -123,6 +125,11 @@ public static class DebugOverlay
                 stringBuilder.AppendLine($"DecisionReasons");
                 var decisions = bot.Decision.EnemyDecisions.DecisionReasons;
                 stringBuilder.Append(decisions);
+            }
+
+            if (debug.Overlay_Medical)
+            {
+                AddMedicalInfo(bot, botOwner, stringBuilder);
             }
 
             if (debug.Overlay_EnemyLists)
@@ -301,6 +308,101 @@ public static class DebugOverlay
             Color.yellow,
             true
         );
+    }
+
+    private static void AddMedicalInfo(BotComponent bot, BotOwner botOwner, StringBuilder stringBuilder)
+    {
+        var medecine = botOwner.Medecine;
+        if (medecine == null)
+        {
+            stringBuilder.AppendLabeledValue("Medicine", "None", Color.white, Color.yellow, true);
+            return;
+        }
+        float time = Time.time;
+        stringBuilder.AppendLabeledValue(
+            "Medicine",
+            $"Using [{medecine.Using}] Self Decision [{bot.Decision.CurrentSelfDecision}] Surgery Area Clear [{bot.Medical.Surgery.AreaClearForSurgery}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+
+        var firstAid = medecine.FirstAid;
+        stringBuilder.AppendLabeledValue(
+            "First Aid",
+            $"Using [{firstAid.Using}] Work [{firstAid.Have2Do}] Ready [{time > firstAid._nextPosibleUseTime}] "
+                + $"Damaged [{firstAid.Damaged}] Bleeding [{firstAid.IsBleeding}] Part [{GetPartToHeal(firstAid)}] Item [{GetMedsInfo(firstAid.CurUsingMeds)}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+
+        var surgery = medecine.SurgicalKit;
+        stringBuilder.AppendLabeledValue(
+            "Surgery",
+            $"Using [{surgery.Using}] Work [{surgery.HaveWork}] Ready [{time > surgery._nextPosibleUseTime}] "
+                + $"Damaged [{surgery.Damaged}] Part [{GetPartToHeal(surgery)}] Item [{GetMedsInfo(surgery.CurUsingMeds)}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+
+        var stims = medecine.Stimulators;
+        stringBuilder.AppendLabeledValue(
+            "Stims",
+            $"Using [{stims.Using}] Have [{stims.HaveSmt}] Since Last Use [{time - stims.LastEndUseTime:0.0}s]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+
+        IHealthController health = botOwner.HealthController;
+        if (health == null)
+        {
+            return;
+        }
+        stringBuilder.AppendLabeledValue(
+            "Health",
+            $"Head [{GetPartHealth(health, EBodyPart.Head)}] Chest [{GetPartHealth(health, EBodyPart.Chest)}] Stomach [{GetPartHealth(health, EBodyPart.Stomach)}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+        stringBuilder.AppendLabeledValue(
+            "Limbs",
+            $"Arms [{GetPartHealth(health, EBodyPart.LeftArm)} {GetPartHealth(health, EBodyPart.RightArm)}] "
+                + $"Legs [{GetPartHealth(health, EBodyPart.LeftLeg)} {GetPartHealth(health, EBodyPart.RightLeg)}]",
+            Color.white,
+            Color.yellow,
+            true
+        );
+    }
+
+    private static string GetPartToHeal(BotAbstractMedsToPart meds)
+    {
+        return meds._bodyPartToHeal.HasValue ? meds._bodyPartToHeal.Value.ToString() : "None";
+    }
+
+    private static string GetMedsInfo(Meds meds)
+    {
+        if (meds == null)
+        {
+            return "None";
+        }
+        return $"{meds.LocalizedShortName()} {meds.MedKitComponent?.HpResource}";
+    }
+
+    private static string GetPartHealth(IHealthController health, EBodyPart part)
+    {
+        var value = health.GetBodyPartHealth(part, false);
+        string bleeding = health.FindActiveEffect<IBleeding>(part) switch
+        {
+            IHeavyBleeding => " HBL",
+            ILightBleeding => " LBL",
+            _ => string.Empty,
+        };
+        string broken = health.IsBodyPartBroken(part) ? " Broken" : string.Empty;
+        return $"{value.Current:0}/{value.Maximum:0}{bleeding}{broken}";
     }
 
     private static Enemy getEnemy2Show(BotComponent bot)

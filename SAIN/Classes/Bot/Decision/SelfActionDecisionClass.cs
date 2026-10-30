@@ -54,12 +54,27 @@ public class SelfActionDecisionClass : BotBase
     {
         // Runs whether or not the bot has an enemy, so a stuck reload can't block patrolling either
         BotReload reload = BotOwner.WeaponManager?.Reload;
+#if DEBUG
+        _reloadDiagnostics.Update(BotOwner, Player);
+#endif
         if (reload?.Reloading == true)
         {
             ClearStuckReload(reload);
         }
         base.ManualUpdate();
     }
+
+#if DEBUG
+    private readonly ReloadDiagnostics _reloadDiagnostics = new();
+
+    private void ReportStuckReload(BotReload reload, EStuckReloadOutcome outcome)
+    {
+        if (ReloadDiagnostics.Enabled)
+        {
+            _reloadDiagnostics.ReportStuck(BotOwner, Player, reload, outcome);
+        }
+    }
+#endif
 
     private void ClearStuckReload(BotReload reload)
     {
@@ -77,6 +92,9 @@ public class SelfActionDecisionClass : BotBase
             if (!ReferenceEquals(controller.Item, BotOwner.WeaponManager.CurrentWeapon))
             {
                 _nextStuckReloadCheckTime = Time.time + 1f;
+#if DEBUG
+                ReportStuckReload(reload, EStuckReloadOutcome.OtherWeapon);
+#endif
                 return;
             }
             // Only internal magazine reloads accept a trigger press; Fika's overrides send AbortReload from it.
@@ -94,12 +112,18 @@ public class SelfActionDecisionClass : BotBase
             {
                 // Retry slowly instead of every frame while the operation refuses to finish.
                 _nextStuckReloadCheckTime = Time.time + 1f;
+#if DEBUG
+                ReportStuckReload(reload, EStuckReloadOutcome.OperationStillRunning);
+#endif
                 return;
             }
             finishedOperation = true;
         }
         if (reload.Reloading)
         {
+#if DEBUG
+            ReportStuckReload(reload, finishedOperation ? EStuckReloadOutcome.FinishedOperation : EStuckReloadOutcome.Cleared);
+#endif
             reload.Reloading = false;
             Logger.LogWarning(
                 finishedOperation

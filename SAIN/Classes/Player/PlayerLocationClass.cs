@@ -14,9 +14,11 @@ public class PlayerLocationClass : AIDataBase
     {
         InBunker = trigger != null && trigger.IsBunker;
         BunkerDepth = InBunker ? trigger.BunkerDepth : 0f;
-        if (InBunker)
+#if DEBUG
+        if (InBunker && SAINPlugin.DebugMode)
         {
             Logger.LogDebug($"In Bunker. BunkerDepth: {BunkerDepth}");
         }
+#endif
     }
 }

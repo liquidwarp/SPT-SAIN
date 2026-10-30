@@ -30,7 +30,10 @@ public class DoorOpener : BotComponentClassBase
         if (!InteractWithDoor(ref data, interactionType))
         {
 #if DEBUG
-            Logger.LogDebug($"[{Bot.name}]:[{data.Door.Id}] failed to interact with door");
+            if (SAINPlugin.DebugMode)
+            {
+                Logger.LogDebug($"[{Bot.name}]:[{data.Door.Id}] failed to interact with door");
+            }
 #endif
             Clear();
             return false;
@@ -192,7 +195,10 @@ public class DoorOpener : BotComponentClassBase
             if (FindDoorFromCollider(hit.collider, out data, out index, doors))
             {
 #if DEBUG
-                Logger.LogDebug($"Found door from hit collider [PlayerStaticDoorMask] [{hit.collider.name}]");
+                if (SAINPlugin.DebugMode)
+                {
+                    Logger.LogDebug($"Found door from hit collider [PlayerStaticDoorMask] [{hit.collider.name}]");
+                }
 #endif
                 if (data.Door.DoorState == EDoorState.Open)
                 {
@@ -214,7 +220,10 @@ public class DoorOpener : BotComponentClassBase
             if (FindDoorFromCollider(hit.collider, out data, out index, doors))
             {
 #if DEBUG
-                Logger.LogDebug($"Found door from hit collider [DoorLayer] [{hit.collider.name}]");
+                if (SAINPlugin.DebugMode)
+                {
+                    Logger.LogDebug($"Found door from hit collider [DoorLayer] [{hit.collider.name}]");
+                }
 #endif
                 if (data.Door.DoorState == EDoorState.Open)
                 {
@@ -250,7 +259,10 @@ public class DoorOpener : BotComponentClassBase
             if (doorCollider.Raycast(ray, out hit, SPHERECAST_DISTANCE))
             {
 #if DEBUG
-                Logger.LogDebug($"hit door  [Door.collider.Raycast]");
+                if (SAINPlugin.DebugMode)
+                {
+                    Logger.LogDebug($"hit door  [Door.collider.Raycast]");
+                }
                 DebugGizmos.DrawLine(ray.origin, hit.point, Color.red, 0.25f, 30f, true);
 #endif
                 if (data.Door.DoorState == EDoorState.Open)

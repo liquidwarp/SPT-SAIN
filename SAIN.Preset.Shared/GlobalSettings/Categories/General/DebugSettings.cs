@@ -39,6 +39,9 @@ public class DebugOverlaySettings : SAINSettingsBase<DebugOverlaySettings>
 
     [DataMember]
     public bool Overlay_Hearing = false;
+
+    [DataMember]
+    public bool Overlay_Medical = false;
 }
 
 [DataContract]
@@ -114,6 +117,14 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
             + "Enable on the instance running bot logic, such as the Fika headless."
     )]
     public bool DebugBotAwareness = false;
+
+    [DataMember]
+    [Name("Debug Bot Reloads")]
+    [Description(
+        "Logs bot reloads that run long, get stuck or are left behind by a weapon change, with what was in the bot's hands meanwhile. "
+            + "Enable on the instance running bot logic, such as the Fika headless. Debug builds only."
+    )]
+    public bool DebugBotReloads = false;
 }
 
 [DataContract]

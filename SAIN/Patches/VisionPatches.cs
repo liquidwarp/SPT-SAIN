@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using EFT;
 using HarmonyLib;
@@ -59,19 +58,16 @@ public class UpdateLightEnablePatch : ModulePatch
             {
                 __instance.TurnOff(true, true);
             }
-            catch { }
 #if DEBUG
-            try
-            {
-                __instance.TurnOff(true, true);
-            }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 if (SAINPlugin.DebugMode)
                 {
                     Logger.LogError(e);
                 }
             }
+#else
+            catch { }
 #endif
 
             if (__instance.IsEnable)
