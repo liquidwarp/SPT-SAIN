@@ -208,7 +208,9 @@ public class DoorOpener : BotComponentClassBase
         }
         if (Physics.SphereCast(ray, SPHERECAST_RADIUS, out hit, SPHERECAST_DISTANCE, LayersMaskController.DoorLayer))
         {
+#if DEBUG
             DebugGizmos.DrawLine(ray.origin, hit.point, Color.red, 0.25f, 30f, true);
+#endif
             if (FindDoorFromCollider(hit.collider, out data, out index, doors))
             {
 #if DEBUG

@@ -9,6 +9,7 @@ namespace SAIN;
 
 internal static class Logger
 {
+    [Conditional("DEBUG")]
     public static void LogInfo(object data)
     {
 #if DEBUG
@@ -16,6 +17,7 @@ internal static class Logger
 #endif
     }
 
+    [Conditional("DEBUG")]
     public static void LogDebug(object data)
     {
 #if DEBUG

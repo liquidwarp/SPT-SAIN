@@ -23,7 +23,9 @@ public abstract class BotAction(BotOwner botOwner) : CustomLogic(botOwner), IBot
 
     public override void BuildDebugText(StringBuilder stringBuilder)
     {
+#if DEBUG
         DebugOverlay.AddBaseInfo(Bot, BotOwner, stringBuilder);
+#endif
     }
 
     public BotComponent Bot

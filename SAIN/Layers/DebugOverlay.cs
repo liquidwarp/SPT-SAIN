@@ -1,3 +1,4 @@
+#if DEBUG
 using System;
 using System.Text;
 using EFT;
@@ -501,3 +502,4 @@ public static class DebugOverlay
         }
     }
 }
+#endif

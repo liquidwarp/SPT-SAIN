@@ -662,6 +662,7 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             }
         }
 
+#if DEBUG
         public static void DrawMoverDebug(Vector3 BotPos, Vector3 destination)
         {
             Vector3 debugOffset = Vector3.up * 0.25f;
@@ -669,6 +670,7 @@ public class BotPathDataManual(BotComponent bot, IBotPathFinder pathFinder) : IB
             DebugGizmos.DrawLine(destination, destination + debugOffset, Color.white, 0.075f, 0.02f);
             DebugGizmos.DrawLine(destination + debugOffset, BotPos + debugOffset, Color.white, 0.075f, 0.02f);
         }
+#endif
 
         private static float FindStartSprintStamina(ESprintUrgency urgency)
         {

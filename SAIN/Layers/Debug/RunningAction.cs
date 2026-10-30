@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿#if DEBUG
+using System.Text;
 using DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using SAIN.Models.Enums;
@@ -63,3 +64,4 @@ internal class RunningAction(BotOwner bot) : BotAction(bot), IBotAction
         stringBuilder.AppendLabeledValue("Run State", $"{Bot.Mover.ActivePath?.CurrentSprintStatus}", Color.white, Color.yellow, true);
     }
 }
+#endif

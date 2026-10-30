@@ -32,6 +32,8 @@ internal class DogFightAction(BotOwner bot) : BotAction(bot), IBotAction
 
     public override void BuildDebugText(StringBuilder stringBuilder)
     {
+#if DEBUG
         DebugOverlay.AddBaseInfo(Bot, BotOwner, stringBuilder);
+#endif
     }
 }

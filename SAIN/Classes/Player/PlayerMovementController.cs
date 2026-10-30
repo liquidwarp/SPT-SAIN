@@ -366,7 +366,9 @@ public class PlayerMovementController
             Vector3 bulletDropOffset =
                 horizontalDistance < 0.01f ? Vector3.zero : CalculateSimpleBallisticOffset(displacement, muzzleVelocity, gravity);
             Vector3 leadOffset = playerVelocity * (displacement.magnitude / muzzleVelocity);
+#if DEBUG
             DebugGizmos.DrawLine(targetPosition, targetPosition + leadOffset + bulletDropOffset, Color.green, 0.015f, 5f);
+#endif
             return bulletDropOffset + leadOffset;
         }
 

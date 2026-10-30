@@ -147,7 +147,9 @@ public abstract class SAINLayer : CustomLayer
     {
         if (Bot != null)
         {
+#if DEBUG
             DebugOverlay.AddBaseInfo(Bot, BotOwner, stringBuilder);
+#endif
         }
     }
 }

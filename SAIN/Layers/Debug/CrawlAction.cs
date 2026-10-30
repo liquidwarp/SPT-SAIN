@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿#if DEBUG
+using System.Text;
 using DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using UnityEngine;
@@ -53,3 +54,4 @@ internal class CrawlAction(BotOwner bot) : BotAction(bot), IBotAction
 
     public override void BuildDebugText(StringBuilder stringBuilder) { }
 }
+#endif

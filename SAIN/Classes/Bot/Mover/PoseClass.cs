@@ -134,7 +134,9 @@ public class PoseClass : BotBase
         float targetHeight = StartHeight;
         for (int i = 0; i <= max; i++)
         {
+#if DEBUG
             DebugGizmos.Ray(start, direction, Color.red, rayLength, 0.05f, 0.5f, true);
+#endif
             if (Physics.Raycast(start, direction, rayLength, Mask))
             {
                 return FindCrouchHeight(targetHeight);

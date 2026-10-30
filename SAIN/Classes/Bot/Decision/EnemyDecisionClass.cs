@@ -22,12 +22,14 @@ public class EnemyDecisionClass : BotBase
     private const float FREEZE_MAX_TIMESINCEHEARD = 80f;
     private const float MOVE_TO_ENGAGE_MAX_TIME_SINCE_KNOWN = 60f;
 
+#if DEBUG
     public SearchReasonsStruct DebugSearchReasons { get; private set; }
+    public StringBuilder DecisionReasons { get; } = new StringBuilder();
+    public bool? DebugShallSearch { get; set; }
+#endif
     public float FrozenDuration { get; private set; }
     public float TimeToUnfreeze { get; private set; }
-    public StringBuilder DecisionReasons { get; } = new StringBuilder();
     public bool ShiftCoverComplete { get; set; }
-    public bool? DebugShallSearch { get; set; }
 
     public Vector3? FiringPosition
     {
@@ -496,8 +498,10 @@ public class EnemyDecisionClass : BotBase
     private bool shallSearch(Enemy enemy, out string reason)
     {
         bool shallSearch = Bot.Search.Decider.ShallStartSearch(enemy, out SearchReasonsStruct reasons);
+#if DEBUG
         DebugSearchReasons = reasons;
         DebugShallSearch = shallSearch;
+#endif
         if (shallSearch)
         {
             reason = "wantToSearch";

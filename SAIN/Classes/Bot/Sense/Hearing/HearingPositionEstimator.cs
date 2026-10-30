@@ -40,18 +40,20 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
         {
             HearingDiagnostics.LogEstimate(Bot, estimate, result, Sound);
         }
-#endif
         if (SAINPlugin.DebugSettings.Gizmos.DrawHearingEstimates && IsNewPlacement(result.Step) && HearingAnalysis.IsFromMainPlayer(Sound))
         {
             DrawEstimate(result, Sound);
         }
+#endif
         return result;
     }
 
+#if DEBUG
     private static bool IsNewPlacement(EEstimateStep step)
     {
         return step != EEstimateStep.Reused && step != EEstimateStep.SightingHeld;
     }
+#endif
 
     private SoundPositionEstimate GetEstimate(SoundPositionEstimate? estimate, AISoundData Sound)
     {
@@ -95,6 +97,7 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
         return Place(Sound, last.Confidence, Drift(last.AngleOffset), Drift(last.DistanceOffset), EEstimateStep.Drift);
     }
 
+#if DEBUG
     private void DrawEstimate(SoundPositionEstimate estimate, AISoundData Sound)
     {
         const float expireTime = 10f;
@@ -107,6 +110,7 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
         DebugGizmos.DrawSphere(estimate.Position, 0.25f, color, expireTime, label);
         DebugGizmos.DrawLine(enemyPosition, estimate.Position, color, 0.05f, expireTime);
     }
+#endif
 
     private SoundPositionEstimate Place(AISoundData Sound, float confidence, float angleOffset, float distanceOffset, EEstimateStep step)
     {

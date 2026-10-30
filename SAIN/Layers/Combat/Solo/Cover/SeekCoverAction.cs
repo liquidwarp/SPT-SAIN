@@ -183,7 +183,9 @@ internal class SeekCoverAction(BotOwner bot) : BotAction(bot), IBotAction
         stringBuilder.AppendLabeledValue("Cover Seeking State", $"{cover.CoverSeekingState}", Color.white, Color.yellow, true);
         stringBuilder.AppendLabeledValue("Running To Cover", $"{cover.SprintingToCover}", Color.white, Color.yellow, true);
         stringBuilder.AppendLabeledValue("Cover Count", $"{cover.CoverPoints.Count}", Color.white, Color.yellow, true);
+#if DEBUG
         DebugOverlay.AddMoveData(Bot, stringBuilder);
+#endif
         CoverPoint point = Bot.Cover.CoverInUse;
         if (point != null)
         {

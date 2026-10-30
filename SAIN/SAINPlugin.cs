@@ -138,7 +138,9 @@ public class SAINPlugin : BaseUnityPlugin
 
         ModDetection.ManualUpdate();
         SAINEditor.ManualUpdate();
+#if DEBUG
         DebugGizmos.ManualUpdate();
+#endif
     }
 
     public void Start()

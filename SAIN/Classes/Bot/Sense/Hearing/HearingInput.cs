@@ -146,7 +146,9 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
 
     public void ProcessAISoundCache()
     {
+#if DEBUG
         UnityEngine.Profiling.Profiler.BeginSample("Process Sounds For Bots");
+#endif
 
         bool wasDeafened = IsBotDeafened;
         bool deafeningSoundHeard = false;
@@ -188,7 +190,9 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
             DeafenBot(BOT_DEAF_TIME_INTERVAL);
         }
 
+#if DEBUG
         UnityEngine.Profiling.Profiler.EndSample();
+#endif
     }
 
     private void ProcessSoundReactions()

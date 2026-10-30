@@ -4,7 +4,9 @@ using System.Reflection;
 using DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using SAIN.Layers;
+#if DEBUG
 using SAIN.Layers.Combat.Run;
+#endif
 using SAIN.Layers.Combat.Solo;
 using SAIN.Layers.Combat.Squad;
 using SAIN.Layers.Flashed;
@@ -406,7 +408,9 @@ public static class BigBrainHandler
         {
             LayerSettings settings = SAINPlugin.LoadedPreset.GlobalSettings.General.Layers;
 
+#if DEBUG
             AddLayer(typeof(DebugLayer), brainList, debugPriority, roles);
+#endif
             AddLayer(typeof(SAINAvoidThreatLayer), brainList, avoidThreatPriority, roles);
             AddLayer(typeof(SAINFlashedLayer), brainList, flashedPriority, roles);
             AddLayer(typeof(CombatSquadLayer), brainList, squadPriority ?? settings.SAINCombatSquadLayerPriority, roles);

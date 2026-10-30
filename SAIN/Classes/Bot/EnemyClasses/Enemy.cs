@@ -434,7 +434,9 @@ public class Enemy : BotBase
 
             Vector3 cornerA = Path.PathCorners[node.CornerStartIndex];
             Vector3 cornerB = Path.PathCorners[node.CornerEndIndex];
+#if DEBUG
             DebugGizmos.DrawLine(cornerA, cornerB, Color.yellow, 0.05f, 1f);
+#endif
             VisiblePathPointSignedAngle = Vector.FindFlatSignedAngle(cornerA, cornerB, botPosition);
         }
         else

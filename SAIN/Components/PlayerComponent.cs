@@ -418,6 +418,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
         return speaker.Play(phrase, mask, true, null) != null;
     }
 
+#if DEBUG
     private void drawTransformGizmos()
     {
         if (SAINPlugin.DebugSettings.Gizmos.DrawTransformGizmos)
@@ -437,6 +438,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
             DebugGizmos.DrawSphere(Transform.BodyPosition, 0.1f, Color.blue, 0.1f, "Body");
         }
     }
+#endif
 
     private Coroutine _gearCoroutine;
     private Item _currentItem = null;

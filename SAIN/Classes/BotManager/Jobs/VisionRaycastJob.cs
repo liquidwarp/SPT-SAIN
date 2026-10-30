@@ -190,6 +190,7 @@ public class VisionRaycastJob : BotManagerBase
                 Vector3 castPoint = _castPoints[colliderTypeCount];
                 colliderTypeCount++;
 
+#if DEBUG
                 if (SAINPlugin.DebugSettings.Gizmos.DrawLineOfSightGizmos)
                 {
                     var cmd = commands[hits];
@@ -203,6 +204,7 @@ public class VisionRaycastJob : BotManagerBase
                         DebugGizmos.DrawLine(from, castPoint, Color.green, 0.025f, 0.2f);
                     }
                 }
+#endif
 
                 part.SetLineOfSight(castPoint, colliderType, raycastHits[hits++], ERaycastCheck.LineofSight, time);
                 part.SetLineOfSight(castPoint, colliderType, raycastHits[hits++], ERaycastCheck.Vision, time);

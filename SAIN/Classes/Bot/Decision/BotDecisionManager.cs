@@ -195,7 +195,9 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
             SetDecisions(ECombatDecision.None, ESquadDecision.None, ESelfActionType.None, enemy);
             return;
         }
+#if DEBUG
         BaseClass.EnemyDecisions.DebugShallSearch = null;
+#endif
         if (BaseClass.SelfActionDecisions.GetDecision(out ESelfActionType selfDecision, enemy))
         {
             SetDecisions(ECombatDecision.SeekCover, ESquadDecision.None, selfDecision, enemy);

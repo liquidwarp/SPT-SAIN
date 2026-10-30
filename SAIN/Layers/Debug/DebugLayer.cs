@@ -1,3 +1,4 @@
+#if DEBUG
 using EFT;
 using SAIN.Extensions;
 using SAIN.Models.Enums;
@@ -55,3 +56,4 @@ internal class DebugLayer : SAINLayer
         return false;
     }
 }
+#endif

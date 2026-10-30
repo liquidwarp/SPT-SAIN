@@ -117,12 +117,15 @@ public static class PlayerDataExtensions
             {
                 playerNavData.TimeLastOnNavMesh = time;
             }
+#if DEBUG
             DrawDebugGizmos(playerNavData, playerPosition, delay);
+#endif
         }
         playerNavData.IsOnNavMesh = time - playerNavData.TimeLastOnNavMesh < ON_NAVMESH_BUFFER_INTERVAL;
         return playerNavData;
     }
 
+#if DEBUG
     private static void DrawDebugGizmos(PlayerNavData playerNavData, Vector3 playerPosition, float expireTime)
     {
         Color color;
@@ -144,6 +147,7 @@ public static class PlayerDataExtensions
         DebugGizmos.DrawSphere(playerPosition, 0.1f, Color.white, expireTime);
         DebugGizmos.DrawLine(playerNavData.Position, playerPosition, color, 0.1f, expireTime);
     }
+#endif
 
     private static EPlayerNavMeshDistance CalcStatus(Vector3 offset)
     {
