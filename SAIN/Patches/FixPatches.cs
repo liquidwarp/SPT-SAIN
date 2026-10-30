@@ -5,6 +5,7 @@ using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
 using HarmonyLib;
+using SAIN.Classes.Bot.Sense.Hearing;
 using SAIN.Components;
 using SAIN.Helpers;
 using SAIN.Extensions;
@@ -345,6 +346,15 @@ internal class GroupHostilityPatch : ModulePatch
                 return;
             }
             group.AddEnemy(bot, EBotEnemyCause.initial);
+#if DEBUG
+            if (HearingDiagnostics.Enabled)
+            {
+                _log.LogInfo(
+                    $"Added {bot.Profile.Info.Nickname} ({bot.name}, {bot.Profile.Info.Settings.Role}) to the enemies of group {group.Id}"
+                        + $" (first {group._initialBot.Profile.Info.Nickname})"
+                );
+            }
+#endif
         }
         catch (Exception exception)
         {

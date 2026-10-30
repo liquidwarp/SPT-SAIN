@@ -17,6 +17,12 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
     {
         if (ShallLimitAI(sound))
         {
+#if DEBUG
+            if (HearingDiagnostics.Enabled)
+            {
+                HearingDiagnostics.RecordGunshot(sound, EGunshotStage.AILimit);
+            }
+#endif
             return false;
         }
 
@@ -55,6 +61,24 @@ public class HearingAnalysis(HearingSensor hearingSensor) : BotSubClass<HearingS
         );
         float FinalRange = sound.Sound.Range * sound.Sound.Volume * FinalModifier;
         bool heard = sound.PlayerDistance <= FinalRange;
+#if DEBUG
+        if (HearingDiagnostics.Enabled)
+        {
+            HearingDiagnostics.RecordHearingRange(
+                sound,
+                FinalRange,
+                FinalModifier,
+                EnvironmentModifier,
+                ConditionModifier,
+                OcclusionModifier,
+                DifficultyModifier
+            );
+            if (!heard)
+            {
+                HearingDiagnostics.RecordGunshot(sound, EGunshotStage.OutOfRange);
+            }
+        }
+#endif
         if (log)
         {
             LogHearing(

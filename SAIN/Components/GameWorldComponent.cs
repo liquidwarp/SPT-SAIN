@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EFT;
 using EFT.Ballistics;
 using EFT.InventoryLogic;
+using SAIN.Classes.Bot.Sense.Hearing;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using UnityEngine;
@@ -179,6 +180,13 @@ public class GameWorldComponent : MonoBehaviour
                 }
 
                 TickSoundCaches(players, CurrentTime);
+#if DEBUG
+                if (HearingDiagnostics.Enabled)
+                {
+                    HearingDiagnostics.Update(CurrentTime);
+                    HearingDiagnostics.CheckSides(players, CurrentTime);
+                }
+#endif
             }
         }
     }
@@ -241,6 +249,12 @@ public class GameWorldComponent : MonoBehaviour
                             bool isGunshot = soundEvent.IsGunShot;
                             if (isGunshot && !InGunfireRadius)
                             {
+#if DEBUG
+                                if (HearingDiagnostics.Enabled)
+                                {
+                                    HearingDiagnostics.RecordGunshot(Bot, Player, Distance, EGunshotStage.OutsideGunfireRadius);
+                                }
+#endif
                                 continue;
                             }
 
@@ -304,6 +318,9 @@ public class GameWorldComponent : MonoBehaviour
     public void DestroyComponent()
     {
         Instance = null;
+#if DEBUG
+        HearingDiagnostics.EndRaid();
+#endif
         try
         {
             PlayerTracker?.Dispose();

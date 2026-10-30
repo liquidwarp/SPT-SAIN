@@ -12,6 +12,19 @@ using UnityEngine.AI;
 
 namespace SAIN.Classes.Bot.Sense.Hearing;
 
+#if DEBUG
+public enum EHearingSnap
+{
+    NearGuess,
+    AlongLine,
+    NavMeshCast,
+    EnemySpot,
+
+    // Keep last, it sizes the counters
+    RawGuess,
+}
+#endif
+
 public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass<HearingSensor>(hearingSensor), IBotClass
 {
     private static HearingSettings _settings
@@ -22,6 +35,12 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
     public SoundPositionEstimate Estimate(SoundPositionEstimate? estimate, AISoundData Sound)
     {
         SoundPositionEstimate result = GetEstimate(estimate, Sound);
+#if DEBUG
+        if (HearingDiagnostics.Enabled)
+        {
+            HearingDiagnostics.LogEstimate(Bot, estimate, result, Sound);
+        }
+#endif
         if (SAINPlugin.DebugSettings.Gizmos.DrawHearingEstimates && IsNewPlacement(result.Step) && HearingAnalysis.IsFromMainPlayer(Sound))
         {
             DrawEstimate(result, Sound);
@@ -167,17 +186,26 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
         Vector3? snapped = SampleSameFloor(guess, enemyPosition.y);
         if (snapped != null)
         {
+#if DEBUG
+            HearingDiagnostics.CountSnap(EHearingSnap.NearGuess);
+#endif
             return snapped.Value;
         }
         snapped = SampleAlongLine(guess, enemyPosition);
         if (snapped != null)
         {
+#if DEBUG
+            HearingDiagnostics.CountSnap(EHearingSnap.AlongLine);
+#endif
             return snapped.Value;
         }
 
         Vector3? enemyOnMesh = SampleSameFloor(enemyPosition, enemyPosition.y);
         if (enemyOnMesh == null)
         {
+#if DEBUG
+            HearingDiagnostics.CountSnap(EHearingSnap.RawGuess);
+#endif
             return guess;
         }
 
@@ -188,12 +216,24 @@ public class HearingPositionEstimator(HearingSensor hearingSensor) : BotSubClass
         Vector3? castEnd = blocked ? hit.position : SampleSameFloor(target, enemyPosition.y);
         if (castEnd == null || Mathf.Abs(castEnd.Value.y - enemyPosition.y) > _settings.HEAR_NAV_MAX_HEIGHT_DIFF)
         {
+#if DEBUG
+            HearingDiagnostics.CountSnap(EHearingSnap.EnemySpot);
+#endif
             return start;
         }
+#if DEBUG
+        if (HearingDiagnostics.Enabled)
+        {
+            bool atEnemy = (castEnd.Value - start).sqrMagnitude < CAST_AT_ENEMY_DISTANCE * CAST_AT_ENEMY_DISTANCE;
+            HearingDiagnostics.CountSnap(atEnemy ? EHearingSnap.EnemySpot : EHearingSnap.NavMeshCast);
+        }
+#endif
         return castEnd.Value;
     }
 
+#if DEBUG
     private const float CAST_AT_ENEMY_DISTANCE = 1f;
+#endif
 
     private static Vector3? SampleAlongLine(Vector3 guess, Vector3 enemyPosition)
     {

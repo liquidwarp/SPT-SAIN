@@ -106,6 +106,14 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [Name("Debug Hearing Checks")]
     [Description("Logs why bots did or didn't hear the sounds you make.")]
     public bool DebugHearingChecks = false;
+
+    [DataMember]
+    [Name("Debug Bot Awareness")]
+    [Description(
+        "Logs bot-to-bot gunfire hearing, dropped enemies, prolonged cover decisions, nearby groups' hostility, and hearing placement summaries. "
+            + "Enable on the instance running bot logic, such as the Fika headless."
+    )]
+    public bool DebugBotAwareness = false;
 }
 
 [DataContract]

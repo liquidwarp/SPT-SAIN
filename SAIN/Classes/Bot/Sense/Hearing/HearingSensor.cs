@@ -53,6 +53,12 @@ public class HearingSensor : BotComponentClassBase
     public void ReactToBulletFlyBy(AISoundData sound, float FlyByDistance)
     {
         bool underFire = FlyByDistance <= SAINPlugin.LoadedPreset.GlobalSettings.Mind.MaxUnderFireDistance;
+#if DEBUG
+        if (HearingDiagnostics.Enabled)
+        {
+            HearingDiagnostics.RecordFlyBy(sound, FlyByDistance, underFire);
+        }
+#endif
         if (HearingInput.IsIgnoringSounds(underFire))
         {
             return;
@@ -76,8 +82,20 @@ public class HearingSensor : BotComponentClassBase
                 }
                 _unchasedGunshot = sound;
                 _timeUnchasedGunshot = Time.time;
+#if DEBUG
+                if (HearingDiagnostics.Enabled)
+                {
+                    HearingDiagnostics.RecordGunshot(sound, EGunshotStage.NotChased);
+                }
+#endif
                 return;
             }
+#if DEBUG
+            if (HearingDiagnostics.Enabled)
+            {
+                HearingDiagnostics.RecordGunshot(sound, Bot.Squad.SquadInfo == null ? EGunshotStage.NoSquad : EGunshotStage.Placed);
+            }
+#endif
             SoundPositionEstimate estimate = sound.Enemy.Hearing.EstimateSoundPosition(sound);
             Bot.Squad.SquadInfo?.AddPointToSearch(sound.Enemy, estimate, sound, Bot);
             OnEnemySoundHeard?.Invoke(sound, sound.Enemy);

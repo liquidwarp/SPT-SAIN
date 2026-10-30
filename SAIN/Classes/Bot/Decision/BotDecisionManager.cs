@@ -1,5 +1,6 @@
 using System;
 using EFT;
+using SAIN.Classes.Bot.Sense.Hearing;
 using SAIN.Components;
 using SAIN.Models.Enums;
 using SAIN.Preset.Shared.Enums;
@@ -171,6 +172,17 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
     private void getDecision()
     {
         Enemy enemy = Bot.EnemyController.ChooseEnemy();
+#if DEBUG
+        if (HearingDiagnostics.Enabled)
+        {
+            HearingDiagnostics.CheckChosenEnemy(Bot, _diagnosticsChosenEnemy, enemy);
+            _diagnosticsChosenEnemy = enemy;
+        }
+        else
+        {
+            _diagnosticsChosenEnemy = null;
+        }
+#endif
 
         if (Bot.Grenade.GrenadeReactionClass.ShallAvoidGrenade())
         {
@@ -322,6 +334,9 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
     }
 
     private Enemy _lastDecisionEnemy;
+#if DEBUG
+    private Enemy _diagnosticsChosenEnemy;
+#endif
 
     public void ResetDecisions()
     {

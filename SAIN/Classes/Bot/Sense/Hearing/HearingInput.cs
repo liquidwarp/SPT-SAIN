@@ -95,6 +95,12 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
     {
         if (Bot.Hearing.HearingInput.IsIgnoringSounds(Sound.SoundType.IsGunShot()))
         {
+#if DEBUG
+            if (Sound.IsGunShot && HearingDiagnostics.Enabled)
+            {
+                HearingDiagnostics.RecordGunshot(Bot, Sound.PlayerComponent, PlayerDistance, EGunshotStage.IgnoringSounds);
+            }
+#endif
             return;
         }
 
@@ -104,6 +110,12 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
 
             if (enemy == null && Sound.SoundType != SAINSoundType.Conversation)
             {
+#if DEBUG
+                if (Sound.IsGunShot && HearingDiagnostics.Enabled)
+                {
+                    HearingDiagnostics.RecordGunshot(Bot, Sound.PlayerComponent, PlayerDistance, EGunshotStage.NotEnemy);
+                }
+#endif
                 return;
             }
 
@@ -270,6 +282,12 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
                     if (previouslyDeaf && !thisShotDeafened)
                     {
                         LogDropped(Sound, "Not heard: deafened by a gunshot");
+#if DEBUG
+                        if (HearingDiagnostics.Enabled)
+                        {
+                            HearingDiagnostics.RecordGunshot(Sound, EGunshotStage.Deafened);
+                        }
+#endif
                         continue;
                     }
 
@@ -283,6 +301,12 @@ public class HearingInput(HearingSensor hearingSensor) : BotSubClass<HearingSens
                 else
                 {
                     LogDropped(Sound, "Not heard: beyond base range");
+#if DEBUG
+                    if (HearingDiagnostics.Enabled)
+                    {
+                        HearingDiagnostics.RecordGunshot(Sound, EGunshotStage.BeyondBaseRange);
+                    }
+#endif
                 }
             }
             Sounds.Clear();
