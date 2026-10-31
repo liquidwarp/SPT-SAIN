@@ -72,7 +72,10 @@ internal sealed class ReloadDiagnostics
         {
             if (_startTime >= 0f)
             {
-                if (!_reported && Time.time - _startTime > SLOW_RELOAD)
+                // A reload operation that ran until the flag cleared, with nothing else in hands, is just a long reload,
+                // such as loading an internal magazine round by round.
+                bool healthy = _lastOperation != null && Time.time - _lastOperationTime < 1f && _otherHands == null;
+                if (!_reported && !healthy && Time.time - _startTime > SLOW_RELOAD)
                 {
                     Report(botOwner, player, reload, "finished normally but slowly");
                 }

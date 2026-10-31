@@ -466,7 +466,7 @@ internal static class HearingDiagnostics
         }
         sb.Append(
             $" | shooter known {enemy.EnemyKnown} chosen {goal == enemy} (goal {goalName}), sinceShotAtMe {SinceTime(enemy.Status.TimeLastShotAtMe, time)}"
-                + $", sinceKnownUpdate {enemy.TimeSinceLastKnownUpdated:0.0}s | {listener.Decision.CurrentCombatDecision}/{listener.Decision.CurrentSquadDecision}/{listener.Decision.CurrentSelfDecision}"
+                + $", sinceKnownUpdate {FormatSince(enemy.TimeSinceLastKnownUpdated)} | {listener.Decision.CurrentCombatDecision}/{listener.Decision.CurrentSquadDecision}/{listener.Decision.CurrentSelfDecision}"
         );
     }
 
@@ -483,6 +483,12 @@ internal static class HearingDiagnostics
         {
             return;
         }
+        // Dropping an enemy that died or despawned is expected.
+        Player enemyPlayer = previous.EnemyPlayer;
+        if (enemyPlayer == null || enemyPlayer.HealthController?.IsAlive != true)
+        {
+            return;
+        }
         string botId = bot.ProfileId;
         if (_nextDropLogTime.TryGetValue(botId, out float nextTime) && nextTime > time)
         {
@@ -495,7 +501,7 @@ internal static class HearingDiagnostics
             $"[Dropped enemy] {bot.PlayerComponent.Name} ({bot.Info.Personality}) dropped {previous.EnemyName} at {previous.RealDistance:0}m"
                 + $" | sinceShotAtMe {SinceTime(previous.Status.TimeLastShotAtMe, time)}, sinceGunfireHeard {FormatSince(sinceGunfire)}"
                 + $" | knownEnemies {bot.EnemyController.KnownEnemies.Count}, known {previous.EnemyKnown}, valid {previous.WasValid}, active {active}"
-                + $", lastKnown {(previous.LastKnownPosition != null)}, sinceKnownUpdate {previous.TimeSinceLastKnownUpdated:0.0}s"
+                + $", lastKnown {(previous.LastKnownPosition != null)}, sinceKnownUpdate {FormatSince(previous.TimeSinceLastKnownUpdated)}"
                 + $", visible {previous.IsVisible}, seen {previous.Seen} ({previous.TimeSinceSeen:0}s), heard {previous.Heard} ({previous.TimeSinceHeard:0}s)"
                 + $" | was {bot.Decision.CurrentCombatDecision}/{bot.Decision.CurrentSquadDecision}/{bot.Decision.CurrentSelfDecision}"
                 + $", layersActive {bot.SAINLayersActive}"
