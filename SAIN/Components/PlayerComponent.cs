@@ -124,7 +124,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
                     nickname = Player.Profile.Nickname;
                 }
                 Logger.LogDebug(
-                    $"[{nickname}] Equipped Weapon [{value?.ShortName?.Localized()}] Last Weapon [{LastWeapon?.ShortName?.Localized()}]"
+                    $"[{nickname}] Equipped Weapon [{value?.TemplateId}] Last Weapon [{LastWeapon?.TemplateId}]"
                 );
 #endif
                 _currentWeapon = value;
@@ -150,7 +150,7 @@ public class PlayerComponent : MonoBehaviour, IDisposable
                     nickname = Player.Profile.Nickname;
                 }
                 Logger.LogDebug(
-                    $"[{nickname}] Equipped Item [{value?.ShortName?.Localized()}] Last Item [{LastItem?.ShortName?.Localized()}]"
+                    $"[{nickname}] Equipped Item [{value?.TemplateId}] Last Item [{LastItem?.TemplateId}]"
                 );
 #endif
                 _currentItem = value;
