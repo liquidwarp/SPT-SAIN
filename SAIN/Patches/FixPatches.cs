@@ -329,6 +329,11 @@ internal class GroupHostilityPatch : ModulePatch
 
     private static void TryAddEnemy(BotsGroup group, BotOwner bot)
     {
+        Player player = bot.GetPlayer;
+        if (player == null)
+        {
+            return;
+        }
         string profileId = bot.ProfileId;
         // Enemies a group gets before its first member activates wait in the recheck list
         if (
@@ -341,11 +346,11 @@ internal class GroupHostilityPatch : ModulePatch
         }
         try
         {
-            if (!group.IsPlayerEnemy(bot))
+            if (!group.IsPlayerEnemy(player))
             {
                 return;
             }
-            group.AddEnemy(bot, EBotEnemyCause.initial);
+            group.AddEnemy(player, EBotEnemyCause.initial);
 #if DEBUG
             if (HearingDiagnostics.Enabled)
             {
