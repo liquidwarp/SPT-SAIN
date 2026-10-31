@@ -246,7 +246,7 @@ public class BotDecisionManager(SAINDecisionClass decisionClass) : BotSubClass<S
         }
         if (ContinueMoveToCover())
         {
-            SetDecisions(ECombatDecision.SeekCover, ESquadDecision.None, Bot.Decision.CurrentSelfDecision, enemy);
+            SetDecisions(ECombatDecision.SeekCover, ESquadDecision.None, selfDecision, enemy);
             return;
         }
         if (BaseClass.SquadDecisions.GetDecision(out ESquadDecision squadDecision, enemy))
