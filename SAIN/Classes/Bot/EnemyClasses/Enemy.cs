@@ -267,7 +267,7 @@ public class Enemy : BotBase
             return false;
         }
 
-        if (!enemy.PlayerComponent.IsActive)
+        if (!enemy.EnemyPlayerComponent.IsActive)
         {
             return false;
         }
@@ -521,7 +521,7 @@ public class Enemy : BotBase
         }
         // Checks specific to bots
         BotOwner enemyBotOwner = enemyPlayerComp.BotOwner;
-        if (enemyPlayerComp.IsAI && enemyBotOwner == null)
+        if (enemyPlayerComp.IsAI)
         {
             if (enemyBotOwner == null)
             {
