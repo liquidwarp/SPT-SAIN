@@ -218,13 +218,14 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
             return false;
         }
 
-        // Did we already check the current enemy position and has the bot not moved? dont recalc path then
-        if (!checkPositionsChanged(Bot.Position, LastKnown.Value))
+        // Throttle first, so positions are only cached when a path is actually calculated for them
+        if (_calcPathTime + calcDelayOnDistance() > currentTime)
         {
             return false;
         }
 
-        if (_calcPathTime + calcDelayOnDistance() > currentTime)
+        // Did we already check the current enemy position and has the bot not moved? dont recalc path then
+        if (!checkPositionsChanged(Bot.Position, LastKnown.Value))
         {
             return false;
         }
@@ -377,6 +378,7 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
     public void Clear()
     {
         _calcPathTime = 0;
+        _enemyLastPosChecked = null;
         PathToEnemy.ClearCorners();
         PathCornerCount = 0;
         PathLength = float.MaxValue;
