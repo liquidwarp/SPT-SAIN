@@ -4,6 +4,7 @@ using EFT;
 using EFT.Ballistics;
 using EFT.InventoryLogic;
 using SAIN.Classes.Bot.Sense.Hearing;
+using SAIN.Components.BotController;
 using SAIN.Components.PlayerComponentSpace;
 using SAIN.Helpers;
 using UnityEngine;
@@ -186,6 +187,10 @@ public class GameWorldComponent : MonoBehaviour
                     HearingDiagnostics.Update(CurrentTime);
                     HearingDiagnostics.CheckSides(players, CurrentTime);
                 }
+                if (BotActivationDiagnostics.Enabled)
+                {
+                    BotActivationDiagnostics.Update(GameWorld.AllAlivePlayersList, CurrentTime);
+                }
 #endif
             }
         }
@@ -320,6 +325,7 @@ public class GameWorldComponent : MonoBehaviour
         Instance = null;
 #if DEBUG
         HearingDiagnostics.EndRaid();
+        BotActivationDiagnostics.EndRaid();
 #endif
         try
         {

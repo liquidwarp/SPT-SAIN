@@ -17,6 +17,21 @@ public class AddBotComponentPatch : ModulePatch
         return AccessTools.Method(typeof(BotOwner), nameof(BotOwner.PreActivate));
     }
 
+#if DEBUG
+    [PatchPrefix]
+    public static void PatchPrefix(BotOwner __instance)
+    {
+        BotActivationDiagnostics.OnPreActivateStart(__instance);
+    }
+
+    // Runs even when PreActivate throws, which the postfix doesn't; the exception still propagates.
+    [PatchFinalizer]
+    public static void PatchFinalizer(BotOwner __instance, Exception __exception)
+    {
+        BotActivationDiagnostics.OnPreActivateEnd(__instance, __exception);
+    }
+#endif
+
     [PatchPostfix]
     public static void PatchPostfix(ref BotOwner __instance)
     {

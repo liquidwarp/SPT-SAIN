@@ -125,6 +125,14 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
             + "Enable on the instance running bot logic, such as the Fika headless. Debug builds only."
     )]
     public bool DebugBotReloads = false;
+
+    [DataMember]
+    [Name("Debug Bot Activation")]
+    [Description(
+        "Logs bots that still aren't active a while after spawning, with how far their activation got and what it threw. "
+            + "Enable on the instance running bot logic, such as the Fika headless. Debug builds only."
+    )]
+    public bool DebugBotActivation = false;
 }
 
 [DataContract]
