@@ -368,6 +368,27 @@ namespace SAIN.Patches.Generic
         }
     }
 
+    public class WeaponTakenAfterDisposePatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(BotWeaponSelector), nameof(BotWeaponSelector.OnWeaponTaken));
+        }
+
+        [PatchPrefix]
+        public static bool PatchPrefix(BotWeaponSelector __instance)
+        {
+            // A draw animation can finish after death has disposed the weapon manager.
+            var owner = __instance._owner;
+            if (owner == null || owner.IsDead)
+            {
+                return false;
+            }
+            var weaponManager = owner.WeaponManager;
+            return weaponManager != null && !weaponManager._disposed;
+        }
+    }
+
     public class TurnDamnLightOffPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
