@@ -26,7 +26,8 @@ public class SearchPathFinder : BotSubClass<SearchClass>
     public bool CanStillReachTarget(Enemy enemy)
     {
         NavMeshPath path = enemy.Path.PathToEnemy;
-        return path != null && path.status != NavMeshPathStatus.PathInvalid;
+        // A failed or cleared path keeps its previous status but has no corners left to walk.
+        return path != null && path.status != NavMeshPathStatus.PathInvalid && enemy.Path.PathCornerCount >= 2;
     }
 
     public void UpdateSearchDestination(Enemy enemy)
