@@ -353,6 +353,11 @@ public class SelfActionDecisionClass : BotBase
                 return checkContinueStims(_timeSinceChangeDecision, out Decision);
 
             default:
+                // A surgery started outside SAIN, such as by EFT's heal node, is still SAIN's to keep or cancel once it's fighting.
+                if (BotOwner.Medecine?.SurgicalKit?.Using == true)
+                {
+                    return checkContinueSurgery(out Decision);
+                }
                 Decision = ESelfActionType.None;
                 return false;
         }
