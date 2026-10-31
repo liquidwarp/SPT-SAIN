@@ -29,6 +29,9 @@ public class SearchClass : BotComponentClassBase
     private float _waitAtPointTimer = -1;
     private float _advanceTime = -1f;
     private float _timeLastMoved = float.NegativeInfinity;
+#if DEBUG
+    private readonly SearchDiagnostics _diagnostics = new();
+#endif
 
     private PersonalitySearchSettings _searchSettings
     {
@@ -71,6 +74,9 @@ public class SearchClass : BotComponentClassBase
             SearchTarget.Events.OnSearch.CheckToggle(false, currentTime);
             SearchTarget = null;
         }
+#if DEBUG
+        _diagnostics.EndStreak(Bot, "search stopped");
+#endif
         SearchActive = false;
         Reset();
     }
@@ -175,11 +181,21 @@ public class SearchClass : BotComponentClassBase
             case ESearchMove.None:
                 if (MoveToEnemy(enemy, shallSprint))
                 {
+#if DEBUG
+                    _diagnostics.EndStreak(Bot, "moving again");
+#endif
                     CurrentState = ESearchMove.DirectMove;
                     break;
                 }
 #if DEBUG
-                Logger.LogWarning($"{BotOwner.name}'s cannot peek and cannot direct move!");
+                if (SearchDiagnostics.Enabled)
+                {
+                    _diagnostics.OnMoveFailed(Bot, this, enemy);
+                }
+                else
+                {
+                    Logger.LogWarning($"{BotOwner.name}'s cannot peek and cannot direct move!");
+                }
 #endif
                 break;
 

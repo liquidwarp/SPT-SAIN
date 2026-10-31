@@ -113,7 +113,8 @@ public class DebugLogSettings : SAINSettingsBase<DebugLogSettings>
     [DataMember]
     [Name("Debug Bot Awareness")]
     [Description(
-        "Logs bot-to-bot gunfire hearing, dropped enemies, prolonged cover decisions, nearby groups' hostility, and hearing placement summaries. "
+        "Logs bot-to-bot gunfire hearing, dropped enemies, prolonged cover decisions, nearby groups' hostility, hearing placement summaries, "
+            + "and searches that keep failing to move. "
             + "Enable on the instance running bot logic, such as the Fika headless."
     )]
     public bool DebugBotAwareness = false;
