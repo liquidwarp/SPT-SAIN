@@ -100,6 +100,19 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
 
     public int PathCornerCount { get; private set; }
 
+    // Path queries run on the main thread; only two corners are needed to check walkability.
+    private static readonly Vector3[] _pathCornerProbe = new Vector3[2];
+
+    public bool HasUsablePath
+    {
+        get
+        {
+            return PathToEnemy.status != NavMeshPathStatus.PathInvalid
+                && PathCornerCount >= 2
+                && PathToEnemy.GetCornersNonAlloc(_pathCornerProbe) >= 2;
+        }
+    }
+
     private void CacheCorners()
     {
         PathCornerCount = NavMeshHelpers.GetCorners(PathToEnemy, ref _pathCorners, MAX_PATH_CORNERS);
@@ -224,8 +237,9 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
             return false;
         }
 
-        // Did we already check the current enemy position and has the bot not moved? dont recalc path then
-        if (!checkPositionsChanged(Bot.Position, LastKnown.Value))
+        // An unusable path must be retried even when neither position has changed.
+        bool positionsChanged = checkPositionsChanged(Bot.Position, LastKnown.Value);
+        if (!positionsChanged && HasUsablePath)
         {
             return false;
         }
