@@ -100,8 +100,10 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
 
     public int PathCornerCount { get; private set; }
 
-    // Path queries run on the main thread; only two corners are needed to check walkability.
-    private static readonly Vector3[] _pathCornerProbe = new Vector3[2];
+    // Validate with the mover's full corner read. A truncated prefix can succeed even when
+    // the full read fails, leaving a stationary search with no usable route and no retry.
+    // Path queries run on the main thread, so the growing buffer can be shared.
+    private static Vector3[] _pathCornerProbe = new Vector3[32];
 
     public bool HasUsablePath
     {
@@ -109,7 +111,7 @@ public class SAINEnemyPath(EnemyData enemyData) : EnemyBase(enemyData, enemyData
         {
             return PathToEnemy.status != NavMeshPathStatus.PathInvalid
                 && PathCornerCount >= 2
-                && PathToEnemy.GetCornersNonAlloc(_pathCornerProbe) >= 2;
+                && NavMeshHelpers.GetCorners(PathToEnemy, ref _pathCornerProbe) >= 2;
         }
     }
 
