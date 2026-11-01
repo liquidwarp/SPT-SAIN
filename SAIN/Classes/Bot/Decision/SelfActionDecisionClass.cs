@@ -539,6 +539,20 @@ public class SelfActionDecisionClass : BotBase
         {
             if (!ShallFirstAidCheckEnemy(enemy))
             {
+#if DEBUG
+                if (BotOwner.Medecine.FirstAid.Using && SAINPlugin.DebugSettings.Logs.DebugBotAwareness)
+                {
+                    SAIN.Classes.Bot.Sense.Hearing.HearingDiagnostics.Log.LogInfo(
+                        $"[First aid cancel] {System.DateTime.UtcNow:O} frame {Time.frameCount}, realtime {Time.realtimeSinceStartup:F3}"
+                            + $" | {Bot.PlayerComponent.Name} ({Bot.Info.Personality}) enemy {enemy.EnemyName}"
+                            + $" | reason {(enemy.InLineOfSight ? "line of sight" : "health/path/recency rule")}, health {Bot.Memory.Health.HealthStatus}, path distance {enemy.EPathDistance}"
+                            + $", seen {enemy.Seen}, heard {enemy.Heard}, in line of sight {enemy.InLineOfSight}"
+                            + $", since seen {enemy.TimeSinceSeen:F3}s, since known update {enemy.TimeSinceLastKnownUpdated:F3}s, since hit {Bot.Medical.TimeSinceShot:F3}s"
+                            + $" | decision {Bot.Decision.CurrentCombatDecision}/{Bot.Decision.CurrentSquadDecision}/{Bot.Decision.CurrentSelfDecision}"
+                            + $" | bot at {Bot.Position}"
+                    );
+                }
+#endif
                 return false;
             }
         }

@@ -58,7 +58,7 @@ Fork of SAIN, whose continued repo is now archived.
 - Debug builds add hearing test tools under General → Debug: a hearing overlay, markers where bots guess you are, logs of why a sound was or wasn't heard, and a "Bots Can't See Me" option to test hearing alone.
 - Debug builds add a medical section to the bot overlay: what each bot is using, whether first aid, surgery and stims have work and are ready, which body part and item they'd use, and whether the area is clear for surgery.
 - Debug builds add diagnostic logs, each with its own setting under General → Debug. Enable them on the instance running bot logic, such as the Fika headless.
-  - **Debug Bot Awareness:** where bot-to-bot gunfire gets dropped before a bot hears it, bots dropping an enemy that just shot at them, hearing estimates of bots holding cover for long, whether nearby bots of different sides are enemies, how hearing guesses are placed on walkable ground, and searches that keep failing to move.
+  - **Debug Bot Awareness:** where bot-to-bot gunfire gets dropped before a bot hears it, bots dropping an enemy that just shot at them, hearing estimates of bots holding cover for long, whether nearby bots of different sides are enemies, how hearing guesses are placed on walkable ground, searches that keep failing to move, and enemy safety checks that cancel first aid (with timestamps, enemy sight, path-distance and knowledge state).
   - **Debug Bot Reloads:** reloads that run long, get stuck or are left behind by a weapon change.
   - **Debug Bot Activation:** bots still not active a while after spawning, with how far their activation got and what it threw.
 - More debug-only code is compiled out of release builds.
