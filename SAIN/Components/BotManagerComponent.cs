@@ -15,9 +15,12 @@ public class BotManagerComponent : MonoBehaviour
 {
     public static BotManagerComponent Instance { get; private set; }
 
+    private readonly Dictionary<string, BotComponent> _emptyBots = [];
+
     public Dictionary<string, BotComponent> Bots
     {
-        get { return BotSpawnController.Bots; }
+        // Coalesced for RaidReview compatibility
+        get { return BotSpawnController?.BotDictionary ?? _emptyBots; }
     }
 
     public GameWorld GameWorld
@@ -136,12 +139,14 @@ public class BotManagerComponent : MonoBehaviour
                     }
                 }
             }
-
-            Bots?.Clear();
         }
         catch (Exception ex)
         {
             Logger.LogError($"Dispose SAIN BotController Error: {ex}");
+        }
+        finally
+        {
+            Bots.Clear();
         }
 
         Destroy(this);
