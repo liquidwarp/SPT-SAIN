@@ -82,7 +82,7 @@ public class GrenadeReactionClass : BotSubClass<BotGrenadeManager>, IBotClass
 
         foreach (var tracker in EnemyGrenadesList.Values)
         {
-            if (tracker?.Grenade == null || !tracker.CanReact)
+            if (tracker?.Grenade == null || tracker.Grenade is SmokeGrenade || !tracker.CanReact)
             {
                 continue;
             }
