@@ -21,6 +21,7 @@ public sealed class SainMeta
 
     public bool Advanced { get; init; }
     public bool Developer { get; init; }
+    public bool Debug { get; init; }
     public bool Experimental { get; init; }
     public bool Hidden { get; init; }
     public bool SimpleValue { get; init; }
@@ -62,6 +63,7 @@ public sealed class SainMeta
             DefaultFloat = defaultFloat?.Value ?? 0f,
             Advanced = member.GetCustomAttribute<AdvancedAttribute>() != null,
             Developer = member.GetCustomAttribute<DeveloperOptionAttribute>() != null,
+            Debug = member.GetCustomAttribute<DebugAttribute>() != null,
             Experimental = member.GetCustomAttribute<ExperimentalAttribute>() != null,
             Hidden = member.GetCustomAttribute<HiddenAttribute>() != null || member.GetCustomAttribute<IgnoreDataMemberAttribute>() != null,
             SimpleValue = member.GetCustomAttribute<SimpleValueAttribute>() != null,

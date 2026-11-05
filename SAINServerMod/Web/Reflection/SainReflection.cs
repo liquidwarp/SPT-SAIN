@@ -8,6 +8,12 @@ public static class SainReflection
 {
     private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
 
+#if DEBUG
+    private const bool IsDebugBuild = true;
+#else
+    private const bool IsDebugBuild = false;
+#endif
+
     public static List<SainMember> Members(object owner)
     {
         var type = owner.GetType();
@@ -20,7 +26,7 @@ public static class SainReflection
                 continue;
             }
             var member = new SainMember(owner, field);
-            if (member.Meta.Hidden || !IsEditable(member))
+            if (!IsVisibleInBuild(member.Meta) || !IsEditable(member))
             {
                 continue;
             }
@@ -34,7 +40,7 @@ public static class SainReflection
                 continue;
             }
             var member = new SainMember(owner, prop);
-            if (member.Meta.Hidden || !IsEditable(member))
+            if (!IsVisibleInBuild(member.Meta) || !IsEditable(member))
             {
                 continue;
             }
@@ -80,9 +86,14 @@ public static class SainReflection
             .ToList();
     }
 
+    private static bool IsVisibleInBuild(SainMeta meta)
+    {
+        return !meta.Hidden && !(meta.Debug && !IsDebugBuild);
+    }
+
     public static bool IsVisible(SainMeta meta, bool showAdvanced, bool showDeveloper)
     {
-        if (meta.Hidden)
+        if (!IsVisibleInBuild(meta))
         {
             return false;
         }
